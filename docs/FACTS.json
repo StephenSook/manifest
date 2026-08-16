@@ -1,0 +1,62 @@
+{
+  "_meta": {
+    "generated_at": "2026-08-16T22:04:42.837177+00:00",
+    "generated_by": "scripts/facts.py",
+    "source_files": [
+      "data/decay-table.json",
+      "data/surya-outlook.json"
+    ],
+    "note": "Every number in README.md, docs/, and the video script must come from this file. Hand-editing this file fails CI. Re-run scripts/facts.py after any change to data/decay-table.json or data/surya-outlook.json."
+  },
+  "differentiator": {
+    "orbit_description": "3U CubeSat at 550 km circular, Bc=180.0 kg/m^2",
+    "altitude_km": 550,
+    "ballistic_coefficient": 180.0,
+    "fcc_limit_years": 5.0,
+    "f107_assumed_nominal": 120.0,
+    "lifetime_years_nominal": 9.602,
+    "lifetime_years_solar_min": 15.0,
+    "lifetime_years_solar_max": 2.568,
+    "verdict_nominal": "VIOLATED",
+    "verdict_solar_min": "VIOLATED",
+    "verdict_solar_max": "OK",
+    "swing_sentence": "At 550 km with Bc=180 kg/m^2: solar min lifetime 15.0 yr (VIOLATED), solar max lifetime 2.57 yr (OK). Same orbit. Opposite verdict. The solar cycle decides.",
+    "citation": "47 CFR 25.283(e), FCC 22-74 (2022)",
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)"
+  },
+  "surya": {
+    "activity_index": 0.0231,
+    "model_id": "nasa-ibm-ai4science/Surya-1.0",
+    "checkpoint": "surya.366m.v1.pt",
+    "inference_date": "2026-08-16T21:41:36.246741+00:00",
+    "notes": "ESTIMATED. Activity index is mean top-1% AIA 94A pixel intensity from one forward pass on Oct 2014 benchmark data, normalized to ~Oct 2014 reference level. This is a scalar proxy for near-term flare-associated EUV activity, not a calibrated X-ray flux value. Source: Roy et al. 2025 Surya-1.0, NASA SDO bench, AIA 94A channel. Used only to NARROW the near-term end of NOAA predicted-flux envelope; the deorbit compliance verdict computes from NOAA alone if this is absent."
+  },
+  "models": {
+    "generation": "ibm/granite-4-h-small",
+    "audit": "ibm/granite-guardian-3-8b",
+    "embedding": "ibm/granite-embedding-278m-multilingual",
+    "surya": "nasa-ibm-ai4science/Surya-1.0",
+    "local_fallback": "granite4.1:8b"
+  },
+  "seed_mission": {
+    "id": "gt-1",
+    "name": "GT-1 (Georgia Tech SSDL)",
+    "source": "SmallSat 2021 SSC21-P2-48, DOI 10.26077/s4a1-qn29",
+    "perigee_km": 550,
+    "bc_kg_m2": 180.0
+  },
+  "beneficiary_sizing": {
+    "missions_per_year_approx": "40+",
+    "missions_per_year_source": "UNVERIFIED -- Swartwout CubeSat Database, verify URL and edition year",
+    "university_failure_rate_pct": "40",
+    "university_failure_rate_source": "UNVERIFIED -- Swartwout/AIAA-USU, verify paper DOI",
+    "licensing_runway_months": "12",
+    "licensing_runway_source": "UNVERIFIED -- NASA state-of-the-art smallsat guidance, verify edition and page"
+  },
+  "engine": {
+    "test_count": 74,
+    "test_count_note": "As of 2026-08-17. Update after adding tests.",
+    "decay_table_entries": 21,
+    "decay_table_generated_at": "2026-08-16T20:38:16.649836+00:00"
+  }
+}

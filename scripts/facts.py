@@ -75,6 +75,34 @@ GT1_BC = 180.0
 # Compute the key numbers
 # ---------------------------------------------------------------------------
 
+def run_status() -> dict | None:
+    """Run the real /api/status logic via scripts/run_status.ts (task 2.18 step 4).
+
+    Returns the parsed route response, or None if node/tsx is unavailable so the
+    decay-table facts can still be generated (the headline block is then omitted
+    and downstream surfaces keep their placeholders).
+    """
+    try:
+        out = subprocess.run(
+            ["npx", "tsx", "scripts/run_status.ts"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        print(f"WARNING: run_status.ts did not run ({exc}); headline omitted", file=sys.stderr)
+        return None
+    if out.returncode != 0:
+        print(f"WARNING: run_status.ts failed:\n{out.stderr[-500:]}", file=sys.stderr)
+        return None
+    try:
+        return json.loads(out.stdout)
+    except json.JSONDecodeError:
+        print("WARNING: run_status.ts emitted non-JSON; headline omitted", file=sys.stderr)
+        return None
+
+
 def compute_facts() -> dict:
     table = load_decay_table()
 
@@ -113,6 +141,29 @@ def compute_facts() -> dict:
         "surya": "nasa-ibm-ai4science/Surya-1.0",
         "local_fallback": "granite4.1:8b",
     }
+
+    # Headline from the real engine run (task 2.17 route, via scripts/run_status.ts).
+    # deadline_violations_days moves as `today` advances, so the staleness check
+    # (--check) deliberately excludes this block; it compares differentiator
+    # numbers only. Re-run facts.py before any surface quotes the headline.
+    status = run_status()
+    headline = None
+    if status is not None:
+        headline = {
+            "deadline_violations_days": status.get("deadline_violations_days"),
+            "violated_node_count": len(status.get("violated_nodes", [])),
+            "violated_nodes": status.get("violated_nodes", []),
+            "node_count": status.get("node_count"),
+            "compute_ms": status.get("compute_ms"),
+            "seed_note": (
+                "GT-1 mission profile re-based onto a live delivery date "
+                "(2026-12-01); the planner's question is 'standing at today, "
+                "licensing not started, which deadlines are already dead.' "
+                "All dates ESTIMATED per D5, replaced by data/missions/gt-1.json "
+                "when 2.16 lands."
+            ),
+            "measured_at": datetime.now(timezone.utc).isoformat(),
+        }
 
     # Beneficiary sizing (second-hand figures -- VERIFY_TO_PRIMARY_SOURCE before shipping)
     # Source: research pack; every figure marked UNVERIFIED until primary source URL is added.
@@ -187,6 +238,9 @@ def compute_facts() -> dict:
             "perigee_km": GT1_PERIGEE_KM,
             "bc_kg_m2": GT1_BC,
         },
+
+        # Headline from the real engine run -- None if run_status.ts unavailable
+        "headline": headline,
 
         # Beneficiary sizing -- UNVERIFIED until primary sources confirmed
         "beneficiary_sizing": beneficiary_sizing,

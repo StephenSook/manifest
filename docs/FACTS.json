@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-08-16T22:04:42.837177+00:00",
+    "generated_at": "2026-08-16T22:59:43.656327+00:00",
     "generated_by": "scripts/facts.py",
     "source_files": [
       "data/decay-table.json",
@@ -44,6 +44,26 @@
     "source": "SmallSat 2021 SSC21-P2-48, DOI 10.26077/s4a1-qn29",
     "perigee_km": 550,
     "bc_kg_m2": 180.0
+  },
+  "headline": {
+    "deadline_violations_days": 151,
+    "violated_node_count": 10,
+    "violated_nodes": [
+      "iaru-request",
+      "iaru-letter",
+      "itu-api-filed",
+      "itu-api-published",
+      "fcc-application-prepared",
+      "fcc-application-filed",
+      "nasa-debris-assessment",
+      "deorbit-compliance",
+      "fcc-grant",
+      "delivery"
+    ],
+    "node_count": 10,
+    "compute_ms": 0,
+    "seed_note": "GT-1 mission profile re-based onto a live delivery date (2026-12-01); the planner's question is 'standing at today, licensing not started, which deadlines are already dead.' All dates ESTIMATED per D5, replaced by data/missions/gt-1.json when 2.16 lands.",
+    "measured_at": "2026-08-16T22:59:43.656110+00:00"
   },
   "beneficiary_sizing": {
     "missions_per_year_approx": "40+",

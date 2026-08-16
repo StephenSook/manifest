@@ -46,11 +46,11 @@ The worked example, computed by NRLMSISE-00 ballistic drag integration from NOAA
 
 Theme: Advance Space Exploration with AI. Manifest ingests live NOAA SWPC F10.7 flux, runs Surya inference locally from the public checkpoint, and turns both into a licensing decision for real missions. The seeded missions are real (GT-1 and two other public university missions), with every date labeled DOCUMENTED with a source or ESTIMATED with a basis. No fictional personas, no synthetic load-bearing data.
 
-Feasibility is one command: fresh clone, `npm ci && npm run test:engine` ([FACTS: engine.test_count] engine tests, no network, no keys), then the deployed URL with no credentials. The corpus ships frozen with the app. The eval bank ([FACTS: eval sentence, filled after the scored run]) gates CI, so a change that regresses citations does not merge.
+Feasibility is one command: fresh clone, `npm ci && npm run test:engine` (74 engine tests, no network, no keys), then the deployed URL with no credentials. The corpus ships frozen with the app. The eval bank ([FACTS: eval sentence, filled after the scored run]) gates CI, so a change that regresses citations does not merge.
 
 ### Real-World Impact
 
-The headline, recomputed live on every request: [FACTS: deadline_violations_days] days of violated regulatory deadline on the seeded mission, found in [FACTS: compute_seconds] seconds. NASA's smallsat guidance tells teams to budget [VERIFY: a full year] for licensing; Manifest tells a specific team which of their specific deadlines are already dead, today.
+The headline, recomputed live on every request: 151 days of already-violated regulatory deadline on the seeded mission profile, found in under one second (FACTS.headline, 2026-08-16 run; re-filled at freeze from a fresh run since the number moves as days pass). NASA's smallsat guidance tells teams to budget [VERIFY: a full year] for licensing; Manifest tells a specific team which of their specific deadlines are already dead, today.
 
 Honesty is part of the product: when the corpus cannot support an answer, Manifest abstains and says exactly what is missing. Six abstention traps in the eval bank enforce it. Durations are labeled DOCUMENTED or ESTIMATED everywhere. The full operator interview happens after submission; the written exchange above is what we hold today, and we say so.
 

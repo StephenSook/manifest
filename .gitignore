@@ -1,0 +1,69 @@
+# ---------------------------------------------------------------------------
+# Workspace rule: this folder is BOTH the private research workspace and the
+# code repo. Code is built here at the root, beside the research PDFs.
+# Nothing private below is ever pushed. Verify with `git ls-files` before any
+# push, and never `git add -A`.
+# ---------------------------------------------------------------------------
+
+# Internal research / strategy documents (stay local, never public)
+*.pdf
+BUILD_PLAN.md
+BUILD_PLAN copy.md
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+service-account*.json
+.npmrc
+.pypirc
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.venv/
+venv/
+
+# Build output
+.next/
+out/
+dist/
+build/
+.turbo/
+*.tsbuildinfo
+.vercel/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+
+# Native build variants
+ios/App/Pods/
+android/.gradle/
+android/app/build/
+*.ipa
+*.apk
+*.aab
+
+# Corpus intermediates (frozen artifacts are committed deliberately, raw is not)
+pipeline/raw/
+pipeline/tmp/
+
+# OS / editor
+.DS_Store
+.AppleDouble
+._*
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+npm-debug.log*

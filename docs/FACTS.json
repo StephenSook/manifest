@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-08-16T22:59:43.656327+00:00",
+    "generated_at": "2026-08-16T23:06:58.993278+00:00",
     "generated_by": "scripts/facts.py",
     "source_files": [
       "data/decay-table.json",
@@ -63,15 +63,17 @@
     "node_count": 10,
     "compute_ms": 0,
     "seed_note": "GT-1 mission profile re-based onto a live delivery date (2026-12-01); the planner's question is 'standing at today, licensing not started, which deadlines are already dead.' All dates ESTIMATED per D5, replaced by data/missions/gt-1.json when 2.16 lands.",
-    "measured_at": "2026-08-16T22:59:43.656110+00:00"
+    "measured_at": "2026-08-16T23:06:58.993091+00:00"
   },
   "beneficiary_sizing": {
-    "missions_per_year_approx": "40+",
-    "missions_per_year_source": "UNVERIFIED -- Swartwout CubeSat Database, verify URL and edition year",
+    "missions_per_year_approx": "40",
+    "missions_per_year_quote": "now it is not unusual for 40 university-class missions to fly every year",
+    "missions_per_year_source": "Swartwout and Jayne, 'University-Class Spacecraft by the Numbers: Success, Failure, Debris. (But Mostly Success.)', 30th AIAA/USU Conference on Small Satellites, 2016, https://digitalcommons.usu.edu/smallsat/2016/TS13Education/1",
     "university_failure_rate_pct": "40",
-    "university_failure_rate_source": "UNVERIFIED -- Swartwout/AIAA-USU, verify paper DOI",
-    "licensing_runway_months": "12",
-    "licensing_runway_source": "UNVERIFIED -- NASA state-of-the-art smallsat guidance, verify edition and page"
+    "university_failure_rate_quote": "about 40% of all manifested university-class missions fail to achieve any of their primary mission objectives",
+    "university_failure_rate_source": "Swartwout and Jayne, SmallSat 2016, https://digitalcommons.usu.edu/smallsat/2016/TS13Education/1 (figure dates to 2016)",
+    "licensing_runway": "4 to 6 months",
+    "licensing_runway_source": "NASA CubeSat 101 (CSLI, 2017), Section 2.8 'Regulatory Licensing (4-6 months)'; same document: FCC requires a minimum of 90 days from application receipt, and IARU coordination starts immediately at manifest. Age flagged per D5."
   },
   "engine": {
     "test_count": 74,

@@ -165,16 +165,33 @@ def compute_facts() -> dict:
             "measured_at": datetime.now(timezone.utc).isoformat(),
         }
 
-    # Beneficiary sizing (second-hand figures -- VERIFY_TO_PRIMARY_SOURCE before shipping)
-    # Source: research pack; every figure marked UNVERIFIED until primary source URL is added.
-    # Owner: Stephen, due before 3.4. Figures that do not resolve get cut.
+    # Beneficiary sizing -- VERIFIED to primary sources 2026-08-16.
+    # Both Swartwout figures date to 2016; state the year wherever they appear (D5).
+    # The research pack's "12 months licensing" claim was CUT: the checkable
+    # primary (CubeSat 101, 2017, Section 2.8) says 4 to 6 months.
     beneficiary_sizing = {
-        "missions_per_year_approx": "40+",
-        "missions_per_year_source": "UNVERIFIED -- Swartwout CubeSat Database, verify URL and edition year",
+        "missions_per_year_approx": "40",
+        "missions_per_year_quote": "now it is not unusual for 40 university-class missions to fly every year",
+        "missions_per_year_source": (
+            "Swartwout and Jayne, 'University-Class Spacecraft by the Numbers: Success, "
+            "Failure, Debris. (But Mostly Success.)', 30th AIAA/USU Conference on Small "
+            "Satellites, 2016, https://digitalcommons.usu.edu/smallsat/2016/TS13Education/1"
+        ),
         "university_failure_rate_pct": "40",
-        "university_failure_rate_source": "UNVERIFIED -- Swartwout/AIAA-USU, verify paper DOI",
-        "licensing_runway_months": "12",
-        "licensing_runway_source": "UNVERIFIED -- NASA state-of-the-art smallsat guidance, verify edition and page",
+        "university_failure_rate_quote": (
+            "about 40% of all manifested university-class missions fail to achieve any "
+            "of their primary mission objectives"
+        ),
+        "university_failure_rate_source": (
+            "Swartwout and Jayne, SmallSat 2016, "
+            "https://digitalcommons.usu.edu/smallsat/2016/TS13Education/1 (figure dates to 2016)"
+        ),
+        "licensing_runway": "4 to 6 months",
+        "licensing_runway_source": (
+            "NASA CubeSat 101 (CSLI, 2017), Section 2.8 'Regulatory Licensing (4-6 months)'; "
+            "same document: FCC requires a minimum of 90 days from application receipt, and "
+            "IARU coordination starts immediately at manifest. Age flagged per D5."
+        ),
     }
 
     return {

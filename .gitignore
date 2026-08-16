@@ -75,3 +75,7 @@ npm-debug.log*
 CLAUDE.md
 stephen-impl-plan.md
 BOB_HANDOFF.md
+
+# Model weight and benchmark caches, never committed
+pipeline/.surya_weights/
+pipeline/.surya_bench/

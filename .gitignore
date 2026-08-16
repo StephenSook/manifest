@@ -56,6 +56,9 @@ android/app/build/
 pipeline/raw/
 pipeline/tmp/
 
+# Vendored third-party reference code, research-only, never shipped
+pipeline/orbitm_vendor/
+
 # OS / editor
 .DS_Store
 .AppleDouble
@@ -71,3 +74,4 @@ npm-debug.log*
 # Private planning docs (stay local, never public)
 CLAUDE.md
 stephen-impl-plan.md
+BOB_HANDOFF.md

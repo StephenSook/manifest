@@ -1,13 +1,13 @@
 {
   "horizonMonths": 1,
-  "activityIndex": null,
-  "activityIndexSource": "noaa-fallback",
+  "activityIndex": [
+    0.0231
+  ],
+  "activityIndexSource": "surya-1.0-aia94-proxy",
   "modelId": "nasa-ibm-ai4science/Surya-1.0",
   "checkpoint": "surya.366m.v1.pt",
-  "sourceDataRange": null,
-  "inferenceDate": "2026-08-16T21:33:17.117456+00:00",
-  "generatedAt": "2026-08-16T21:33:17.117456+00:00",
-  "suryaStatus": "weights-loaded-inference-blocked",
-  "suryaStatusDetail": "Surya-1.0 weights (1.8GB) downloaded and model loaded successfully on Apple MPS. Forward pass blocked: model trained at img_size=4096 (65536 patches) but benchmark .nc files require 4x pooling on this machine to fit in memory, yielding 4096 patches -- dimension mismatch. Resolution: run at full 4096 resolution on a GPU instance with >=16GB VRAM before Aug 23 deadline. Fallback path: deorbit verdict computes from NOAA predicted-flux envelope alone. Per PLAN.md D7.",
-  "notes": "NOAA fallback active. Surya weights are loaded and verified; inference requires full 4096x4096 SDO frame resolution. Deorbit compliance verdict computed from NOAA predicted-flux envelope. Per PLAN.md Decision D7: the verdict computes from NOAA alone when Surya is absent, and the panel says so."
+  "sourceDataRange": "2014-10-23 10:00:00 / 2014-10-23 11:00:00 UTC",
+  "inferenceDate": "2026-08-16T21:41:36.246741+00:00",
+  "generatedAt": "2026-08-16T21:41:36.246741+00:00",
+  "notes": "ESTIMATED. Activity index is mean top-1% AIA 94A pixel intensity from one forward pass on Oct 2014 benchmark data, normalized to ~Oct 2014 reference level. This is a scalar proxy for near-term flare-associated EUV activity, not a calibrated X-ray flux value. Source: Roy et al. 2025 Surya-1.0, NASA SDO bench, AIA 94A channel. Used only to NARROW the near-term end of NOAA predicted-flux envelope; the deorbit compliance verdict computes from NOAA alone if this is absent."
 }

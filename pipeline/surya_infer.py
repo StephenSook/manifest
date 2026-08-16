@@ -257,6 +257,67 @@ def _extract_activity_index(predicted_frame: np.ndarray) -> float:
 
 
 # ---------------------------------------------------------------------------
+# Weight interpolation for resolution change
+# ---------------------------------------------------------------------------
+
+def _interpolate_state_dict_to_resolution(
+    state: dict,
+    src_img_size: int,
+    tgt_img_size: int,
+    patch_size: int = 16,
+) -> None:
+    """
+    Interpolate resolution-dependent weights in-place from src to tgt img_size.
+
+    Handles:
+      embedding.pos_embed: (1, N_src, D) -> (1, N_tgt, D) via bicubic 2D interp
+      *.filter.complex_weight: (H_src, W_src, D, 2) -> (H_tgt, W_tgt, D, 2)
+
+    This is a standard ViT positional embedding interpolation (DeiT/MAE technique).
+    Weights trained at 4096 transfer to 1024 with spatial bicubic interpolation.
+    The model output is an approximation -- not identical to native-resolution inference.
+    """
+    src_patches = src_img_size // patch_size  # e.g. 256 at 4096
+    tgt_patches = tgt_img_size // patch_size  # e.g. 64 at 1024
+
+    # 1. Positional embedding: (1, P_src^2, D) -> (1, P_tgt^2, D)
+    if "embedding.pos_embed" in state:
+        pe = state["embedding.pos_embed"]   # (1, P_src^2, D)
+        D = pe.shape[2]
+        pe_2d = pe.permute(0, 2, 1).reshape(1, D, src_patches, src_patches).float()
+        pe_2d = torch.nn.functional.interpolate(
+            pe_2d, size=(tgt_patches, tgt_patches), mode="bicubic", align_corners=False
+        )
+        state["embedding.pos_embed"] = (
+            pe_2d.reshape(1, D, tgt_patches * tgt_patches)
+            .permute(0, 2, 1)
+            .to(pe.dtype)
+        )
+
+    # 2. Spectral filter weights: (H_src, W_fft_src, D, 2) -> (H_tgt, W_fft_tgt, D, 2)
+    # FFT of N-point signal has N//2+1 unique complex frequencies
+    src_fft_h = src_patches         # 256
+    src_fft_w = src_patches // 2 + 1  # 129
+    tgt_fft_h = tgt_patches         # 64
+    tgt_fft_w = tgt_patches // 2 + 1  # 33
+
+    for key in list(state.keys()):
+        if "filter.complex_weight" in key:
+            w = state[key]   # (H_src, W_fft_src, D, 2)
+            D2 = w.shape[2]
+            # Treat (D, 2) as independent spatial filters
+            wf = w.float().permute(2, 3, 0, 1).reshape(D2 * 2, 1, src_fft_h, src_fft_w)
+            wf = torch.nn.functional.interpolate(
+                wf, size=(tgt_fft_h, tgt_fft_w), mode="bilinear", align_corners=False
+            )
+            state[key] = (
+                wf.reshape(D2, 2, tgt_fft_h, tgt_fft_w)
+                .permute(2, 3, 0, 1)
+                .to(w.dtype)
+            )
+
+
+# ---------------------------------------------------------------------------
 # Main inference function
 # ---------------------------------------------------------------------------
 
@@ -292,14 +353,25 @@ def run_surya_inference(
         config = yaml.safe_load(fh)
     model_cfg = config["model"]
 
-    # 3. Build model
+    # 3. Build model at inference resolution (1024, pooled from native 4096)
     # Args from easy_inference/run_easy_inference.py build_model()
     n_channels = len(config["data"]["sdo_channels"])                    # 13
     n_input_times = len(config["data"]["time_delta_input_minutes"])     # 2
+    infer_h = infer_w = 4096 // INFERENCE_POOL                         # 1024
 
-    print("Loading Surya-1.0 model...", file=sys.stderr)
+    print("Loading Surya-1.0 weights...", file=sys.stderr)
+    state = torch.load(weights_path, map_location="cpu", weights_only=False)
+    if "model" in state:
+        state = state["model"]
+
+    # Interpolate positional embeddings from native 4096 resolution to 1024.
+    # Surya was trained at img_size=4096, patch_size=16 => 256x256=65536 patches.
+    # At 1024: 64x64=4096 patches. Standard ViT positional embedding interpolation.
+    _interpolate_state_dict_to_resolution(state, src_img_size=4096, tgt_img_size=infer_h)
+
+    print("Building model at 1024 resolution...", file=sys.stderr)
     model = HelioSpectFormer(
-        img_size=model_cfg["img_size"],
+        img_size=infer_h,
         patch_size=model_cfg["patch_size"],
         in_chans=n_channels,
         embed_dim=model_cfg["embed_dim"],
@@ -321,10 +393,10 @@ def run_surya_inference(
         dtype=torch.bfloat16,
     )
 
-    state = torch.load(weights_path, map_location="cpu", weights_only=False)
-    if "model" in state:
-        state = state["model"]
-    model.load_state_dict(state, strict=False)
+    result = model.load_state_dict(state, strict=False)
+    if result.missing_keys or result.unexpected_keys:
+        print(f"  load_state_dict: {len(result.missing_keys)} missing, "
+              f"{len(result.unexpected_keys)} unexpected", file=sys.stderr)
     model.to(device)
     model.eval()
     print("Model loaded.", file=sys.stderr)
@@ -357,27 +429,33 @@ def run_surya_inference(
             if std_val > 0:
                 frames[:, ch_idx] = (frames[:, ch_idx] - mean_val) / std_val
 
-    # Model input dict (from easy_inference dataset __getitem__):
-    #   ts: (T, C, H, W) batched to (1, T, C, H, W)
-    #   time_delta_input: (T,) = (latest_offset - time_delta_mins) / 60
-    #     = (0 - [-60, 0]) / 60 = [1.0, 0.0]
+    # Model input dict per HelioSpectFormer.forward() docstring:
+    #   ts:               (B, C, T, H, W)  -- channels first, then time
+    #   time_delta_input: (B, T)
+    # time_delta_input = (latest_offset - time_delta_mins) / 60
+    #   = (0 - [-60, 0]) / 60 = [1.0, 0.0]
     time_delta_mins = np.array(
         config["data"]["time_delta_input_minutes"], dtype=np.float32
     )
     latest_offset = float(max(time_delta_mins))  # 0
-    time_delta_input = (latest_offset - time_delta_mins) / 60.0  # [1.0, 0.0]
+    time_delta_arr = (latest_offset - time_delta_mins) / 60.0  # [1.0, 0.0]
 
-    batch_ts = torch.from_numpy(frames).to(torch.bfloat16).unsqueeze(0).to(device)  # (1, 2, 13, H, W)
-    time_delta_t = torch.from_numpy(time_delta_input).to(device)                    # (2,)
+    # frames shape: (T=2, C=13, H, W)
+    # target:       (B=1, C=13, T=2, H, W)
+    frames_t = torch.from_numpy(frames).to(torch.bfloat16)   # (2, 13, H, W)
+    frames_t = frames_t.permute(1, 0, 2, 3).unsqueeze(0)     # (1, 13, 2, H, W)
+    frames_t = frames_t.to(device)
+
+    time_delta_t = torch.from_numpy(time_delta_arr).unsqueeze(0).to(device)  # (1, 2)
 
     # 7. Forward pass
     print("Running forward pass...", file=sys.stderr)
     device_type = "mps" if str(device) == "mps" else str(device).split(":")[0]
     with torch.inference_mode():
         with torch.autocast(device_type=device_type, dtype=torch.bfloat16):
-            output = model({"ts": batch_ts, "time_delta_input": time_delta_t})
+            output = model({"ts": frames_t, "time_delta_input": time_delta_t})
 
-    predicted_np = output[0].cpu().float().numpy()  # (13, H, W)
+    predicted_np = output[0].cpu().float().numpy()  # (C=13, H, W)
 
     # Denormalize AIA 94 channel for the activity index
     ch_name = config["data"]["sdo_channels"][AIA94_CHANNEL_IDX]

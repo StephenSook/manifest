@@ -24,7 +24,7 @@ Operating rules for any AI agent (Bob, Claude CLI, Codex, or other) working in t
 | Owner | Files |
 |---|---|
 | **Stephen** | `engine/**`, `eval/**`, `services/**`, `pipeline/decay.py`, `pipeline/surya_infer.py`, `pipeline/tests/test_decay.py`, `mobile/**`, `android/**`, `ios/**`, `capacitor.config.ts`, `next.config.mobile.ts`, `data/**`, `app/api/status/**`, `app/api/solar/**`, `scripts/**`, `tests/**` (not `tests/e2e/`), `docs/**` (not `docs/architecture.svg`, not `docs/bob-evidence/**`), `PLAN.md`, `README.md`, `CLAUDE.md`, `AGENTS.md`, `.bob/**` (not `.bob/skills/`), `LICENSE`, `.github/workflows/eval-gate.yml` |
-| **Tylan** | `pipeline/**` (except Stephen's 3 files), `corpus/**`, `app/api/ask/**`, `app/api/push/**`, `.github/workflows/**` (except `eval-gate.yml`), `.bob/skills/**`, `.gitleaksignore`, `.gitignore` |
+| **Tylin** | `pipeline/**` (except Stephen's 3 files), `corpus/**`, `app/api/ask/**`, `app/api/push/**`, `.github/workflows/**` (except `eval-gate.yml`), `.bob/skills/**`, `.gitleaksignore`, `.gitignore` |
 | **Khadim** | `app/**` (except `api/`), `components/**`, `lib/**`, `public/**`, `sw.ts`, `tests/e2e/**`, `docs/architecture.svg`, `docs/bob-evidence/**`, `.env.example`, `.vercel/**` |
 
 If a file you need is in another person's lane, write the requirement in PLAN.md Open Questions and ping. Do not edit.

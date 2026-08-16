@@ -1,12 +1,12 @@
 customModes:
   # ---------------------------------------------------------------------------
-  # corpus-engineer — Tylan's lane
+  # corpus-engineer — Tylin's lane
   # Corpus pipeline, API ask/push routes, all pipeline except Stephen's 3 files
   # ---------------------------------------------------------------------------
   - slug: corpus-engineer
     name: Corpus Engineer
     description: >
-      Tylan's lane. Ingest eCFR bulk XML and PDFs via Docling, build the
+      Tylin's lane. Ingest eCFR bulk XML and PDFs via Docling, build the
       embedding index, manage the SQLite corpus bundle, and implement the
       /api/ask and /api/push routes with watsonx and Guardian wiring.
     roleDefinition: >
@@ -58,7 +58,7 @@ customModes:
       in the browser. Every node duration carries DOCUMENTED (with source) or
       ESTIMATED (with basis). Every regulatory claim carries a CFR citation
       pinned to the snapshot AMDDATE, or the product abstains. You never write
-      to Khadim's or Tylan's files. The language boundary between Python and
+      to Khadim's or Tylin's files. The language boundary between Python and
       TypeScript is a frozen JSON file: pipeline/decay.py writes
       data/decay-table.json, pipeline/surya_infer.py writes
       data/surya-outlook.json. The engine reads these files; Python is never

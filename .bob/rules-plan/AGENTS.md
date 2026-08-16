@@ -8,7 +8,7 @@ You are designing or planning changes to Manifest. Before proposing any implemen
 
 ## Plan quality bar
 
-1. Every sub-task has an explicit owner from {Stephen, Tylan, Khadim}.
+1. Every sub-task has an explicit owner from {Stephen, Tylin, Khadim}.
 2. Every sub-task identifies which files it touches.
 3. Every regulatory claim in a plan has a CFR citation. Unverified paragraph paths are flagged explicitly as UNVERIFIED and blocked on the eCFR parse (task 1.1).
 4. Duration estimates carry DOCUMENTED or ESTIMATED labels with sources or bases.

@@ -1,0 +1,233 @@
+[
+  {
+    "altitudeKm": 400.0,
+    "ballisticCoefficient": 120.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 0.517,
+    "lifetimeYearsLow": 1.303,
+    "lifetimeYearsHigh": 0.23,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:16.649836+00:00"
+  },
+  {
+    "altitudeKm": 400.0,
+    "ballisticCoefficient": 180.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 0.747,
+    "lifetimeYearsLow": 1.916,
+    "lifetimeYearsHigh": 0.326,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:16.904987+00:00"
+  },
+  {
+    "altitudeKm": 400.0,
+    "ballisticCoefficient": 250.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 1.016,
+    "lifetimeYearsLow": 2.626,
+    "lifetimeYearsHigh": 0.441,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:17.238025+00:00"
+  },
+  {
+    "altitudeKm": 450.0,
+    "ballisticCoefficient": 120.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 1.227,
+    "lifetimeYearsLow": 3.814,
+    "lifetimeYearsHigh": 0.46,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:17.684591+00:00"
+  },
+  {
+    "altitudeKm": 450.0,
+    "ballisticCoefficient": 180.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 1.802,
+    "lifetimeYearsLow": 5.692,
+    "lifetimeYearsHigh": 0.671,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:18.336036+00:00"
+  },
+  {
+    "altitudeKm": 450.0,
+    "ballisticCoefficient": 250.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 2.472,
+    "lifetimeYearsLow": 7.877,
+    "lifetimeYearsHigh": 0.901,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:19.239874+00:00"
+  },
+  {
+    "altitudeKm": 500.0,
+    "ballisticCoefficient": 120.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 2.836,
+    "lifetimeYearsLow": 10.828,
+    "lifetimeYearsHigh": 0.901,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:20.366469+00:00"
+  },
+  {
+    "altitudeKm": 500.0,
+    "ballisticCoefficient": 180.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 4.216,
+    "lifetimeYearsLow": 15.0,
+    "lifetimeYearsHigh": 1.322,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:21.932848+00:00"
+  },
+  {
+    "altitudeKm": 500.0,
+    "ballisticCoefficient": 250.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 5.826,
+    "lifetimeYearsLow": 15.0,
+    "lifetimeYearsHigh": 1.821,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:23.712682+00:00"
+  },
+  {
+    "altitudeKm": 550.0,
+    "ballisticCoefficient": 120.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 6.42,
+    "lifetimeYearsLow": 15.0,
+    "lifetimeYearsHigh": 1.744,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:25.584674+00:00"
+  },
+  {
+    "altitudeKm": 550.0,
+    "ballisticCoefficient": 180.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 9.602,
+    "lifetimeYearsLow": 15.0,
+    "lifetimeYearsHigh": 2.568,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:27.625456+00:00"
+  },
+  {
+    "altitudeKm": 550.0,
+    "ballisticCoefficient": 250.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 13.3,
+    "lifetimeYearsLow": 15.0,
+    "lifetimeYearsHigh": 3.546,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:30.034877+00:00"
+  },
+  {
+    "altitudeKm": 600.0,
+    "ballisticCoefficient": 120.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 14.182,
+    "lifetimeYearsLow": 15.0,
+    "lifetimeYearsHigh": 3.296,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:32.545904+00:00"
+  },
+  {
+    "altitudeKm": 600.0,
+    "ballisticCoefficient": 180.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 15.0,
+    "lifetimeYearsLow": 15.0,
+    "lifetimeYearsHigh": 4.925,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:35.241279+00:00"
+  },
+  {
+    "altitudeKm": 600.0,
+    "ballisticCoefficient": 250.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 15.0,
+    "lifetimeYearsLow": 15.0,
+    "lifetimeYearsHigh": 6.804,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:38.015954+00:00"
+  },
+  {
+    "altitudeKm": 650.0,
+    "ballisticCoefficient": 120.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 15.0,
+    "lifetimeYearsLow": 15.0,
+    "lifetimeYearsHigh": 6.19,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:40.726975+00:00"
+  },
+  {
+    "altitudeKm": 650.0,
+    "ballisticCoefficient": 180.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 15.0,
+    "lifetimeYearsLow": 15.0,
+    "lifetimeYearsHigh": 9.238,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:43.721278+00:00"
+  },
+  {
+    "altitudeKm": 650.0,
+    "ballisticCoefficient": 250.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 15.0,
+    "lifetimeYearsLow": 15.0,
+    "lifetimeYearsHigh": 12.802,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:47.042155+00:00"
+  },
+  {
+    "altitudeKm": 700.0,
+    "ballisticCoefficient": 120.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 15.0,
+    "lifetimeYearsLow": 15.0,
+    "lifetimeYearsHigh": 11.384,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:50.168446+00:00"
+  },
+  {
+    "altitudeKm": 700.0,
+    "ballisticCoefficient": 180.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 15.0,
+    "lifetimeYearsLow": 15.0,
+    "lifetimeYearsHigh": 15.0,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:53.550339+00:00"
+  },
+  {
+    "altitudeKm": 700.0,
+    "ballisticCoefficient": 250.0,
+    "launchYearMonth": "2026-08",
+    "lifetimeYears": 15.0,
+    "lifetimeYearsLow": 15.0,
+    "lifetimeYearsHigh": 15.0,
+    "f107Assumed": 120.0,
+    "method": "NRLMSISE-00 ballistic drag integration (pyatmos 1.2.7, King-Hele/Low 2018)",
+    "generatedAt": "2026-08-16T20:38:56.942495+00:00"
+  }
+]

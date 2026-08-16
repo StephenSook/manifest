@@ -18,7 +18,7 @@ Georgia Tech's GT-1 CubeSat was planned as a nine month project. It took over tw
 
 University CubeSat teams face a multi-agency licensing campaign with no map: IARU frequency coordination, an ITU filing through the FCC, the FCC license itself across three possible regulatory pathways, a NASA orbital debris assessment, and a NOAA license if the satellite images Earth. The deadlines interlock, the agencies wait on each other, and the launch provider's delivery date does not move.
 
-A principal investigator at a US university CubeSat program told us (paraphrased, shared with permission pending): reconstructing his own mission's licensing chronology would require going back through all the filings, his team slow-walked licensing steps while waiting for launch details to firm up, and the only reason the FCC filing was manageable at all was that a NASA launch award paid for a consultant to run it. Teams without that award run it themselves, [VERIFY: roughly 40 or more university-class missions fly per year, and roughly 40% of university-class missions fail; Swartwout CubeSat Database, primary URL and edition pending].
+A principal investigator at a US university CubeSat program told us in writing (August 2026, paraphrased, shared anonymously): reconstructing his own mission's licensing chronology would require going back through all the filings, his team slow-walked licensing steps while waiting for launch details to firm up, and the only reason the FCC filing was manageable at all was that a NASA launch award paid for a consultant to run it. Teams without that award run it themselves. The field, sourced: "it is not unusual for 40 university-class missions to fly every year," and "about 40% of all manifested university-class missions fail to achieve any of their primary mission objectives" (Swartwout and Jayne, SmallSat 2016, digitalcommons.usu.edu/smallsat/2016/TS13Education/1; figures date to 2016).
 
 And one input nobody plans for: the sun. The FCC requires disposal within five years of end of mission. Orbital lifetime is driven by atmospheric drag, drag by air density, density by the solar cycle. The same satellite in the same orbit can be legal at solar maximum and in violation at solar minimum. No planning tool tells a university team that.
 
@@ -38,7 +38,7 @@ Verify without logging in or holding any key: `curl https://[DEPLOY-URL]/api/sta
 
 ### Innovation
 
-Start with who is excluded: university CubeSat teams who cannot afford licensing counsel. [VERIFY: failure-rate and missions-per-year figures pending primary source.] Manifest's answer is the deorbit compliance verdict, a real prerequisite node in the graph, not a dashboard widget.
+Start with who is excluded: university CubeSat teams who cannot afford licensing counsel, in a field where about 40% of manifested university-class missions fail to achieve any primary objective (Swartwout and Jayne, SmallSat 2016). Manifest's answer is the deorbit compliance verdict, a real prerequisite node in the graph, not a dashboard widget.
 
 The worked example, computed by NRLMSISE-00 ballistic drag integration from NOAA's own predicted flux envelope: a 3U CubeSat at 550 km with a ballistic coefficient of 180 kg/m^2 has an estimated lifetime of 15.0 years at solar minimum (VIOLATED, the FCC limit is 5) and 2.57 years at solar maximum (OK). Same orbit. Opposite verdict. The solar cycle decides, and Manifest is the only tool in this field that treats space weather as a regulatory input instead of a chart.
 
@@ -50,7 +50,7 @@ Feasibility is one command: fresh clone, `npm ci && npm run test:engine` (74 eng
 
 ### Real-World Impact
 
-The headline, recomputed live on every request: 151 days of already-violated regulatory deadline on the seeded mission profile, found in under one second (FACTS.headline, 2026-08-16 run; re-filled at freeze from a fresh run since the number moves as days pass). NASA's smallsat guidance tells teams to budget [VERIFY: a full year] for licensing; Manifest tells a specific team which of their specific deadlines are already dead, today.
+The headline, recomputed live on every request: 151 days of already-violated regulatory deadline on the seeded mission profile, found in under one second (FACTS.headline, 2026-08-16 run; re-filled at freeze from a fresh run since the number moves as days pass). NASA's CubeSat 101 (2017) budgets 4 to 6 months for regulatory licensing and the FCC requires a minimum of 90 days from application receipt; Manifest tells a specific team which of their specific deadlines are already dead, today.
 
 Honesty is part of the product: when the corpus cannot support an answer, Manifest abstains and says exactly what is missing. Six abstention traps in the eval bank enforce it. Durations are labeled DOCUMENTED or ESTIMATED everywhere. The full operator interview happens after submission; the written exchange above is what we hold today, and we say so.
 
@@ -75,7 +75,7 @@ Honesty is part of the product: when the corpus cannot support an answer, Manife
 ## Fill-at-freeze checklist
 
 - [ ] Replace every `[FACTS: ...]` from a fresh `scripts/facts.py` run. Never by hand.
-- [ ] Resolve or cut every `[VERIFY]` figure to a primary source with URL and year.
+- [x] Beneficiary figures resolved to primary sources 2026-08-16 (Swartwout and Jayne SmallSat 2016; CubeSat 101 2017). The "full year for licensing" research-pack claim was cut: the primary says 4 to 6 months.
 - [ ] Replace `[DEPLOY-URL]`, `[YOUTUBE-URL]`, mobile links with live ones and click each from a logged-out browser.
 - [ ] Confirm the eval sentence states the real score verbatim.
 - [ ] Ask the validator for per-surface consent or keep the paraphrase fully anonymized as written.

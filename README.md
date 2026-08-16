@@ -73,7 +73,7 @@ The deorbit compliance verdict is computed from live NOAA SWPC F10.7 flux, NOAA'
 
 **Retrieval:** `ibm/granite-embedding-278m-multilingual` over a precomputed brute-force cosine index. The corpus is a frozen SQLite bundle plus Float32 vectors committed to the repo.
 
-**Solar outlook:** `NASA-IMPACT/Surya` fine-tuned heliophysics model (`solar_flares_surya` checkpoint, Apache-2.0), run via `easy_inference/` on Apple Silicon MPS. Output is a frozen artifact at `data/surya-outlook.json` that the demo reads. Live inference is a bonus path with a visible fallback.
+**Solar outlook:** `nasa-ibm-ai4science/Surya-1.0` (IBM and NASA heliophysics foundation model, Apache-2.0, checkpoint `surya.366m.v1.pt`), run locally with a real forward pass over NASA SDO benchmark frames. Its activity index narrows the near-term end of NOAA's predicted-flux envelope. Output is a frozen artifact at `data/surya-outlook.json` that the demo reads (D7); if Surya is absent, the verdict computes from NOAA alone and the panel says so.
 
 **Local fallback (disclosed):** Ollama `granite4.1:8b` and `granite-embedding:278m`. Rehearsed on Ollama; watsonx tokens reserved for the live demo and judging week.
 
@@ -87,7 +87,7 @@ The deorbit compliance verdict is computed from live NOAA SWPC F10.7 flux, NOAA'
 
 <!-- Build-trace table and evidence populated as features land. Updated after each phase boundary. -->
 
-IBM Bob 2.0.3 is the primary development tool (competition requirement). The `.bob/` directory is committed and inspectable; it is the only project in this field with machine-checkable Bob adoption.
+IBM Bob 2.0.3 is the primary development tool (competition requirement). The `.bob/` directory is committed and inspectable: the write-scoped modes, skills, MCP config, and the evidence trail are all in the repo and machine-checkable.
 
 **Evidence locations:**
 
@@ -160,10 +160,11 @@ The engine encodes this as a deorbit compliance node that is a hard prerequisite
 
 ## Real-World Impact
 
-<!-- Populated from docs/FACTS.json after a real engine run.
-     Beneficiary population figures verified to primary source before this section ships. -->
-
 Manifest is for university CubeSat programs that cannot afford licensing counsel, where a schedule slip means the launch provider demanifests the satellite before the FCC license arrives.
+
+The population, sourced: "it is not unusual for 40 university-class missions to fly every year," and "about 40% of all manifested university-class missions fail to achieve any of their primary mission objectives" (Swartwout and Jayne, "University-Class Spacecraft by the Numbers", 30th AIAA/USU Conference on Small Satellites, 2016, digitalcommons.usu.edu/smallsat/2016/TS13Education/1; figures date to 2016). NASA's CubeSat 101 (2017) budgets 4 to 6 months for regulatory licensing and notes the FCC requires a minimum of 90 days from application receipt, with IARU coordination starting immediately at manifest.
+
+The need, from the field: a principal investigator at a US university CubeSat program told us in writing (August 2026, paraphrased and shared anonymously) that reconstructing his own mission's licensing chronology would require going back through all the filings, that his team slow-walked licensing steps while waiting for launch details to firm up, and that the FCC filing was only manageable because a NASA launch award paid a consultant to run it. Teams without that award are exactly who Manifest is for.
 
 Every number in this section is sourced. Unsourced figures do not ship.
 
@@ -171,11 +172,11 @@ Every number in this section is sourced. Unsourced figures do not ship.
 
 ## Live Demo
 
-- **Web app:** *(Vercel URL — populated after first deploy)*
-- **Judge page:** `/judge` — numbered three-minute walkthrough, every claim reachable without login or key
-- **Status API:** `/api/status` — unauthenticated, recomputes the headline number on every request, self-reports which models are running
-- **iOS:** *(TestFlight link — populated if Beta App Review passes by Aug 26)*
-- **Android:** *(Firebase App Distribution link — populated after signed APK/AAB)*
+- **Web app:** *(Vercel URL, populated after first deploy)*
+- **Judge page:** `/judge`: numbered three-minute walkthrough, every claim reachable without login or key
+- **Status API:** `/api/status`: unauthenticated, recomputes the headline number on every request, self-reports which models are running
+- **iOS:** *(TestFlight link, populated if Beta App Review passes by Aug 26)*
+- **Android:** *(Firebase App Distribution link, populated after signed APK/AAB)*
 
 ---
 

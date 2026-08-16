@@ -67,3 +67,7 @@ pipeline/tmp/
 # Logs
 *.log
 npm-debug.log*
+
+# Private planning docs (stay local, never public)
+CLAUDE.md
+stephen-impl-plan.md

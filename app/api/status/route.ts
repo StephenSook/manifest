@@ -31,15 +31,22 @@ import type { MissionInput } from '../../../engine/types';
 // in task 2.16 (Tylin). When 2.16 ships, this file reads from that JSON.
 // ---------------------------------------------------------------------------
 
+// GT-1 mission PROFILE (3U, 550 km circular, amateur 437.5 MHz) re-based onto
+// a live delivery date, because the planner's question is "standing at today,
+// licensing not yet started, which deadlines are already dead." GT-1's own
+// paper documents the shape of this scenario: a nine month plan that became
+// two-plus years with the FCC license nearly missing the launch window.
+// Every date below is ESTIMATED (D5) with that documented profile as basis.
+// Replaced by data/missions/gt-1.json when task 2.16 lands.
 const GT1_MISSION: MissionInput = {
-  // ESTIMATED: launch ~late 2025, based on 2021 publication timeline + delays
-  launchDate: '2025-12-01',
-  // ESTIMATED: delivery 30 days before launch per standard manifest contract
-  deliveryDate: '2025-11-01',
-  // ESTIMATED: LV determination roughly 18 months before launch
-  lvDeterminationDate: '2024-06-01',
-  // ESTIMATED: integration start 6 months before delivery
-  integrationDate: '2025-05-01',
+  // ESTIMATED: launch 45 days after delivery per typical rideshare cadence
+  launchDate: '2027-01-15',
+  // ESTIMATED: live-frame delivery wall, ~3.5 months from mid-August 2026
+  deliveryDate: '2026-12-01',
+  // ESTIMATED: LV determination entered two weeks ago, the demo's entry event
+  lvDeterminationDate: '2026-08-01',
+  // ESTIMATED: integration start 6 weeks before delivery
+  integrationDate: '2026-10-15',
   pathway: 'part-97-amateur',
   frequencyMHz: 437.5,
   imagingEarth: false,
@@ -94,24 +101,31 @@ export async function GET(): Promise<NextResponse> {
 
   // 3. Compute critical path
   const today = new Date().toISOString().split('T')[0];
+  // Project start is TODAY: no licensing work has been filed yet, and work
+  // cannot start in the past. Anchoring the forward pass three years back
+  // made every schedule feasible and the violated-days headline permanently
+  // zero, which PLAN.md's own order-of-magnitude check calls an engine error.
   const result = computeCriticalPath(
     nodes,
     edges,
     GT1_MISSION.deliveryDate,
-    // Project start: 3 years before delivery to cover the full licensing runway
-    new Date(
-      new Date(GT1_MISSION.deliveryDate).getTime() - 3 * 365.25 * 86_400_000,
-    )
-      .toISOString()
-      .split('T')[0],
+    today,
     today,
   );
 
-  // 4. Count violated nodes by agency for the summary
+  // 4. Count violated nodes and find the binding overrun.
+  //    The headline is the WORST single overrun (how many days past feasible
+  //    the binding chain already is). Summing every node's float counts one
+  //    slip once per downstream node and inflates a 151-day overrun into
+  //    four figures, which fails PLAN.md's order-of-magnitude check.
   const violatedNodes: string[] = [];
   const atRiskNodes: string[] = [];
+  let worstViolationDays = 0;
   for (const [id, node] of result.nodes) {
-    if (node.verdict === 'VIOLATED') violatedNodes.push(id);
+    if (node.verdict === 'VIOLATED') {
+      violatedNodes.push(id);
+      worstViolationDays = Math.max(worstViolationDays, Math.abs(node.float ?? 0));
+    }
     if (node.verdict === 'AT_RISK') atRiskNodes.push(id);
   }
 
@@ -137,8 +151,12 @@ export async function GET(): Promise<NextResponse> {
   const responseMs = Date.now() - t0;
 
   return NextResponse.json({
-    // Headline number: total violated-deadline days across all VIOLATED nodes
-    deadline_violations_days: result.totalViolatedDays,
+    // Headline number: days by which the binding deadline chain is already
+    // past feasible (worst single overrun among VIOLATED nodes).
+    deadline_violations_days: worstViolationDays,
+    // Cascade sum across all violated nodes, kept for transparency. One slip
+    // propagates to every downstream node, so this is NOT days-of-lateness.
+    violated_day_sum_all_nodes: result.totalViolatedDays,
 
     // Critical path summary
     critical_path: result.criticalPath,

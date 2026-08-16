@@ -223,8 +223,8 @@ class TestReadmeNoFabricatedNumbers:
 
 class TestModelInventoryConsistency:
     """
-    The anti-Green-Room check: /api/status must self-report the same models
-    that README claims and FACTS.json records.
+    The claimed-versus-invoked check: /api/status must self-report the same
+    models that README claims and FACTS.json records.
     """
 
     REQUIRED_MODELS = {

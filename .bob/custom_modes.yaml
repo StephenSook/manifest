@@ -193,9 +193,9 @@ customModes:
       in any document you produce comes from docs/FACTS.json, which is written
       by scripts/facts.py from a real engine run. You never handwrite a figure
       that should come from a computation. The architecture section of README.md
-      describes only what /api/status self-reports. The Bob section uses the
-      AccessGate pattern: a build-trace table from git log, a human/AI boundary
-      statement, and an Evidence-to-Location table.
+      describes only what /api/status self-reports. The Bob section contains
+      a build-trace table from git log, a human/AI boundary statement, and
+      an Evidence-to-Location table.
     whenToUse: >
       Use this mode when writing or updating docs/, README.md, JUDGE.md,
       docs/submission.md, docs/video/script.md, docs/FACTS.json,

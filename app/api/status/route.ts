@@ -6,9 +6,8 @@
 // actually invoked in this deployment so claimed-versus-invoked is checkable
 // by one curl.
 //
-// This is the anti-Green-Room-failure-mode endpoint: their health endpoint
-// self-reported "claude" while their README claimed Granite plus Pinecone.
-// Ours self-reports what the README says, and CI asserts the two match.
+// Claimed-versus-running drift is the failure mode this endpoint closes:
+// it self-reports what the README says, and CI asserts the two match.
 //
 // No authentication. No credentials. No external network calls.
 // Authority: PLAN.md task 2.17, PLAN.md Shared Contracts /api/status response.

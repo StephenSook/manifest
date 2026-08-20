@@ -1,0 +1,190 @@
+# ci.yml - Tylin's lane
+# Every gate runs BARE. No pipe on the exit path. A skipped test is a false green.
+# The eval gate is Stephen's separate eval-gate.yml and must not appear here.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # -------------------------------------------------------------------------
+  # em-dash: hard rule, runs on every push, no scaffold dependency
+  # -------------------------------------------------------------------------
+  em-dash:
+    name: No em-dashes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check for em-dashes
+        run: uv run --python 3.12 python scripts/no_em_dash.py --check
+
+  # -------------------------------------------------------------------------
+  # gitleaks: secret scan over full history
+  # -------------------------------------------------------------------------
+  gitleaks:
+    name: Gitleaks secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # -------------------------------------------------------------------------
+  # lint: requires Next.js scaffold (task 0.8, Khadim)
+  # Skipped when package-lock.json is absent (scaffold not yet landed)
+  # -------------------------------------------------------------------------
+  lint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check scaffold exists
+        id: scaffold
+        run: |
+          if [ -f "package-lock.json" ] && [ -d "node_modules" ] || [ -f "package-lock.json" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.scaffold.outputs.present == 'true'
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        if: steps.scaffold.outputs.present == 'true'
+        run: npm ci
+
+      - name: Lint
+        if: steps.scaffold.outputs.present == 'true'
+        run: npm run lint
+
+      - name: Scaffold not yet available
+        if: steps.scaffold.outputs.present == 'false'
+        run: echo "Lint skipped - Next.js scaffold (task 0.8) not yet landed"
+
+  # -------------------------------------------------------------------------
+  # typecheck: requires Next.js scaffold (task 0.8, Khadim)
+  # -------------------------------------------------------------------------
+  typecheck:
+    name: TypeScript typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check scaffold exists
+        id: scaffold
+        run: |
+          if [ -f "package-lock.json" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.scaffold.outputs.present == 'true'
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        if: steps.scaffold.outputs.present == 'true'
+        run: npm ci
+
+      - name: Typecheck
+        if: steps.scaffold.outputs.present == 'true'
+        run: npm run typecheck
+
+      - name: Scaffold not yet available
+        if: steps.scaffold.outputs.present == 'false'
+        run: echo "Typecheck skipped - Next.js scaffold (task 0.8) not yet landed"
+
+  # -------------------------------------------------------------------------
+  # test-engine: vitest engine tests, requires scaffold
+  # -------------------------------------------------------------------------
+  test-engine:
+    name: Engine tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check scaffold exists
+        id: scaffold
+        run: |
+          if [ -f "package-lock.json" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.scaffold.outputs.present == 'true'
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        if: steps.scaffold.outputs.present == 'true'
+        run: npm ci
+
+      - name: Run engine tests
+        if: steps.scaffold.outputs.present == 'true'
+        run: npm run test:engine
+
+      - name: Scaffold not yet available
+        if: steps.scaffold.outputs.present == 'false'
+        run: echo "Engine tests skipped - Next.js scaffold (task 0.8) not yet landed"
+
+  # -------------------------------------------------------------------------
+  # build: next build, requires scaffold
+  # -------------------------------------------------------------------------
+  build:
+    name: Next.js build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check scaffold exists
+        id: scaffold
+        run: |
+          if [ -f "package-lock.json" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.scaffold.outputs.present == 'true'
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        if: steps.scaffold.outputs.present == 'true'
+        run: npm ci
+
+      - name: Build
+        if: steps.scaffold.outputs.present == 'true'
+        run: npm run build
+
+      - name: Scaffold not yet available
+        if: steps.scaffold.outputs.present == 'false'
+        run: echo "Build skipped - Next.js scaffold (task 0.8) not yet landed"

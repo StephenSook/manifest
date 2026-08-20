@@ -2,7 +2,9 @@
 name = "manifest-pipeline"
 version = "0.1.0"
 requires-python = ">=3.12,<3.13"
-dependencies = []
+dependencies = [
+    "ibm-watsonx-ai>=1.1.15",
+]
 
 [build-system]
 requires = ["hatchling"]

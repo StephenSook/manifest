@@ -57,7 +57,7 @@ jobs:
       - name: Check scaffold exists
         id: scaffold
         run: |
-          if [ -f "package-lock.json" ] && [ -d "node_modules" ] || [ -f "package-lock.json" ]; then
+          if [ -f "next.config.ts" ] || [ -f "next.config.js" ]; then
             echo "present=true" >> "$GITHUB_OUTPUT"
           else
             echo "present=false" >> "$GITHUB_OUTPUT"
@@ -93,7 +93,7 @@ jobs:
       - name: Check scaffold exists
         id: scaffold
         run: |
-          if [ -f "package-lock.json" ]; then
+          if [ -f "next.config.ts" ] || [ -f "next.config.js" ]; then
             echo "present=true" >> "$GITHUB_OUTPUT"
           else
             echo "present=false" >> "$GITHUB_OUTPUT"
@@ -129,7 +129,7 @@ jobs:
       - name: Check scaffold exists
         id: scaffold
         run: |
-          if [ -f "package-lock.json" ]; then
+          if [ -f "next.config.ts" ] || [ -f "next.config.js" ]; then
             echo "present=true" >> "$GITHUB_OUTPUT"
           else
             echo "present=false" >> "$GITHUB_OUTPUT"
@@ -165,7 +165,7 @@ jobs:
       - name: Check scaffold exists
         id: scaffold
         run: |
-          if [ -f "package-lock.json" ]; then
+          if [ -f "next.config.ts" ] || [ -f "next.config.js" ]; then
             echo "present=true" >> "$GITHUB_OUTPUT"
           else
             echo "present=false" >> "$GITHUB_OUTPUT"

@@ -8,7 +8,7 @@
       ],
       "env": {
         "MCP_SERVER_URL": "http://localhost:4444",
-        "MCP_AUTH": "see ~/.bob/settings/mcp.json for the bearer token — never commit credentials here"
+        "MCP_AUTH": "see ~/.bob/settings/mcp.json for the bearer value (never commit credentials here)"
       },
       "disabled": false,
       "alwaysAllow": []

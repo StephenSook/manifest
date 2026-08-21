@@ -1,0 +1,1502 @@
+[
+  {
+    "id": "15-960-960.1-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.1",
+    "paragraphPath": "(a)",
+    "text": "The regulations in this part implement the Secretary's authority to license the operation of private remote sensing space systems under the Land Remote Sensing Policy Act of 1992, as amended, codified at 51 U.S.C. 60101 et seq., and are intended to promote continued U.S. private sector innovation and leadership in the global remote sensing industry.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.1-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.1",
+    "paragraphPath": "(b)",
+    "text": "In carrying out this part, the Secretary takes into account the following considerations:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.1-1_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.1",
+    "paragraphPath": "(1)",
+    "text": "Technological changes in remote sensing;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.1-2_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.1",
+    "paragraphPath": "(2)",
+    "text": "Non-technological changes in the remote sensing space industry, such as to business models and practices;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.1-3_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.1",
+    "paragraphPath": "(3)",
+    "text": "The relative burden to licensees and benefits to national security and international policies of license conditions;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.1-4_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.1",
+    "paragraphPath": "(4)",
+    "text": "Changes in the methods to mitigate risks to national security and international policies;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.1-5_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.1",
+    "paragraphPath": "(5)",
+    "text": "International obligations of the United States;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.1-6_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.1",
+    "paragraphPath": "(6)",
+    "text": "The availability of data from sources in other nations;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.1-7_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.1",
+    "paragraphPath": "(7)",
+    "text": "The remote sensing regulatory environment in other nations; and",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.1-8_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.1",
+    "paragraphPath": "(8)",
+    "text": "The potential for overlapping regulatory burdens imposed by other U.S. Government agencies.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.2-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.2",
+    "paragraphPath": "(a)",
+    "text": "The regulations in this part set forth the requirements for the operation of private remote sensing space systems within the United States or by a U.S. person.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.2-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.2",
+    "paragraphPath": "(b)",
+    "text": "Instruments used primarily for mission assurance or other technical purposes, including but not limited to navigation, attitude control, monitoring spacecraft health, separation events, or payload deployments, such as traditional star trackers, sun sensors, and horizon sensors, shall not be subject to this part.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.2-c_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.2",
+    "paragraphPath": "(c)",
+    "text": "In the case of a system that is used for remote sensing and other purposes, as determined by the Secretary, the scope of the license issued under this part will not extend to the operation of instruments that do not support remote sensing.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.2-d_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.2",
+    "paragraphPath": "(d)",
+    "text": "The Secretary does not authorize the use of spectrum for radio communications by a private remote sensing space system.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.3-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.3",
+    "paragraphPath": "(a)",
+    "text": "After reviewing each license existing prior to July 20, 2020, on July 20, 2020, the Secretary will either:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.3-1_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.3",
+    "paragraphPath": "(1)",
+    "text": "Replace the existing license with one developed in accordance with this part, retaining any applicable waivers and modifications; or",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.3-2_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.3",
+    "paragraphPath": "(2)",
+    "text": "If the Secretary determines that an existing licensee no longer requires a license under this part the Secretary will notify the existing licensee that the license is terminated.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.3-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.3",
+    "paragraphPath": "(b)",
+    "text": "The replacement license or termination determination will be effective 30 days after delivery by the Secretary to existing licensees. Existing licensees who object to their existing license being replaced or terminated must notify the Secretary in writing within those 30 days, and specify their objection in the notification.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "For purposes of this part, the following terms have the following meanings:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Act means the Land Remote Sensing Policy Act of 1992, as amended, codified at 51 U.S.C. 60101, et seq.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Anomaly means an unexpected event or abnormal characteristic affecting the operations of a system that could indicate a significant technical malfunction or security threat. Anomalies include any significant deviation from the orbit and data collection characteristics of the system.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Appellant means a person to whom the Secretary has certified an appeal request.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Applicant means a person who submits an application to operate a private remote sensing space system.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Application means a document submitted by a person to the Secretary that contains all the information described in appendix A of this part.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Available means readily and consistently obtainable by an entity or individual other than the U.S. Government or a foreign government.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Ground sample distance or GSD refers to the common measurement for describing the spatial resolution of unenhanced data created from most remote sensing instruments, typically measured in meters. A resolution “finer than” X meters GSD means the resolution is a number lower than X. For example, 5 meters GSD is finer than 10 meters GSD.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "In writing or written means written communication, physically or electronically signed (if applicable), transmitted via email, forms submitted on the Secretary's website, or traditional mail.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "License means a license granted by the Secretary under the Act.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Licensee means a person to whom the Secretary has granted a license under the Act.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Material fact means a fact an applicant provides in the application, or a fact in Parts C or D of a license.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Memorandum of Understanding or MOU means the April 25, 2017 version of the “Memorandum of Understanding Among the Departments of Commerce, State, Defense, and Interior, and the Office of the Director of National Intelligence, Concerning the Licensing and Operations of Private Remote Sensing Satellite Systems,” which is included as appendix D of this part. In the event that any provisions of the MOU conflict with this part, this part shall govern.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Modification means any change in the text of a license after issuance.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Operate means to have decision-making authority over the functioning of a remote sensing instrument. If there are multiple entities involved, the entity with the ultimate ability to decide what unenhanced data to collect with the instrument and to execute that decision, directly or through a legal arrangement with a third party such as a ground station or platform owner, is considered to be operating that system.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Person or private sector party means any entity or individual other than agencies or instrumentalities of the U.S. Government.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Private remote sensing space system or system means an instrument that is capable of conducting remote sensing and which is not owned by an agency or instrumentality of the U.S. Government. A system must contain a remote sensing instrument and all additional components that support operating the remote sensing instrument, receipt of unenhanced data, and data preprocessing, regardless of whether the component is owned or managed by the applicant or licensee, or by a third party through a legal arrangement with the applicant or licensee.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Remote sensing means the collection of unenhanced data by an instrument in orbit of the Earth which can be processed into imagery of surface features of the Earth.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Secretary means the Secretary of Commerce, or his or her designee.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Significant or substantial foreign agreement means a contract or legal arrangement with a foreign national, entity, or consortium involving foreign nations or entities, only if executing such contract or arrangement would require a license modification under § 960.13.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Subsidiary or affiliate means a person who directly or indirectly, through one or more intermediaries, controls or is controlled by or is under common control with, the applicant or licensee.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Substantially the same means that one item is a market substitute for another, taking into account all applicable factors. When comparing data, factors include but are not limited to the data's spatial resolution, spectral bandwidth, number of imaging bands, temporal resolution, persistence of imaging, local time of imaging, geographic or other restrictions imposed by foreign governments, and all applicable technical system factors listed in the application in appendix A of this part.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Unenhanced data means the output from a remote sensing instrument, including imagery products, which is either unprocessed or preprocessed. Preprocessing includes rectification of system and sensor distortions in data as it is received directly from the instrument in preparation for delivery to a user, registration of such data with respect to features of the Earth, and calibration of spectral response with respect to such data, but does not include conclusions, manipulations, or calculations derived from such data, or a combination of such data with other data.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "U.S. person means:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4-1_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "(1)",
+    "text": "Any individual who is a citizen or lawful permanent resident of the United States; and",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4-2_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "(2)",
+    "text": "Any corporation, partnership, joint venture, association, or other entity organized or existing under the laws of the United States or any State, the District of Columbia, Puerto Rico, American Samoa, the United States Virgin Islands, Guam, the Northern Mariana Islands, and any other commonwealth, territory, or possession of the United States.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.4",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.4",
+    "paragraphPath": "",
+    "text": "Waiver means any change from the standard license text in § 960.8, § 960.9, or § 960.10, which change is included in a license upon license issuance, in response to a request by the applicant pursuant to § 960.12.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.5-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.5",
+    "paragraphPath": "(a)",
+    "text": "Before submitting an application, a person may consult informally with the Secretary to discuss matters under this part, including whether a license is likely to be required for a system.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.5-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.5",
+    "paragraphPath": "(b)",
+    "text": "A person may submit an application for a license in accordance with the specific instructions found in appendix B of this part. The application must contain fully accurate and responsive information, as described in appendix A of this part. Responses an applicant provides to each prompt in the application constitute material facts.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.5-c_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.5",
+    "paragraphPath": "(c)",
+    "text": "Within seven days of the submission, the Secretary shall determine, after consultation with the Secretaries of Defense and State, whether the submission is a complete application meeting the requirements of appendix A of this part. If the submission is a complete application, the Secretary shall immediately notify the applicant in writing. If the submission is not a complete application, the Secretary shall inform the applicant in writing of what additional information or clarification is required to complete the application.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.5-d_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.5",
+    "paragraphPath": "(d)",
+    "text": "If any information the applicant submitted becomes inaccurate or incomplete at any time after submission to the Secretary but before license grant or denial, the applicant must contact the Secretary and submit correct and updated information as instructed by the Secretary. The Secretary will determine whether the change is significant. If the Secretary determines that the change is significant, the Secretary will notify the applicant within seven days of receipt of the correct and updated information that the revision constitutes a new application submission under paragraph (b) of this section, and that the previous application is deemed to have been withdrawn.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.5-e_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.5",
+    "paragraphPath": "(e)",
+    "text": "Upon request by the applicant, the Secretary shall provide an update on the status of their application review.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.6-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.6",
+    "paragraphPath": "(a)",
+    "text": "Within seven days of the Secretary's notification to the applicant under § 960.5(c) that the application is complete, the Secretary shall determine, after consultation with the Secretaries of Defense and State as appropriate, the category for the system as follows:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.6-1_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.6",
+    "paragraphPath": "(1)",
+    "text": "If the application proposes a system with the capability to collect unenhanced data substantially the same as unenhanced data already available from entities or individuals not licensed under this part, such as foreign entities, the Secretary shall categorize the application as Tier 1;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.6-2_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.6",
+    "paragraphPath": "(2)",
+    "text": "If the application proposes a system with the capability to collect unenhanced data substantially the same as unenhanced data already available, but only from entities or individuals licensed under this part, the Secretary shall categorize the application as Tier 2; and",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.6-3_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.6",
+    "paragraphPath": "(3)",
+    "text": "If the application proposes a system with the capability to collect unenhanced data not substantially the same as unenhanced data already available from any domestic or foreign entity or individual, the Secretary shall categorize the application as Tier 3.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.6-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.6",
+    "paragraphPath": "(b)",
+    "text": "If the Secretary of Defense or State disagrees with the Secretary's determination in paragraph (a) of this section, the Secretary of Defense or State may notify the Secretary and request the Secretary's reconsideration. Such a request for reconsideration may not be delegated below the Assistant Secretary level. If the Secretary of Defense or State disagrees with the Secretary's reconsideration decision, the Secretary of Defense or State may appeal that tier categorization pursuant to the interagency dispute resolution procedures in Section IV(B) of the MOU, but only at the Advisory Committee on Private Remote Sensing Space Systems level or higher. The Secretary shall categorize the system in accordance with the decision resulting from such MOU procedures.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.6-c_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.6",
+    "paragraphPath": "(c)",
+    "text": "The system shall remain in the tier assigned to it under paragraph (a) in this section until such time as the Secretary determines, after consultation with the Secretaries of Defense and State as appropriate, that the system belongs in a lower-numbered tier due to the advancement of non-U.S. commercial remote sensing capabilities or due to other facts, or until the Secretary grants the licensee's request for a license modification that results in re-categorization under § 960.13. When the Secretary determines that a lower-numbered tier is appropriate due to reasons other than a modification under § 960.13, the Secretary will notify the applicant or licensee in writing that the system falls under a lower-numbered tier than the one previously assigned under this section. Upon receiving that notification, the applicant or licensee will be responsible for complying only with the license conditions applicable to the new tier.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.7-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.7",
+    "paragraphPath": "(a)",
+    "text": "Based on the Secretary's review of the application, the Secretary must determine whether the applicant will comply with the requirements of the Act, this part, and the license. The Secretary will presume that the applicant will comply, unless the Secretary has specific, credible evidence to the contrary. If the Secretary determines that the applicant will comply, the Secretary shall grant the license.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.7-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.7",
+    "paragraphPath": "(b)",
+    "text": "The Secretary shall make the determination in paragraph (a) of this section within 60 days of the notification under § 960.5(c), and shall notify the applicant in writing whether the license is granted or denied.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.7-c_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.7",
+    "paragraphPath": "(c)",
+    "text": "If the Secretary has not notified the applicant whether the license is granted or denied within 60 days, the applicant may submit a request that the license be granted. Within three days of this request, the Secretary shall grant the license, unless the Secretary determines with specific, credible evidence that the applicant will not comply with the requirements of the Act, this part, or the license, in which case the Secretary will deny the license, or the Secretary and the applicant mutually agree to extend this review period.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.8",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.8",
+    "paragraphPath": "",
+    "text": "All licenses granted under this part shall specify that the licensee shall:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.8-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.8",
+    "paragraphPath": "(a)",
+    "text": "Comply with the Act, this part, the license, applicable domestic legal obligations, and the international obligations of the United States;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.8-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.8",
+    "paragraphPath": "(b)",
+    "text": "Operate the system in such manner as to preserve the national security of the United States and to observe international obligations and policies, as articulated in the other conditions included in this license;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.8-c_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.8",
+    "paragraphPath": "(c)",
+    "text": "Upon request, offer to the government of any country (including the United States) unenhanced data collected by the system concerning the territory under the jurisdiction of such government without delay and on reasonable terms and conditions, unless doing so would be prohibited by law or license conditions;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.8-d_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.8",
+    "paragraphPath": "(d)",
+    "text": "Upon termination of operations under the license, make disposition of any satellites in space in a manner satisfactory to the President;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.8-e_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.8",
+    "paragraphPath": "(e)",
+    "text": "Notify the Secretary in writing of each of the following events, no later than seven days after the event:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.8-1_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.8",
+    "paragraphPath": "(1)",
+    "text": "The launch and deployment of each system component, to include confirmation that the component matches the orbital parameters and data collection characteristics of the system, as described in Part D of the license;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.8-2_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.8",
+    "paragraphPath": "(2)",
+    "text": "Each disposal of an on-orbit component of the system;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.8-3_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.8",
+    "paragraphPath": "(3)",
+    "text": "The detection of an anomaly; and",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.8-4_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.8",
+    "paragraphPath": "(4)",
+    "text": "The licensee's financial insolvency or dissolution;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.8-f_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.8",
+    "paragraphPath": "(f)",
+    "text": "Request and receive approval for a license modification before taking any action that would change a material fact in the license;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.8-g_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.8",
+    "paragraphPath": "(g)",
+    "text": "Certify that all material facts in the license remain accurate pursuant to the procedures in § 960.14 no later than October 15th of each year;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.8-h_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.8",
+    "paragraphPath": "(h)",
+    "text": "Cooperate with compliance, monitoring, and enforcement authorities described in the Act and this part, and permit the Secretary to access, at all reasonable times and with no shorter notice than 48 hours, any component of the system for the purpose of ensuring compliance with the Act, this part, and the license; and",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.8-i_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.8",
+    "paragraphPath": "(i)",
+    "text": "Refrain from disseminating unenhanced data, or processed data or products derived from the licensee's system, of the State of Israel at a resolution finer than the resolution most recently specified by the Secretary in the Federal Register as being available from commercial sources.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.9",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.9",
+    "paragraphPath": "",
+    "text": "If the Secretary has categorized the system as Tier 2 under § 960.6, the license shall specify that the licensee shall comply with the conditions listed in § 960.8 and further shall comply with the following conditions until the Secretary notifies the licensee that the system belongs in a lower-numbered tier:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.9-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.9",
+    "paragraphPath": "(a)",
+    "text": "Comply with limited-operations directives issued by the Secretary, in accordance with a determination made by the Secretary of Defense or the Secretary of State pursuant to the procedures in Section IV(D) of the MOU, that require licensees to temporarily limit data collection and/or dissemination during periods of increased concerns for national security and where necessary to meet international obligation or foreign policy interests; and:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.9-1_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.9",
+    "paragraphPath": "(1)",
+    "text": "Be able to comply with limited-operations directives at all times. This includes:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.9-i_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.9",
+    "paragraphPath": "(i)",
+    "text": "The ability to implement National Institute of Standards and Technology-approved encryption, in accordance with the manufacturer's security policy, wherein the key length is at least 256 bits, for communications to and from the on-orbit components of the system related to tracking, telemetry, and control and for transmissions throughout the system of the data specified in the limited-operations directive; and",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.9-ii_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.9",
+    "paragraphPath": "(ii)",
+    "text": "Implementing measures, consistent with industry best practice for entities of similar size and business operations, that prevent unauthorized access to the system and identify any unauthorized access in the event of a limited-operations directive;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.9-2_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.9",
+    "paragraphPath": "(2)",
+    "text": "Provide and continually update the Secretary with a point of contact and an alternate point of contact for limited-operations directives; and",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.9-3_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.9",
+    "paragraphPath": "(3)",
+    "text": "During any such limited-operations directive, permit the Secretary to immediately access any component of the system for the purpose of ensuring compliance with the limited-operations directive, the Act, this part, and the license.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.9-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.9",
+    "paragraphPath": "(b)",
+    "text": "Conduct resolved imaging of other artificial resident space objects (ARSO) orbiting the Earth only with the written consent of the registered owner of the ARSO to be imaged and with notification to the Secretary at least five days prior to imaging. For purposes of this paragraph (b), “resolved imaging” means the imaging of another ARSO that results in data depicting the ARSO with a resolution of 3 x 3 pixels or greater.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(a)",
+    "text": "If the Secretary has categorized the system as Tier 3 under § 960.6, the license shall specify that the licensee shall comply with the conditions listed in § 960.8 and further shall comply with the following conditions until the Secretary notifies the licensee that the system belongs in a lower-numbered tier for which the following conditions are not required:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-1_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(1)",
+    "text": "Comply with limited-operations directives issued by the Secretary, in accordance with a determination made by the Secretary of Defense or the Secretary of State pursuant to the procedures in Section IV(D) of the MOU, that require licensees to temporarily limit data collection and/or dissemination during periods of increased concerns for national security and where necessary to meet international obligations or foreign policy interests; and:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-i_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(i)",
+    "text": "Be able to comply with limited-operations directives at all times. This includes:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-A_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(A)",
+    "text": "The ability to implement National Institute of Standards and Technology-approved encryption, in accordance with the manufacturer's security policy, wherein the key length is at least 256 bits, for communications to and from the on-orbit components of the system related to tracking, telemetry, and control and for transmissions throughout the system of the data specified in the limited-operations directive; and",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-B_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(B)",
+    "text": "Implementing measures, consistent with industry best practice for entities of similar size and business operations, that prevent unauthorized access to the system and identify any unauthorized access in the event of a limited-operations directive;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-ii_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(ii)",
+    "text": "Provide and continually update the Secretary with a point of contact and an alternate point of contact for limited-operations directives; and",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-iii_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(iii)",
+    "text": "During any such limited-operations directive, permit the Secretary to immediately access any component of the system for the purpose of ensuring compliance with the limited-operations directive, the Act, this part, and the license.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-2_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(2)",
+    "text": "Conduct resolved imaging of other artificial resident space objects (ARSO) orbiting the Earth only with the written consent of the registered owner of the ARSO to be imaged and with notification to the Secretary at least five days prior to imaging, or as may otherwise be provided in a temporary license condition developed under paragraphs (b) and (c) of this section. For purposes of this paragraph (a)(2), “resolved imaging” means the imaging of another ARSO that results in data depicting the ARSO with a resolution of 3 x 3 pixels or greater.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-3_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(3)",
+    "text": "Comply with any temporary license conditions developed in accordance with paragraphs (b) and (c) of this section until their specified expiration date, including any extensions of the expiration date.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(b)",
+    "text": "To determine whether additional temporary license conditions are necessary, the Secretary shall notify the Secretaries of Defense and State of any system categorized as Tier 3 under § 960.6. The Secretaries of Defense and State shall determine whether any temporary license conditions are necessary (in addition to the standard license conditions in § 960.8) to meet national security concerns or international obligations and policies of the United States regarding that system. Within 21 days of receiving the notification, the Secretary of Defense or State shall notify the Secretary of any such conditions and the length of time such conditions should remain in place, which shall not exceed one year from the earlier of either when the licensee first delivers unenhanced data suitable for evaluating the system's capabilities to the Secretary (under reasonable terms and conditions or other mutually agreed arrangement with the Secretary of Defense or State), or when the Secretary of Defense or State first obtains comparably suitable data from another source, unless the length of such condition is extended in accordance with paragraph (e) of this section.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-c_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(c)",
+    "text": "The Secretary shall review the notification from the Secretary of Defense or State under paragraph (b) of this section and aim to craft the least restrictive temporary license condition(s) possible, before the expiration of the 60-day application review period under § 960.7(b). In crafting such conditions the Secretary shall consult, as appropriate, with the Secretaries of Defense and State and the applicant or licensee, to determine whether the proposed condition would be consistent with applicable laws. In making this determination, the Secretary shall consider whether:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-1_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(1)",
+    "text": "The risk addressed by the proposed condition is specific and compelling;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-2_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(2)",
+    "text": "The proposed condition would be effective against the risk;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-3_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(3)",
+    "text": "The proposed condition addresses only the data proposed to be collected that are not available from any domestic or foreign source;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-4_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(4)",
+    "text": "The U.S. Government cannot currently mitigate the risk without the proposed condition;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-5_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(5)",
+    "text": "The U.S. Government cannot address the risk by some less restrictive means than the proposed condition; and",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-6_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(6)",
+    "text": "The applicant or licensee can mitigate the risk by taking alternative action.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-d_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(d)",
+    "text": "When considering the factors under paragraphs (c)(1) through (6) of this section, the Secretary shall accept as final the determinations made by the Secretary of Defense or State as appropriate, in such Secretary's notification to the Secretary of the need for such conditions. If the Secretary determines that a condition proposed by the Secretary of Defense or State would be consistent with applicable law, the Secretary shall include such condition in the license, absent any elevation of a dispute under paragraph (f) of this section.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-e_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(e)",
+    "text": "The Secretary will notify the Secretaries of Defense and State 90 days before the expiration of a temporary condition imposed under this section. If, within 30 days after such notification, either the Secretary of Defense or State notifies the Secretary that an extension is needed, the Secretary shall consult with the Secretary of Defense or State about the ongoing need for the temporary condition. The Secretary may extend the expiration date of the temporary condition for a maximum of one year, and may extend the condition no more than two times unless requested by the Secretary of Defense or State. The authority to request such additional extensions shall not be delegated by the Secretary of Defense or State. Therefore, absent a request specifically from the Secretary of Defense or State, any temporary condition may exist for no more than a total of three years. The Secretary shall grant an extension if the Secretary determines that:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-1_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(1)",
+    "text": "The Secretary requesting the extension has shown that the considerations in paragraph (c) of this section justify an extension; and",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-2_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(2)",
+    "text": "The Secretary has notified the affected licensee no less than 60 days before the expiration of the temporary condition that an extension is being sought.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.10-f_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.10",
+    "paragraphPath": "(f)",
+    "text": "If, at any point during the procedures in this section, the Secretary, the Secretary of Defense, or the Secretary of State objects to any determination, they may elevate the objection pursuant to the interagency dispute resolution procedures in Section IV(B) of the MOU.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.11",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.11",
+    "paragraphPath": "",
+    "text": "No other conditions shall be included in a license granted under this part, or imposed in such a license after the license has been issued, except in accordance with the provisions of § 960.13 or § 960.17.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.12",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.12",
+    "paragraphPath": "",
+    "text": "As part of the application, the applicant may request that any condition listed in § 960.8, § 960.9, or § 960.10 be waived or adjusted. The Secretary may approve the request to waive or adjust any such condition if the Secretary determines, after consultation with the Secretaries of Defense and State as appropriate, that the Secretary may waive or adjust the condition without violating the Act or other law, and:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.12-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.12",
+    "paragraphPath": "(a)",
+    "text": "The requirement is not applicable due to the nature of the applicant or the proposed system;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.12-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.12",
+    "paragraphPath": "(b)",
+    "text": "The applicant will achieve the goal in a different way; or",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.12-c_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.12",
+    "paragraphPath": "(c)",
+    "text": "There is other good cause to waive or adjust the condition.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.13-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.13",
+    "paragraphPath": "(a)",
+    "text": "The licensee may request in writing that the Secretary modify the license after the license is issued. Such requests should include the reason for the request and relevant supporting documentation.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.13-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.13",
+    "paragraphPath": "(b)",
+    "text": "If the Secretary determines that the requested modification of a license would result in its re-categorization from Tier 1 to Tier 2 under § 960.6, the Secretary shall notify the licensee that approval would require issuance of the conditions in § 960.9, and provide the licensee an opportunity to withdraw or revise the request.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.13-c_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.13",
+    "paragraphPath": "(c)",
+    "text": "If the Secretary determines that the requested modification of a license would result in its re-categorization from Tier 1 or 2 to Tier 3 under § 960.6, the Secretary shall consult with the Secretaries of Defense or State, as appropriate, to determine whether approval of the request would require additional temporary conditions in accordance with the procedures in § 960.10. If so, the Secretary shall notify the licensee that approval would require such additional temporary conditions, and provide the licensee an opportunity to withdraw or revise the request.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.13-d_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.13",
+    "paragraphPath": "(d)",
+    "text": "The Secretary shall approve or deny a modification request after consultation with the Secretaries of Defense and State as appropriate, and shall inform the licensee of the approval or denial within 60 days of the request, unless the Secretary and the applicant mutually agree to extend this review period.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.14-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.14",
+    "paragraphPath": "(a)",
+    "text": "Annually, by the date specified in the license, the licensee will certify in writing to the Secretary that each material fact in the license remains accurate.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.14-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.14",
+    "paragraphPath": "(b)",
+    "text": "If any material fact in the license is no longer accurate at the time the certification is due, the licensee must:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.14-1_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.14",
+    "paragraphPath": "(1)",
+    "text": "Provide all accurate material facts;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.14-2_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.14",
+    "paragraphPath": "(2)",
+    "text": "Explain the reason for any discrepancies between the terms in the license and the accurate material fact; and",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.14-3_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.14",
+    "paragraphPath": "(3)",
+    "text": "Seek guidance from the Secretary on how to correct any errors, which may include requesting a license modification.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.15-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.15",
+    "paragraphPath": "(a)",
+    "text": "The license term begins when the Secretary transmits the signed license to the licensee, regardless of the operational status of the system.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.15-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.15",
+    "paragraphPath": "(b)",
+    "text": "The license is valid until the Secretary confirms in writing that the license is terminated, because the Secretary has determined that one of the following has occurred:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.15-1_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.15",
+    "paragraphPath": "(1)",
+    "text": "The licensee has successfully disposed of, or has taken all actions necessary to successfully dispose of, all on-orbit components of the system, and is in compliance with all other requirements of the Act, this part, and the license;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.15-2_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.15",
+    "paragraphPath": "(2)",
+    "text": "The licensee never had system components on orbit and has requested to end the license term;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.15-3_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.15",
+    "paragraphPath": "(3)",
+    "text": "The license is terminated pursuant to § 960.17; or",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.15-4_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.15",
+    "paragraphPath": "(4)",
+    "text": "The licensee has executed one of the following transfers, subsequent to the Secretary's approval of such transfer:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.15-i_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.15",
+    "paragraphPath": "(i)",
+    "text": "Ownership of the system, or the operations thereof, to an agency or instrumentality of the U.S. Government; or",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.15-ii_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.15",
+    "paragraphPath": "(ii)",
+    "text": "Operations to a person who is not a U.S. person and who will not operate the system from the United States.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.16",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.16",
+    "paragraphPath": "",
+    "text": "Any person who operates a system from the United States and any person who is a U.S. person shall not, directly or through a subsidiary or affiliate:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.16-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.16",
+    "paragraphPath": "(a)",
+    "text": "Operate a system without a current, valid license for that system;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.16-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.16",
+    "paragraphPath": "(b)",
+    "text": "Violate the Act, this part, or any license condition;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.16-c_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.16",
+    "paragraphPath": "(c)",
+    "text": "Submit false information, interfere with, mislead, obstruct, or otherwise frustrate the Secretary's actions and responsibilities under this part in any form at any time, including in the application, during application review, during the license term, in any compliance and monitoring activities, or in enforcement activities; or",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.16-d_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.16",
+    "paragraphPath": "(d)",
+    "text": "Fail to obtain approval for a license modification before taking any action that would change a material fact in the license.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.17-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.17",
+    "paragraphPath": "(a)",
+    "text": "The Secretary may investigate, provide penalties for noncompliance, and prevent future noncompliance, by using the authorities specified at 51 U.S.C. 60123(a).",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.17-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.17",
+    "paragraphPath": "(b)",
+    "text": "When the Secretary undertakes administrative enforcement proceedings as authorized by 51 U.S.C. 60123(a)(3) and (4), the parties will follow the procedures provided at 15 CFR part 904.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.18-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.18",
+    "paragraphPath": "(a)",
+    "text": "In accordance with the procedures in this subpart, a person may appeal the following adverse actions for adjudication by the Secretary:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.18-1_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.18",
+    "paragraphPath": "(1)",
+    "text": "The denial of a license;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.18-2_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.18",
+    "paragraphPath": "(2)",
+    "text": "The categorization of a system in a tier;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.18-3_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.18",
+    "paragraphPath": "(3)",
+    "text": "The failure to make a final determination on a license grant or denial or a licensee's modification request within the timelines provided in this part;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.18-4_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.18",
+    "paragraphPath": "(4)",
+    "text": "The imposition of a license condition;",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.18-5_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.18",
+    "paragraphPath": "(5)",
+    "text": "The denial of a licensee-requested license modification; and",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.18-6_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.18",
+    "paragraphPath": "(6)",
+    "text": "The replacement of an existing license with a license granted under § 960.3(a)(1) or termination of an existing license under § 960.3(a)(2).",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.18-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.18",
+    "paragraphPath": "(b)",
+    "text": "The only acceptable grounds for appeal of the actions in paragraph (a) of this section are as follows:",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.18-1_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.18",
+    "paragraphPath": "(1)",
+    "text": "The Secretary's action was arbitrary, capricious, or contrary to law; or",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.18-2_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.18",
+    "paragraphPath": "(2)",
+    "text": "The action was based on a clear factual error.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.18-c_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.18",
+    "paragraphPath": "(c)",
+    "text": "No appeal is allowed to the extent that there is involved the conduct of military or foreign affairs functions.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.19-a_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.19",
+    "paragraphPath": "(a)",
+    "text": "A person wishing to appeal an action specified at § 960.18(a) may do so within 21 days of the action by submitting a written request to the Secretary.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.19-b_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.19",
+    "paragraphPath": "(b)",
+    "text": "The request must include a detailed explanation of the reasons for the appeal, citing one of the grounds specified in § 960.18(b).",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.19-c_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.19",
+    "paragraphPath": "(c)",
+    "text": "Upon receipt of a request under paragraph (a) of this section, the Secretary shall review the request to certify that it meets the requirements of this subpart and chapter 7 of title 5 of the United States Code. If it does, the Secretary shall coordinate with the appellant to schedule a hearing before a hearing officer designated by the Secretary. If the Secretary does not certify the request, the Secretary shall notify the person in writing that no appeal is allowed, and this notification shall constitute a final agency action.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.19-d_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.19",
+    "paragraphPath": "(d)",
+    "text": "The hearing shall be held in a timely manner. It shall provide the appellant and the Secretary an opportunity to present evidence and arguments.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.19-e_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.19",
+    "paragraphPath": "(e)",
+    "text": "Hearings may be closed to the public, and other actions taken as the Secretary deems necessary, to prevent the disclosure of any information required by law to be protected from disclosure.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.19-f_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.19",
+    "paragraphPath": "(f)",
+    "text": "At the close of the hearing, the hearing officer shall recommend a decision to the Secretary addressing all factual and legal arguments.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  },
+  {
+    "id": "15-960-960.19-g_",
+    "cfrTitle": 15,
+    "part": 960,
+    "section": "960.19",
+    "paragraphPath": "(g)",
+    "text": "Based on the record of the hearing and the recommendation of the hearing officer, and after consultation, as appropriate, with the Secretaries of Defense and State in decisions implicating national security and international obligations and policy, respectively, the Secretary shall make a decision adopting, rejecting, or modifying the recommendation of the hearing officer. This decision constitutes a final agency action, and is subject to judicial review under chapter 7 of title 5 of the United States Code.",
+    "amddate": "2026-08-18",
+    "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+  }
+]

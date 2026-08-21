@@ -4,6 +4,11 @@ version = "0.1.0"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "ibm-watsonx-ai>=1.1.15",
+    "lxml>=5.3.0",
+    "requests>=2.32.0",
+    "numpy>=1.26.0",
+    "docling>=2.0.0",
+    "pytest>=8.0.0",
 ]
 
 [build-system]

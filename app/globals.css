@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg:       oklch(0.16 0.008 265);
+  --color-surface:  oklch(0.20 0.008 265);
+  --color-border:   oklch(0.30 0.010 265);
+  --color-fg:       oklch(0.93 0.005 265);
+  --color-muted:    oklch(0.65 0.008 265);
+  --color-violated: oklch(0.62 0.19 25);
+  --color-at-risk:  oklch(0.75 0.15 75);
+  --color-ok:       oklch(0.70 0.14 155);
+  --color-accent:   oklch(0.62 0.16 295);
+}
+
+/* Base: dark background, regulatory-instrument density */
+html,
+body {
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  /* System mono stack for dates, CFR section numbers, and figures */
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas,
+    "Liberation Mono", monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Proportional text for prose labels and running copy */
+.font-sans {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Borders default to the token */
+* {
+  border-color: var(--color-border);
+  box-sizing: border-box;
+}

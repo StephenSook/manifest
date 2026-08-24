@@ -8,10 +8,14 @@
 // Client component: needs useState, form handlers, and IndexedDB access.
 // React Flow and vis-timeline mount in later tasks (1.14, 2.2, 2.3) as
 // separate client components imported here.
+//
+// Task 2.9: DeadlineBanner is mounted at the top and reflects the last
+// saved mission. It renders nothing when no mission has been saved yet.
 
 import { useState, useEffect, useId } from 'react';
 import type { MissionInput, Pathway } from '@/engine/types';
 import { saveMission, loadMission, clearMission } from '@/lib/store';
+import { DeadlineBanner } from '@/components/deadline-banner/DeadlineBanner';
 
 // ---------------------------------------------------------------------------
 // Styles: reuse globals.css tokens exactly. No new colors introduced.
@@ -368,16 +372,26 @@ export default function MissionPage() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [savedOk, setSavedOk] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  // savedMission tracks the last successfully saved MissionInput.
+  // The banner reflects this, not the in-progress draft in `form`.
+  const [savedMission, setSavedMission] = useState<MissionInput | null>(null);
+  // today is injected from the client on mount so SSR and client agree,
+  // and so task 3.9 tests can override it without patching the component.
+  const [today, setToday] = useState<string>('');
 
   // Field ID prefix for aria-describedby linkage
   const uid = useId();
   const fid = (field: string) => `${uid}-${field}`;
   const errId = (field: string) => `${uid}-err-${field}`;
 
-  // Load any saved mission from IndexedDB on mount
+  // Load any saved mission from IndexedDB on mount. Also capture today.
   useEffect(() => {
+    setToday(new Date().toISOString().split('T')[0]);
     loadMission().then((saved) => {
-      if (saved) setForm(fromMissionInput(saved));
+      if (saved) {
+        setForm(fromMissionInput(saved));
+        setSavedMission(saved);
+      }
       setLoaded(true);
     });
   }, []);
@@ -404,7 +418,9 @@ export default function MissionPage() {
       document.getElementById(fid(firstErrField))?.focus();
       return;
     }
-    await saveMission(toMissionInput(form));
+    const mission = toMissionInput(form);
+    await saveMission(mission);
+    setSavedMission(mission);
     setErrors({});
     setSavedOk(true);
   }
@@ -412,6 +428,7 @@ export default function MissionPage() {
   async function handleClear() {
     await clearMission();
     setForm(DEFAULT_FORM);
+    setSavedMission(null);
     setErrors({});
     setSavedOk(false);
   }
@@ -427,6 +444,16 @@ export default function MissionPage() {
   return (
     <div style={S.page}>
       <h1 style={S.pageTitle}>Mission setup</h1>
+
+      {/* Banner: visible only when a mission is saved and today is known.
+          today is set client-side on mount to avoid SSR/hydration mismatch. */}
+      {savedMission && today && (
+        <DeadlineBanner
+          mission={savedMission}
+          today={today}
+          projectStart={today}
+        />
+      )}
 
       <form onSubmit={handleSubmit} noValidate aria-label="Mission setup form">
 

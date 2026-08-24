@@ -25,6 +25,12 @@ requirement. Confirmed absent: elkjs (EPL/GPL), orbdetpy (GPL-3.0).
 | tsx | MIT |
 | happy-dom | MIT |
 | @playwright/test | Apache-2.0 |
+| @tailwindcss/postcss | MIT |
+| @types/node | MIT |
+| @types/react | MIT |
+| @types/react-dom | MIT |
+| @types/sql.js | MIT |
+| @vitejs/plugin-react | MIT |
 
 ## Python (pipeline/pyproject.toml)
 
@@ -48,4 +54,11 @@ No pinned commit to record until the vendor directory is committed.
 
 gitleaks over full history: see `.gitleaksignore`. Every ignore entry is
 hand-verified against its flagged commit before it is added. The file is
-empty at the 2026-08-24 audit: no fingerprints required ignore.
+empty: no fingerprints required ignore.
+
+Proven scan (not a local-only claim): GitHub Actions job `Gitleaks secret scan`
+on commit `33a1800b09fe4e3c17a9b182c2d890f2f8291309` concluded `success`
+(check-run https://github.com/StephenSook/manifest/actions/runs/32752624880/job/97512867441,
+read via REST check-runs on 2026-08-24). CI also runs a living lockfile
+guard that fails if `elkjs` or `orbdetpy` appear in `package.json`,
+`package-lock.json`, `pipeline/pyproject.toml`, or `pipeline/uv.lock`.

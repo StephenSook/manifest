@@ -143,10 +143,10 @@ async function embedQueryWatsonx(question: string): Promise<Float32Array> {
     serviceUrl: cfg.url,
     authenticator: { apikey: cfg.apiKey } as never,
   });
-  const resp = await client.textEmbeddings({
+  const resp = await client.embedText({
     projectId: cfg.projectId,
     modelId: 'ibm/granite-embedding-278m-multilingual',
-    inputs: [{ text: question }],
+    inputs: [question],
     parameters: { truncate_input_tokens: 512 },
   });
   const vec = resp.result.results[0].embedding as number[];
@@ -183,7 +183,7 @@ Question: ${question}
 
 Answer (cite every claim with its CFR section and AMDDATE):`;
 
-  const resp = await client.textGeneration({
+  const resp = await client.generateText({
     projectId: cfg.projectId,
     modelId: 'ibm/granite-4-h-small',
     input: prompt,
@@ -225,7 +225,7 @@ Answer: ${answer}
 
 Audit result (PASS or FAIL):`;
 
-  const resp = await client.textGeneration({
+  const resp = await client.generateText({
     projectId: cfg.projectId,
     modelId: 'ibm/granite-guardian-3-8b',
     input: guardianPrompt,

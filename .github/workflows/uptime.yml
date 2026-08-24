@@ -16,7 +16,7 @@ on:
 
 jobs:
   content-check:
-    name: Content-check /api/status
+    name: Content-check /api/status and /api/ask
     runs-on: ubuntu-latest
     steps:
       - name: Require deploy URL
@@ -57,4 +57,43 @@ jobs:
               sys.exit(1)
           print("deadline_violations_days=", days)
           print("models=", data["models"])
+          PY
+
+      - name: POST /api/ask dual-clock question
+        env:
+          URL: ${{ vars.MANIFEST_DEPLOY_URL }}
+        run: |
+          code=$(curl -sS -o /tmp/ask.json -w "%{http_code}" \
+            -X POST \
+            -H "Content-Type: application/json" \
+            --data '{"question":"What is the 97.207(g) dual-clock deadline?"}' \
+            "$URL/api/ask")
+          echo "HTTP $code"
+          if [ "$code" != "200" ]; then
+            echo "::error::Expected HTTP 200 from /api/ask, got $code. 503 means corpus gone."
+            exit 1
+          fi
+
+      - name: Assert 97.207(g)(1) citation
+        run: |
+          python3 - << 'PY'
+          import json, sys
+          with open("/tmp/ask.json") as f:
+              data = json.load(f)
+          if data.get("abstained") is not False:
+              print("::error::abstained must be false. Body:", data)
+              sys.exit(1)
+          cites = data.get("citations") or []
+          ok = False
+          for c in cites:
+              section = str(c.get("section") or "")
+              path = str(c.get("paragraphPath") or "")
+              combined = (section + path).replace(" ", "")
+              if "97.207" in combined and "(g)(1)" in combined:
+                  ok = True
+                  break
+          if not ok:
+              print("::error::no citation covering 97.207(g)(1). citations=", cites)
+              sys.exit(1)
+          print("ok citations", cites)
           PY

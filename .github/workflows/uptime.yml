@@ -1,0 +1,60 @@
+# uptime.yml - Tylin's lane
+# Content-check the deployed URL. A warm instance that lost its corpus still
+# returns HTTP 200, so status-code-only is a false green (CI rule 8).
+# Offset minutes. Never */N and never :00.
+#
+# Required repo variable (set when Khadim's 1.17 URL exists):
+#   MANIFEST_DEPLOY_URL   e.g. https://manifest-web.vercel.app
+# If unset, this job FAILS. A skipped watchdog is a false green.
+
+name: Uptime
+
+on:
+  schedule:
+    - cron: "4,14,24,34,44,54 * * * *"
+  workflow_dispatch:
+
+jobs:
+  content-check:
+    name: Content-check /api/status
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require deploy URL
+        env:
+          URL: ${{ vars.MANIFEST_DEPLOY_URL }}
+        run: |
+          if [ -z "$URL" ]; then
+            echo "::error::MANIFEST_DEPLOY_URL is not set. Uptime cannot skip. Set the repo variable after task 1.17."
+            exit 1
+          fi
+
+      - name: Fetch /api/status
+        env:
+          URL: ${{ vars.MANIFEST_DEPLOY_URL }}
+        run: |
+          code=$(curl -sS -o /tmp/status.json -w "%{http_code}" "$URL/api/status")
+          echo "HTTP $code"
+          if [ "$code" != "200" ]; then
+            echo "::error::Expected HTTP 200 from /api/status, got $code"
+            exit 1
+          fi
+
+      - name: Assert headline fields exist
+        run: |
+          python3 - << 'PY'
+          import json, sys
+          with open("/tmp/status.json") as f:
+              data = json.load(f)
+          if "deadline_violations_days" not in data:
+              print("::error::deadline_violations_days missing. Body is not the status payload.")
+              sys.exit(1)
+          days = data["deadline_violations_days"]
+          if not isinstance(days, (int, float)):
+              print("::error::deadline_violations_days is not numeric:", days)
+              sys.exit(1)
+          if "models" not in data:
+              print("::error::models inventory missing")
+              sys.exit(1)
+          print("deadline_violations_days=", days)
+          print("models=", data["models"])
+          PY

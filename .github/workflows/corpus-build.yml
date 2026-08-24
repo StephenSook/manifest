@@ -20,6 +20,15 @@ on:
         default: "false"
         type: choice
         options: ["true", "false"]
+      hash_embeddings:
+        description: "Use hashing-trick embeddings (Q2 Lite cap; no watsonx spend)"
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
+
+permissions:
+  contents: write
 
 jobs:
   build-and-upload:
@@ -43,6 +52,8 @@ jobs:
         run: |
           if [ "${{ inputs.mock_embeddings }}" = "true" ]; then
             uv run --python 3.12 --project pipeline python pipeline/embed_and_store.py --mock-embeddings
+          elif [ "${{ inputs.hash_embeddings }}" = "true" ]; then
+            uv run --python 3.12 --project pipeline python pipeline/embed_and_store.py --hash-embeddings
           else
             uv run --python 3.12 --project pipeline python pipeline/embed_and_store.py
           fi
@@ -60,27 +71,25 @@ jobs:
         env:
           BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
         run: |
-          # Install vercel blob upload CLI or use curl with the Blob REST API
-          # Vercel Blob REST API: PUT https://blob.vercel-storage.com/<filename>
+          if [ -z "$BLOB_READ_WRITE_TOKEN" ]; then
+            echo "::error::BLOB_READ_WRITE_TOKEN is not set (Khadim task 1.18)."
+            exit 1
+          fi
           for artifact in corpus/manifest.sqlite corpus/vectors.f32 corpus/schema.json; do
             filename=$(basename "$artifact")
             echo "Uploading $filename..."
-            response=$(curl -s -X PUT \
+            http_status=$(curl -sS -o /tmp/blob_resp.json -w "%{http_code}" \
+              -X PUT \
               "https://blob.vercel-storage.com/corpus/${filename}" \
               -H "Authorization: Bearer ${BLOB_READ_WRITE_TOKEN}" \
               -H "x-content-type: application/octet-stream" \
-              --data-binary "@${artifact}" \
-              -w "\nHTTP_STATUS:%{http_code}")
-            http_status=$(echo "$response" | grep "HTTP_STATUS:" | cut -d: -f2)
-            body=$(echo "$response" | grep -v "HTTP_STATUS:")
+              --data-binary "@${artifact}")
             echo "  HTTP $http_status"
-            if [ "$http_status" != "200" ]; then
-              echo "::error::Upload failed for $filename: $body"
+            if [ "$http_status" != "200" ] && [ "$http_status" != "201" ]; then
+              echo "::error::Upload failed for $filename"
+              cat /tmp/blob_resp.json
               exit 1
             fi
-            # Extract URL from response
-            blob_url=$(echo "$body" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('url',''))" 2>/dev/null || echo "")
-            echo "  URL: $blob_url"
           done
 
       - name: Write blob-manifest.json

@@ -45,146 +45,74 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # -------------------------------------------------------------------------
-  # lint: requires Next.js scaffold (task 0.8, Khadim)
-  # Skipped when package-lock.json is absent (scaffold not yet landed)
+  # lint, typecheck, tests, build: always run. A skipped gate is a false green.
   # -------------------------------------------------------------------------
   lint:
     name: ESLint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Check scaffold exists
-        id: scaffold
-        run: |
-          if [ -f "next.config.ts" ] || [ -f "next.config.js" ]; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "present=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - uses: actions/setup-node@v4
-        if: steps.scaffold.outputs.present == 'true'
         with:
           node-version: "22"
           cache: "npm"
-
       - name: Install dependencies
-        if: steps.scaffold.outputs.present == 'true'
         run: npm ci
-
       - name: Lint
-        if: steps.scaffold.outputs.present == 'true'
         run: npm run lint
 
-      - name: Scaffold not yet available
-        if: steps.scaffold.outputs.present == 'false'
-        run: echo "Lint skipped - Next.js scaffold (task 0.8) not yet landed"
-
-  # -------------------------------------------------------------------------
-  # typecheck: requires Next.js scaffold (task 0.8, Khadim)
-  # -------------------------------------------------------------------------
   typecheck:
     name: TypeScript typecheck
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Check scaffold exists
-        id: scaffold
-        run: |
-          if [ -f "next.config.ts" ] || [ -f "next.config.js" ]; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "present=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - uses: actions/setup-node@v4
-        if: steps.scaffold.outputs.present == 'true'
         with:
           node-version: "22"
           cache: "npm"
-
       - name: Install dependencies
-        if: steps.scaffold.outputs.present == 'true'
         run: npm ci
-
       - name: Typecheck
-        if: steps.scaffold.outputs.present == 'true'
         run: npm run typecheck
 
-      - name: Scaffold not yet available
-        if: steps.scaffold.outputs.present == 'false'
-        run: echo "Typecheck skipped - Next.js scaffold (task 0.8) not yet landed"
-
-  # -------------------------------------------------------------------------
-  # test-engine: vitest engine tests, requires scaffold
-  # -------------------------------------------------------------------------
   test-engine:
     name: Engine tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Check scaffold exists
-        id: scaffold
-        run: |
-          if [ -f "next.config.ts" ] || [ -f "next.config.js" ]; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "present=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - uses: actions/setup-node@v4
-        if: steps.scaffold.outputs.present == 'true'
         with:
           node-version: "22"
           cache: "npm"
-
       - name: Install dependencies
-        if: steps.scaffold.outputs.present == 'true'
         run: npm ci
-
       - name: Run engine tests
-        if: steps.scaffold.outputs.present == 'true'
         run: npm run test:engine
 
-      - name: Scaffold not yet available
-        if: steps.scaffold.outputs.present == 'false'
-        run: echo "Engine tests skipped - Next.js scaffold (task 0.8) not yet landed"
+  test-ask:
+    name: Ask-route tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+      - name: Install dependencies
+        run: npm ci
+      - name: Run ask tests
+        run: npm run test:ask
 
-  # -------------------------------------------------------------------------
-  # build: next build, requires scaffold
-  # -------------------------------------------------------------------------
   build:
     name: Next.js build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Check scaffold exists
-        id: scaffold
-        run: |
-          if [ -f "next.config.ts" ] || [ -f "next.config.js" ]; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "present=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - uses: actions/setup-node@v4
-        if: steps.scaffold.outputs.present == 'true'
         with:
           node-version: "22"
           cache: "npm"
-
       - name: Install dependencies
-        if: steps.scaffold.outputs.present == 'true'
         run: npm ci
-
       - name: Build
-        if: steps.scaffold.outputs.present == 'true'
         run: npm run build
-
-      - name: Scaffold not yet available
-        if: steps.scaffold.outputs.present == 'false'
-        run: echo "Build skipped - Next.js scaffold (task 0.8) not yet landed"

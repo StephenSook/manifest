@@ -143,7 +143,7 @@ skipped test is a hard failure.
 2. Create `scripts/no_em_dash.py`:
    - Resolve file list with `git ls-files --cached --others --exclude-standard`
    - Filter to text files (`.md`, `.ts`, `.tsx`, `.py`, `.json`, `.yaml`, `.yml`, `.txt`)
-   - Scan each file for the em-dash character (U+2014, `—`) and the double-hyphen `--` pattern only when it appears in prose contexts (skip `--noEmit` and similar CLI flags)
+   - Scan each file for U+2014 (em-dash) and the double-hyphen `--` pattern only when it appears in prose contexts (skip `--noEmit` and similar CLI flags)
    - Report each violation with filename and line number
    - Print total files scanned (must be > 0 or exit non-zero with a clear message)
    - Exit 0 only if zero violations found

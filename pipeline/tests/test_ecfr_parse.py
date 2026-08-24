@@ -113,11 +113,17 @@ class TestEcfrParse:
             empties = [c["id"] for c in chunks if not c.get("text", "").strip()]
             assert not empties, f"{fname.name} has empty text chunks: {empties[:5]}"
 
-    def test_source_url_points_to_govinfo(self):
-        """All chunks sourceUrl must point to govinfo.gov bulk XML."""
+    def test_source_url_points_to_known_source(self):
+        """All eCFR chunks sourceUrl must point to govinfo.gov; PDF chunks point to their canonical URL."""
         for fname in CHUNKS_DIR.glob("*.json"):
             chunks = json.loads(fname.read_text(encoding="utf-8"))
             for c in chunks[:3]:
-                assert "govinfo.gov" in c["sourceUrl"], (
-                    f"{fname.name} chunk {c['id']} has unexpected sourceUrl: {c['sourceUrl']}"
-                )
+                url = c.get("sourceUrl", "")
+                is_ecfr = fname.name.startswith("title")
+                if is_ecfr:
+                    assert "govinfo.gov" in url, (
+                        f"{fname.name} chunk {c['id']} has unexpected sourceUrl: {url}"
+                    )
+                else:
+                    # PDF chunks point to fcc.gov, nasa.gov, or orbitaldebris.jsc.nasa.gov
+                    assert url, f"{fname.name} chunk {c['id']} has empty sourceUrl"

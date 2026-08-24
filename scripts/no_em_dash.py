@@ -43,6 +43,10 @@ def should_scan(path: str) -> bool:
     # handle .env.example and similar dotfiles with compound names
     if path.endswith(".env.example"):
         return True
+    # Exclude corpus chunk JSON files: they contain verbatim regulatory text
+    # that legitimately uses em-dashes (e.g. CFR section headings).
+    if path.startswith("corpus/chunks/"):
+        return False
     return ext.lower() in TEXT_EXTENSIONS
 
 

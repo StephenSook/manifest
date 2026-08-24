@@ -17,6 +17,7 @@ import type { MissionInput, Pathway } from '@/engine/types';
 import { saveMission, loadMission, clearMission } from '@/lib/store';
 import { DeadlineBanner } from '@/components/deadline-banner/DeadlineBanner';
 import { DependencyGraph } from '@/components/graph/DependencyGraph';
+import { DeorbitPanel } from '@/components/deorbit/DeorbitPanel';
 
 // ---------------------------------------------------------------------------
 // Styles: reuse globals.css tokens exactly. No new colors introduced.
@@ -477,6 +478,25 @@ export default function MissionPage() {
             today={today}
             projectStart={today}
           />
+        </div>
+      )}
+
+      {/* Deorbit compliance panel: visible only when a mission is saved. */}
+      {savedMission && (
+        <div style={{ marginBottom: '1rem' }}>
+          <p
+            style={{
+              fontSize: '11px',
+              fontWeight: 600,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: 'var(--color-muted)',
+              margin: '0 0 0.5rem',
+            }}
+          >
+            Deorbit compliance
+          </p>
+          <DeorbitPanel mission={savedMission} />
         </div>
       )}
 

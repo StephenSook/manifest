@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Manifest</string>
+    <string name="title_activity_main">Manifest</string>
+    <string name="package_name">com.stephensookra.manifest</string>
+    <string name="custom_url_scheme">com.stephensookra.manifest</string>
+</resources>

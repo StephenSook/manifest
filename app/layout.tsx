@@ -15,6 +15,7 @@
 
 import type { Metadata } from 'next';
 import './globals.css';
+import { MobileShell } from '../mobile/MobileShell';
 
 export const metadata: Metadata = {
   title: 'Manifest',
@@ -108,6 +109,9 @@ export default function RootLayout({
         <main id="main-content">
           {children}
         </main>
+
+        {/* Native-only shell (tasks 2.13, 2.14): renders nothing on the web */}
+        <MobileShell />
       </body>
     </html>
   );

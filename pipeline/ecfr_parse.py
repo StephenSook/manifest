@@ -43,6 +43,98 @@ def extract_paragraph_label(text: str) -> tuple[str, str]:
     return ("", text)
 
 
+# Roman numerals that appear as CFR subparagraph labels.
+_ROMAN = {
+    "i": 1, "ii": 2, "iii": 3, "iv": 4, "v": 5, "vi": 6, "vii": 7, "viii": 8,
+    "ix": 9, "x": 10, "xi": 11, "xii": 12, "xiii": 13, "xiv": 14, "xv": 15,
+    "xvi": 16, "xvii": 17, "xviii": 18, "xix": 19, "xx": 20,
+}
+
+
+def _classify_label(label: str, stack: list[tuple[str, str]]) -> tuple[str, str]:
+    """Return (type, token) for a single parenthetical like '(g)' or '(1)'."""
+    inner = label.strip()[1:-1]
+    if inner.isdigit():
+        return "num", inner
+    if len(inner) == 1 and inner.isupper() and inner.isalpha():
+        return "caps", inner
+    if inner in _ROMAN:
+        if stack and stack[-1][0] in ("num", "roman"):
+            return "roman", inner
+        if inner == "i" and stack and stack[-1][0] == "letter" and stack[-1][1] == "h":
+            return "letter", inner
+        if stack and stack[-1][0] == "letter" and len(inner) == 1:
+            return "letter", inner
+        return "roman", inner
+    if len(inner) == 1 and inner.islower() and inner.isalpha():
+        return "letter", inner
+    return "other", inner
+
+
+def _is_next_sibling(typ: str, prev: str, tok: str) -> bool:
+    if typ in ("letter", "caps"):
+        return len(prev) == 1 and len(tok) == 1 and ord(tok) == ord(prev) + 1
+    if typ == "num":
+        return int(tok) == int(prev) + 1
+    if typ == "roman":
+        return _ROMAN.get(tok, -99) == _ROMAN.get(prev, -1) + 1
+    return False
+
+
+def _apply_label(stack: list[tuple[str, str]], typ: str, tok: str) -> None:
+    for i in range(len(stack) - 1, -1, -1):
+        if stack[i][0] == typ and _is_next_sibling(typ, stack[i][1], tok):
+            del stack[i + 1 :]
+            stack[i] = (typ, tok)
+            return
+    stack.append((typ, tok))
+
+
+def reconstruct_nested_paths(chunks: list[dict]) -> list[dict]:
+    """
+    eCFR <P> text usually carries only the innermost label: '(1)' not '(g)(1)'.
+    Walk each section in document order and rebuild the full paragraphPath
+    by sibling-continuation of the CFR hierarchy (letter / number / roman / cap).
+    Idempotent if paths are already nested.
+    """
+    by_section: dict[tuple, list[dict]] = {}
+    order: list[tuple] = []
+    for c in chunks:
+        key = (c.get("cfrTitle"), c.get("part"), c.get("section"))
+        if key not in by_section:
+            by_section[key] = []
+            order.append(key)
+        by_section[key].append(c)
+
+    repaired: list[dict] = []
+    for key in order:
+        stack: list[tuple[str, str]] = []
+        for c in by_section[key]:
+            lab = c.get("paragraphPath") or ""
+            if not lab:
+                repaired.append(c)
+                continue
+            segs = re.findall(r"\([^)]+\)", lab)
+            if len(segs) > 1:
+                stack = []
+                for seg in segs:
+                    typ, tok = _classify_label(seg, stack)
+                    stack.append((typ, tok))
+                path = "".join(f"({t})" for _, t in stack)
+            else:
+                typ, tok = _classify_label(lab, stack)
+                _apply_label(stack, typ, tok)
+                path = "".join(f"({t})" for _, t in stack)
+            updated = dict(c)
+            updated["paragraphPath"] = path
+            cid = f"{updated['cfrTitle']}-{updated['part']}-{updated['section']}"
+            if path:
+                cid += f"-{path.replace('(', '').replace(')', '_')}"
+            updated["id"] = cid
+            repaired.append(updated)
+    return repaired
+
+
 def parse_part(part_element: etree._Element, cfr_title: int) -> Iterator[dict]:
     """
     Parse a DIV5:PART element and yield chunks for each Section and paragraph.
@@ -125,7 +217,7 @@ def main():
             # Match DIV5:PART with N=part_target
             if tag == 'DIV5' and typ == 'PART' and n == part_target:
                 print(f"  Found Part {part_target}")
-                chunks.extend(list(parse_part(el, 47)))
+                chunks.extend(reconstruct_nested_paths(list(parse_part(el, 47))))
                 break
 
         output_file = output_dir / f"title47-part{part_target}.json"
@@ -145,7 +237,7 @@ def main():
         typ = el.get('TYPE', '')
         if tag == 'DIV5' and typ == 'PART' and n == "960":
             print(f"  Found Part 960")
-            chunks = list(parse_part(el, 15))
+            chunks = reconstruct_nested_paths(list(parse_part(el, 15)))
             output_file = output_dir / "title15-part960.json"
             with open(output_file, 'w', encoding='utf-8') as f:
                 json.dump(chunks, f, indent=2, ensure_ascii=False)
@@ -156,5 +248,26 @@ def main():
     print(f"AMDDATEs: Title 47 = {AMDDATE_BY_TITLE[47]}, Title 15 = {AMDDATE_BY_TITLE[15]}")
 
 
+def repair_committed_chunks() -> None:
+    """Rebuild nested paragraphPath values on already-committed chunk JSON."""
+    output_dir = Path("corpus/chunks")
+    files = [
+        "title47-part5.json",
+        "title47-part25.json",
+        "title47-part97.json",
+        "title15-part960.json",
+    ]
+    for name in files:
+        path = output_dir / name
+        chunks = json.loads(path.read_text(encoding="utf-8"))
+        repaired = reconstruct_nested_paths(chunks)
+        path.write_text(json.dumps(repaired, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        print(f"  repaired {name}: {len(repaired)} chunks")
+
+
 if __name__ == "__main__":
-    main()
+    import sys
+    if "--repair-only" in sys.argv:
+        repair_committed_chunks()
+    else:
+        main()

@@ -10,6 +10,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test:engine": "vitest run engine",
+    "test:ask": "vitest run app/api",
     "test:e2e": "playwright test",
     "test": "vitest run"
   },

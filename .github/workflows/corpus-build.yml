@@ -1,0 +1,122 @@
+# corpus-build.yml - Tylin's lane
+# Builds the corpus embedding bundle and uploads artifacts to Vercel Blob.
+# Trigger: manual only (workflow_dispatch). Corpus rebuilds are intentional.
+# The eCFR chunks are committed to git; this workflow embeds them and uploads.
+#
+# Required secrets (Vercel project settings, task 1.18):
+#   WATSONX_API_KEY
+#   WATSONX_PROJECT_ID
+#   WATSONX_REGION
+#   BLOB_READ_WRITE_TOKEN  (Vercel Blob, provisioned in task 1.18)
+
+name: Corpus Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      mock_embeddings:
+        description: "Use mock embeddings (no watsonx spend) for testing the pipeline"
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
+
+jobs:
+  build-and-upload:
+    name: Build corpus and upload to Vercel Blob
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pipeline dependencies
+        run: uv sync --python 3.12 --project pipeline
+
+      - name: Build corpus bundle
+        env:
+          WATSONX_API_KEY: ${{ secrets.WATSONX_API_KEY }}
+          WATSONX_PROJECT_ID: ${{ secrets.WATSONX_PROJECT_ID }}
+          WATSONX_REGION: ${{ secrets.WATSONX_REGION }}
+        run: |
+          if [ "${{ inputs.mock_embeddings }}" = "true" ]; then
+            uv run --python 3.12 --project pipeline python pipeline/embed_and_store.py --mock-embeddings
+          else
+            uv run --python 3.12 --project pipeline python pipeline/embed_and_store.py
+          fi
+
+      - name: Verify artifacts exist
+        run: |
+          test -f corpus/manifest.sqlite || (echo "::error::corpus/manifest.sqlite not found" && exit 1)
+          test -f corpus/vectors.f32    || (echo "::error::corpus/vectors.f32 not found" && exit 1)
+          test -f corpus/schema.json   || (echo "::error::corpus/schema.json not found" && exit 1)
+          echo "SQLite: $(wc -c < corpus/manifest.sqlite) bytes"
+          echo "vectors.f32: $(wc -c < corpus/vectors.f32) bytes"
+          cat corpus/schema.json
+
+      - name: Upload to Vercel Blob
+        env:
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+        run: |
+          # Install vercel blob upload CLI or use curl with the Blob REST API
+          # Vercel Blob REST API: PUT https://blob.vercel-storage.com/<filename>
+          for artifact in corpus/manifest.sqlite corpus/vectors.f32 corpus/schema.json; do
+            filename=$(basename "$artifact")
+            echo "Uploading $filename..."
+            response=$(curl -s -X PUT \
+              "https://blob.vercel-storage.com/corpus/${filename}" \
+              -H "Authorization: Bearer ${BLOB_READ_WRITE_TOKEN}" \
+              -H "x-content-type: application/octet-stream" \
+              --data-binary "@${artifact}" \
+              -w "\nHTTP_STATUS:%{http_code}")
+            http_status=$(echo "$response" | grep "HTTP_STATUS:" | cut -d: -f2)
+            body=$(echo "$response" | grep -v "HTTP_STATUS:")
+            echo "  HTTP $http_status"
+            if [ "$http_status" != "200" ]; then
+              echo "::error::Upload failed for $filename: $body"
+              exit 1
+            fi
+            # Extract URL from response
+            blob_url=$(echo "$body" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('url',''))" 2>/dev/null || echo "")
+            echo "  URL: $blob_url"
+          done
+
+      - name: Write blob-manifest.json
+        env:
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+        run: |
+          # Read schema.json to get metadata, then write blob-manifest.json
+          python3 << 'PYEOF'
+          import json, subprocess, os
+          from datetime import datetime, timezone
+
+          schema = json.loads(open("corpus/schema.json").read())
+          # Vercel Blob public URL base (constructed from project)
+          # The actual URLs come from the upload response; hardcode pattern here
+          manifest = {
+              "generatedAt": datetime.now(timezone.utc).isoformat(),
+              "count": schema["count"],
+              "dim": schema["dim"],
+              "model": schema["model"],
+              "amddate_range": schema["amddate_range"],
+              "artifacts": {
+                  "sqlite": "corpus/manifest.sqlite",
+                  "vectors": "corpus/vectors.f32",
+                  "schema": "corpus/schema.json",
+              },
+              "note": "Fetch URLs from BLOB_READ_WRITE_TOKEN env at runtime via Vercel Blob list API"
+          }
+          with open("corpus/blob-manifest.json", "w") as f:
+              json.dump(manifest, f, indent=2)
+          print("blob-manifest.json written")
+          PYEOF
+
+      - name: Commit blob-manifest.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add corpus/blob-manifest.json
+          git diff --cached --quiet || git commit -m "chore(corpus): update blob-manifest.json after corpus rebuild"
+          git push

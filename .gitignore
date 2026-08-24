@@ -79,3 +79,7 @@ BOB_HANDOFF.md
 # Model weight and benchmark caches, never committed
 pipeline/.surya_weights/
 pipeline/.surya_bench/
+
+# Corpus binary artifacts - built in CI, stored in Vercel Blob (Q6 decision)
+corpus/manifest.sqlite
+corpus/vectors.f32

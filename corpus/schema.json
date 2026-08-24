@@ -1,0 +1,12 @@
+{
+  "dim": 768,
+  "count": 3524,
+  "model": "mock",
+  "generatedAt": "2026-08-24T15:51:30.396777+00:00",
+  "amddate_range": {
+    "min": "2017-08-01",
+    "max": "2026-08-18"
+  },
+  "deployment": "vercel-blob",
+  "q6_decision": "build in CI, store in Vercel Blob, route handler fetches on cold start"
+}

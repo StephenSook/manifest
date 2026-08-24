@@ -1,0 +1,51 @@
+{
+  "id": "gt-1",
+  "name": "GT-1",
+  "program": "Georgia Tech SSDL",
+  "source": "SmallSat 2021 SSC21-P2-48, DOI 10.26077/s4a1-qn29, https://digitalcommons.usu.edu/smallsat/2021/all2021/21/",
+  "notes": "Headline seed. The published paper documents a mission originally slated to be designed, built, and delivered in nine months that took over two years. Profile re-based onto a live delivery frame so the planner asks: standing at today, licensing not started, which deadlines are already dead.",
+  "launchDate": "2027-01-15",
+  "deliveryDate": "2026-12-01",
+  "lvDeterminationDate": "2026-08-01",
+  "integrationDate": "2026-10-15",
+  "pathway": "part-97-amateur",
+  "frequencyMHz": 437.5,
+  "imagingEarth": false,
+  "apogeeKm": 550,
+  "perigeeKm": 550,
+  "ballisticCoefficient": 180,
+  "fieldBasis": {
+    "launchDate": {
+      "basis": "ESTIMATED",
+      "note": "45 days after delivery per typical rideshare cadence. Not recoverable from the public paper."
+    },
+    "deliveryDate": {
+      "basis": "ESTIMATED",
+      "note": "Live-frame delivery wall about 3.5 months from mid-August 2026. Shape taken from the GT-1 paper's late-licensing near-miss, dates shifted to a live frame."
+    },
+    "lvDeterminationDate": {
+      "basis": "ESTIMATED",
+      "note": "Demo entry event two weeks before the mid-August 2026 plan date. Not in the public paper."
+    },
+    "integrationDate": {
+      "basis": "ESTIMATED",
+      "note": "Six weeks before delivery, typical CubeSat integration start. Not in the public paper."
+    },
+    "frequencyMHz": {
+      "basis": "ESTIMATED",
+      "note": "437.5 MHz sits in the 435-438 MHz amateur space segment authorized by 47 CFR 97.207(c)(2). GT-1's exact frequency is not in the public paper."
+    },
+    "apogeeKm": {
+      "basis": "ESTIMATED",
+      "note": "3U at 550 km circular is the headline differentiator orbit used by the decay table (data/decay-table.json). GT-1's flown altitude is not recovered from the public paper."
+    },
+    "perigeeKm": {
+      "basis": "ESTIMATED",
+      "note": "Circular 550 km to match apogee. Same basis as apogeeKm."
+    },
+    "ballisticCoefficient": {
+      "basis": "ESTIMATED",
+      "note": "3U CubeSat Bc about 180 kg/m^2 (mass about 4 kg, area about 0.03 m^2, Cd about 2.2)."
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "id": "astra-hyrax",
+  "name": "ASTRA-HyRAX",
+  "program": "Auburn University Small Satellite Program",
+  "source": "AUSSP mission page https://space.auburn.edu/astra/; Gunter's Space Page https://space.skyrocket.de/doc_sdat/astra-hyrax.htm (STP-S29A, Minotaur-4, 2026-04-07).",
+  "notes": "Auburn Satellite Testbed for Retrodirective Array, Hybrid Retrodirective Array in X-band. 3U EnduroSat bus, US Army SMDC funded, manifested on STP-S29A. X-band payload is not an amateur allocation. Specific FCC filing dates are not in public records.",
+  "launchDate": "2026-04-07",
+  "deliveryDate": "2026-02-24",
+  "lvDeterminationDate": "2025-10-01",
+  "integrationDate": "2026-01-13",
+  "pathway": "part-5-experimental",
+  "frequencyMHz": 8500,
+  "imagingEarth": false,
+  "apogeeKm": 500,
+  "perigeeKm": 500,
+  "ballisticCoefficient": 180,
+  "fieldBasis": {
+    "launchDate": {
+      "basis": "DOCUMENTED",
+      "note": "STP-S29A / Minotaur-4 from Vandenberg SLC-8 on 2026-04-07 per Gunter's Space Page catalog entry for ASTRA-HyRAX."
+    },
+    "deliveryDate": {
+      "basis": "ESTIMATED",
+      "note": "Six weeks before the documented launch, typical rideshare delivery. Not in public records."
+    },
+    "lvDeterminationDate": {
+      "basis": "ESTIMATED",
+      "note": "Six months before estimated delivery. Not in public records."
+    },
+    "integrationDate": {
+      "basis": "ESTIMATED",
+      "note": "Six weeks before estimated delivery. Not in public records."
+    },
+    "frequencyMHz": {
+      "basis": "ESTIMATED",
+      "note": "Payload is X-band (IEEE 8-12 GHz). 8500 MHz is a placeholder inside X-band; the flight frequency is not in the public AUSSP page. Not an amateur allocation, so pathway is experimental."
+    },
+    "apogeeKm": {
+      "basis": "ESTIMATED",
+      "note": "Gunter lists orbit blank. 500 km is a typical LEO rideshare altitude, labeled estimate, not a catalog value."
+    },
+    "perigeeKm": {
+      "basis": "ESTIMATED",
+      "note": "Circular estimate. Same basis as apogeeKm."
+    },
+    "ballisticCoefficient": {
+      "basis": "ESTIMATED",
+      "note": "3U EnduroSat bus. Bc about 180 kg/m^2, same 3U assumption as GT-1."
+    },
+    "imagingEarth": {
+      "basis": "DOCUMENTED",
+      "note": "AUSSP page: hybrid retrodirective array characterizes signal direction from targets of opportunity. Not an Earth-imaging mission."
+    },
+    "pathway": {
+      "basis": "ESTIMATED",
+      "note": "X-band payload is outside Part 97 amateur allocations. Part 5 experimental is the remaining non-Part-25 path. Confirm against the actual FCC grant if recovered."
+    }
+  }
+}

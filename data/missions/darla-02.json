@@ -1,0 +1,59 @@
+{
+  "id": "darla-02",
+  "name": "DARLA-02",
+  "program": "Saint Louis University SSRL",
+  "source": "NASA CubeSat Launch Initiative 15th-round selection announcement, 2024-03-18, https://www.nasa.gov/centers-and-facilities/kennedy/nasa-selects-new-round-of-candidates-for-cubesat-missions-to-station/; SmallSat 2024 DORRE paper, https://digitalcommons.usu.edu/smallsat/2024/all2024/33/",
+  "notes": "Demonstration of Artificial Reasoning, Learning, and Analysis. NASA describes a 3U that demonstrates autonomous event response and maps radio-frequency background noise in the amateur UHF band. CSLI 15th-round flights are announced for 2025-2028. Specific filing dates are not in public records.",
+  "launchDate": "2027-01-01",
+  "deliveryDate": "2026-11-01",
+  "lvDeterminationDate": "2026-06-01",
+  "integrationDate": "2026-09-15",
+  "pathway": "part-97-amateur",
+  "frequencyMHz": 437.5,
+  "imagingEarth": false,
+  "apogeeKm": 400,
+  "perigeeKm": 400,
+  "ballisticCoefficient": 180,
+  "fieldBasis": {
+    "launchDate": {
+      "basis": "ESTIMATED",
+      "note": "Midpoint of the NASA CSLI 15th-round ISS launch window announced as 2025-2028 (NASA 2024-03-18). Exact launch date is not public."
+    },
+    "deliveryDate": {
+      "basis": "ESTIMATED",
+      "note": "Two months before the estimated launch, typical CSLI-to-ISS delivery lead. Not in public records."
+    },
+    "lvDeterminationDate": {
+      "basis": "ESTIMATED",
+      "note": "Five months before estimated delivery. Not in public records."
+    },
+    "integrationDate": {
+      "basis": "ESTIMATED",
+      "note": "Six weeks before estimated delivery. Not in public records."
+    },
+    "frequencyMHz": {
+      "basis": "ESTIMATED",
+      "note": "NASA states amateur UHF. 437.5 MHz is inside 47 CFR 97.207(c)(2) 435-438 MHz. Exact frequency not published."
+    },
+    "apogeeKm": {
+      "basis": "ESTIMATED",
+      "note": "CSLI to ISS deployments are typically near 400 km. Exact orbit not in the selection announcement."
+    },
+    "perigeeKm": {
+      "basis": "ESTIMATED",
+      "note": "Circular ISS-altitude estimate. Same basis as apogeeKm."
+    },
+    "ballisticCoefficient": {
+      "basis": "ESTIMATED",
+      "note": "3U CubeSat Bc about 180 kg/m^2, same 3U assumption as GT-1."
+    },
+    "imagingEarth": {
+      "basis": "DOCUMENTED",
+      "note": "NASA describes RF background-noise mapping in amateur UHF, not Earth imaging. NOAA CRSRA is not triggered."
+    },
+    "pathway": {
+      "basis": "DOCUMENTED",
+      "note": "NASA selection text: amateur ultra-high frequency band. Part 97 amateur pathway."
+    }
+  }
+}

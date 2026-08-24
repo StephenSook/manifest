@@ -1,0 +1,3 @@
+# References for this skill live locally (D10: PDFs never committed).
+# Point Bob at the ingested corpus chunks instead:
+#   corpus/chunks/title15-part960.json

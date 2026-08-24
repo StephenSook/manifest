@@ -16,7 +16,7 @@ requirement. Confirmed absent: elkjs (EPL/GPL), orbdetpy (GPL-3.0).
 | @serwist/next | MIT |
 | idb | ISC |
 | @ibm-cloud/watsonx-ai | Apache-2.0 |
-| @vercel/blob | MIT |
+| @vercel/blob | Apache-2.0 |
 | sql.js | MIT |
 | typescript | Apache-2.0 |
 | vitest | MIT |

@@ -19,7 +19,7 @@ Nothing below is in this repo and nothing below should ever be committed. Put va
 | `MANIFEST_DEPLOY_URL` | GitHub repo **variable** (Settings, Secrets and variables, Actions, Variables), not a secret. Set after Khadim 1.17. Example: `https://manifest-web.vercel.app` with no trailing slash. | Uptime workflow (3.10). It **fails** until this is set. Do not skip. |
 | GitHub Actions secrets | Same four watsonx/blob names, on `StephenSook/manifest`. | Manual `workflow_dispatch` of `.github/workflows/corpus-build.yml`. |
 
-**Do not gather (cut or not yours):** VAPID keys and Vercel KV were for web push (2.11), which is cut. `.env.example` is Khadim 1.18. Vercel project name `manifest-web` is verified before any `--prod` (4.3).
+**Do not gather (cut or not yours):** VAPID keys and Vercel KV were for web push (2.11), which is cut. `.env.example` lists placeholder names only. Khadim 1.18 still provisions the real values on Vercel and as GitHub Actions secrets. Vercel project name `manifest-web` is verified before any `--prod` (4.3).
 
 **Lite cap (Q2):** 300,000 tokens/month and 2 requests/second. One 34-item eval is about 153,000 tokens (at most one live eval run per month). A full 3524-chunk Granite embed is about 700,000 tokens and will blow the cap. Keep the hashing-trick freeze until Essentials, or embed a subset. Rehearse eval on Ollama. Local smoke without keys: `uv run --python 3.12 --project pipeline python pipeline/scripts/watsonx_smoke.py` will fail-fast until the three `WATSONX_*` vars are exported.
 

@@ -45,6 +45,39 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # -------------------------------------------------------------------------
+  # license-guard: fail if forbidden EPL/GPL packages appear in lockfiles
+  # -------------------------------------------------------------------------
+  license-guard:
+    name: Permissive license guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fail if elkjs or orbdetpy appear
+        run: |
+          found=0
+          for f in package.json pipeline/pyproject.toml; do
+            if [ ! -f "$f" ]; then
+              echo "::error::$f is missing"
+              exit 1
+            fi
+          done
+          for f in package.json package-lock.json pipeline/pyproject.toml pipeline/uv.lock; do
+            if [ ! -f "$f" ]; then
+              continue
+            fi
+            if grep -E -q 'elkjs|orbdetpy' "$f"; then
+              echo "::error::Forbidden package in $f (elkjs EPL/GPL or orbdetpy GPL-3.0)"
+              grep -n -E 'elkjs|orbdetpy' "$f"
+              found=1
+            fi
+          done
+          if [ "$found" -ne 0 ]; then
+            exit 1
+          fi
+          echo "elkjs and orbdetpy absent from declared deps and lockfiles"
+
+  # -------------------------------------------------------------------------
   # lint, typecheck, tests, build: always run. A skipped gate is a false green.
   # -------------------------------------------------------------------------
   lint:

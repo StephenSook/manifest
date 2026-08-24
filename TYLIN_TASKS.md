@@ -6,6 +6,27 @@ Legend: [ ] not started · [-] in progress · [x] done · [!] blocked
 
 ---
 
+## External credentials to gather (blocked work)
+
+Nothing below is in this repo and nothing below should ever be committed. Put values in a local `.env` (gitignored) and, for production, in Vercel project settings (Khadim task 1.18) plus GitHub Actions secrets for `corpus-build.yml`. Placeholder names only. Region: `us-south`.
+
+| Name | Where you get it | What it unblocks |
+|---|---|---|
+| `WATSONX_API_KEY` | IBM Cloud: Manage, Access (IAM), API keys. Needs a watsonx.ai project on Lite or Essentials. | Task 0.13 live model 200s. Production `/api/ask` Granite generate + Guardian. Optional Granite corpus embed. |
+| `WATSONX_PROJECT_ID` | watsonx.ai project details page (UUID). | Same as the API key. Both are required together. |
+| `WATSONX_REGION` | The region of that project. Use `us-south` unless the project was created elsewhere. | Same. Endpoint is `https://<region>.ml.cloud.ibm.com`. |
+| `BLOB_READ_WRITE_TOKEN` | Vercel dashboard: Storage, Blob, or `vercel blob` token. Khadim provisions this in 1.18. | corpus-build.yml upload. Production `/api/ask` cold-start fetch of sqlite + vectors.f32. |
+| `MANIFEST_DEPLOY_URL` | GitHub repo **variable** (Settings, Secrets and variables, Actions, Variables), not a secret. Set after Khadim 1.17. Example: `https://manifest-web.vercel.app` with no trailing slash. | Uptime workflow (3.10). It **fails** until this is set. Do not skip. |
+| GitHub Actions secrets | Same four watsonx/blob names, on `StephenSook/manifest`. | Manual `workflow_dispatch` of `.github/workflows/corpus-build.yml`. |
+
+**Do not gather (cut or not yours):** VAPID keys and Vercel KV were for web push (2.11), which is cut. `.env.example` is Khadim 1.18. Vercel project name `manifest-web` is verified before any `--prod` (4.3).
+
+**Lite cap (Q2):** 300,000 tokens/month and 2 requests/second. One 34-item eval is about 153,000 tokens (at most one live eval run per month). A full 3524-chunk Granite embed is about 700,000 tokens and will blow the cap. Keep the hashing-trick freeze until Essentials, or embed a subset. Rehearse eval on Ollama. Local smoke without keys: `uv run --python 3.12 --project pipeline python pipeline/scripts/watsonx_smoke.py` will fail-fast until the three `WATSONX_*` vars are exported.
+
+**After keys exist, in this order:** (1) export the three watsonx vars and run `watsonx_smoke.py`, (2) flip 0.13 to done in PLAN.md, (3) ask Khadim to put the same vars plus the blob token on Vercel and GitHub, (4) run corpus-build with `hash_embeddings=true` until Lite can afford Granite embed, (5) set `MANIFEST_DEPLOY_URL` after the first deploy.
+
+---
+
 ## Lane Ownership
 
 Files you own exclusively:
@@ -23,35 +44,35 @@ Files you own exclusively:
 
 ## Phase 0: Scaffold (Sat Aug 15 to Sun Aug 16)
 
-- [ ] **0.5** Four Bob skills: `part-97-amateur`, `part-5-experimental`, `noaa-crsra`, `eval-bank`. Each with a `references/` folder. Location: `.bob/skills/*/SKILL.md`
-- [ ] **0.9** Python 3.12 venv pinned with `uv`. Files: `pipeline/pyproject.toml`, `.python-version`. System python is 3.14.6 and Docling will not run on it.
-- [ ] **0.10** CI skeleton: lint, typecheck, test, build, gitleaks, em-dash gate. Files: `.github/workflows/ci.yml`, `scripts/no_em_dash.py`. Every gate runs BARE (no pipe on exit path). Em-dash checker uses `git ls-files --cached --others --exclude-standard`.
-- [ ] **0.13** Verify watsonx: confirm `ibm/granite-4-h-small`, `ibm/granite-guardian-3-8b`, and `ibm/granite-embedding-278m-multilingual` all return 200. Record the region. File: `pipeline/scripts/watsonx_smoke.py`
+- [x] **0.5** Four Bob skills: `part-97-amateur`, `part-5-experimental`, `noaa-crsra`, `eval-bank`. Each with a `references/` folder. Location: `.bob/skills/*/SKILL.md`
+- [x] **0.9** Python 3.12 venv pinned with `uv`. Files: `pipeline/pyproject.toml`, `.python-version`. System python is 3.14.6 and Docling will not run on it.
+- [x] **0.10** CI skeleton: lint, typecheck, test, build, gitleaks, em-dash gate. Files: `.github/workflows/ci.yml`, `scripts/no_em_dash.py`. Every gate runs BARE (no pipe on exit path). Em-dash checker uses `git ls-files --cached --others --exclude-standard`.
+- [!] **0.13** Verify watsonx: script ready. Live 200s blocked until `WATSONX_*` are gathered (see credentials table above). File: `pipeline/scripts/watsonx_smoke.py`
 
 ---
 
 ## Phase 1: Four Proof Legs (Sun Aug 16 to Wed Aug 19)
 
-- [ ] **1.1** Leg A. Parse eCFR bulk XML to citable sections. Title 47 Parts 5, 25, 97 and Title 15 Part 960 from `govinfo.gov/bulkdata/ECFR`. Citation paths come from hardcoded paragraph labels inside `<P>` elements, not `NODE` attributes. Pin each snapshot `AMDDATE` on every chunk. Files: `pipeline/ecfr_parse.py`, `corpus/chunks/*.json`
-- [ ] **1.2** Leg A. PDF corpus through Docling. Ingest: FCC-26-47A1.pdf, FCC-22-74A1.pdf (5-year rule), NASA-STD-8719.14C, NASA CubeSat 101 (2017, flag the age), DAS 3.2 User's Guide. Spot-check table extraction on the FCC order appendix and the NASA standard tables before trusting them. File: `pipeline/docling_ingest.py`
-- [ ] **1.3** Leg A. Embeddings + SQLite bundle frozen. Read-only bundle shipped with the app. Brute-force cosine is fine at this size. Resolve Q6 before this ships. Files: `corpus/manifest.sqlite`, `corpus/vectors.f32`
-- [ ] **1.6** Leg B. Guardian audit wired, degrade-to-abstain on failure. Every citation-bearing answer goes through `ibm/granite-guardian-3-8b` before display. Fail audit means show retrieved sections and abstain. Abstention is a designed screen, not an error. File: `app/api/ask/route.ts`
+- [x] **1.1** Leg A. Parse eCFR bulk XML to citable sections. Nested `paragraphPath` repaired 2026-08-24 (`97.207(g)(1)` dual clock). AMDDATE Title 47 `2026-08-13`, Title 15 `2026-08-18`.
+- [x] **1.2** Leg A. PDF corpus through Docling. NASA-STD-8719.14C not ingested (login wall). Q3 answered in PLAN.md.
+- [x] **1.3** Leg A. Embeddings + SQLite bundle frozen. Local freeze is hashing-trick-768 (Lite cap). Binaries gitignored. Blob upload waits on `BLOB_READ_WRITE_TOKEN`.
+- [x] **1.6** Leg B. Guardian audit wired, degrade-to-abstain on failure. File: `app/api/ask/route.ts`
 
 ---
 
 ## Phase 2: Core Product (Wed Aug 19 to Sun Aug 23)
 
-- [ ] **2.6** Q&A over the corpus, end to end. Retrieval + `ibm/granite-4-h-small` generation + Guardian audit + degrade-to-abstain. Credentials server-side only, never in the client bundle. Deps: 1.3, 1.6. File: `app/api/ask/route.ts`
-- [ ] **2.11** Web push, secondary channel. VAPID via `web-push`. Subscriptions must be stored server-side (Vercel KV/Blob) or scheduled push is impossible. GitHub Actions schedule with offset minutes (`4,14,24,34,44,54`), never `*/N` or `:00`. Add `workflow_dispatch` so it can be fired live in the demo. Delete subscriptions on 404/410. Dep: 2.10 (Khadim). Files: `app/api/push/**`, `.github/workflows/deadline-check.yml`
-- [ ] **2.16** Seed three real missions. GT-1 (headline, `digitalcommons.usu.edu/smallsat/2021/all2021/21/`, DOI `10.26077/s4a1-qn29`), DARLA-02, ASTRA-HyRAX. Every date is DOCUMENTED with source or ESTIMATED with basis. Nothing invented. Moved off Stephen to rebalance Phase 2. Dep: 1.7. Files: `data/missions/*.json`
+- [x] **2.6** Q&A over the corpus, end to end. Granite+Guardian when keys exist. Extractive fallback without keys. File: `app/api/ask/route.ts`
+- [x] **2.11** Web push. CUT 2026-08-24. Do not gather VAPID keys.
+- [x] **2.16** Seed three real missions. Files: `data/missions/*.json`. Stephen still needs to point `/api/status` at `gt-1.json`.
 
 ---
 
 ## Phase 3: Hardening (Sun Aug 23 to Thu Aug 27)
 
-- [ ] **3.6** Wired-or-cut audit. For every named tool, model, and integration, grep the source for its import or call. If absent, cut or reword. Includes `.env.example`. Dep: 3.4. File: `docs/claims-audit.md`
-- [ ] **3.8** Security scan + license audit. `gitleaks` over full history, not just the working tree. Every fingerprint hand-verified against its flagged commit before it goes in `.gitleaksignore`. Dependency license audit: confirm no `elkjs` (EPL/GPL) and no `orbdetpy` (GPL-3.0) reached the tree. Record ORBITM pinned commit and its MIT license. Files: `.gitleaksignore`, `docs/THIRD_PARTY_NOTICES.md`
-- [ ] **3.10** Uptime watchdog on the deployed URL. Content-check, not status-code-check: a warm instance that lost its corpus still returns 200. Offset minutes. Dep: 1.17 (Khadim). File: `.github/workflows/uptime.yml`
+- [x] **3.6** Wired-or-cut audit. File: `docs/claims-audit.md`. Re-run before freeze.
+- [x] **3.8** Security scan + license audit. Files: `.gitleaksignore`, `docs/THIRD_PARTY_NOTICES.md`.
+- [x] **3.10** Uptime watchdog. File: `.github/workflows/uptime.yml`. Blocked on `MANIFEST_DEPLOY_URL` after 1.17.
 
 ---
 
@@ -64,9 +85,9 @@ Files you own exclusively:
 
 ## Open Questions (Assigned to You)
 
-- [ ] **Q2** (by Aug 17): Verify actual watsonx Lite token limits for your region. Compute how many tokens one eval run costs (34 items x retrieval + `granite-4-h-small` generation + `granite-guardian-3-8b` audit). State how many watsonx runs the monthly cap allows. Record answer in PLAN.md.
-- [ ] **Q3** (by Aug 18): Does Docling's table extraction survive the FCC 26-47 appendix and the NASA-STD-8719.14C requirement tables? Name the three specific tables, confirm each round-trips to its source values. If one fails, extract by hand and mark it in the corpus.
-- [ ] **Q6** (before 1.3 ships): Are `corpus/manifest.sqlite` and `corpus/vectors.f32` committed to git or built in CI? Measure the artifacts first, decide, then record the decision in Shared Contracts in PLAN.md.
+- [x] **Q2** resolved 2026-08-24. See PLAN.md and the credentials table above.
+- [x] **Q3** resolved 2026-08-24. See PLAN.md.
+- [x] **Q6** resolved. Blob in CI, binaries gitignored.
 
 ---
 

@@ -30,6 +30,7 @@ venv/
 # Build output
 .next/
 out/
+.mobile-build-hold/
 dist/
 build/
 .turbo/

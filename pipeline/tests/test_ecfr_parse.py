@@ -17,7 +17,7 @@ CHUNKS_DIR = Path("corpus/chunks")
 def load_chunks(filename: str) -> list[dict]:
     path = CHUNKS_DIR / filename
     if not path.exists():
-        pytest.skip(f"{path} not found - run pipeline/ecfr_parse.py first")
+        pytest.fail(f"{path} not found - run pipeline/ecfr_parse.py first")
     with open(path, encoding="utf-8") as f:
         return json.load(f)
 
@@ -52,6 +52,19 @@ class TestEcfrParse:
         assert c["amddate"] == "2026-08-13"
         # The text must reference notification to the Space Bureau
         assert "space station" in c["text"].lower() or "notification" in c["text"].lower()
+
+    def test_97_207_g1_dual_clock(self):
+        """Nested path reconstruction must produce 97.207(g)(1) with both clocks."""
+        chunks = load_chunks("title47-part97.json")
+        matches = [
+            c for c in chunks
+            if c["section"] == "97.207" and c["paragraphPath"] == "(g)(1)"
+        ]
+        assert len(matches) == 1, f"Expected 1 chunk for 97.207(g)(1), got {len(matches)}"
+        text = matches[0]["text"].lower()
+        assert "30 days" in text
+        assert "90 days" in text
+        assert "pre-space" in text
 
     def test_97_207_b_exists(self):
         """47 CFR 97.207(b) - frequency authorizations for space stations."""

@@ -330,11 +330,11 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.54-2_",
+    "id": "47-5-5.54-a_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.54",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(a)(2)",
     "text": "Special temporary authorization. When an experimental program is expected to last no more than six months, its operation is considered to be temporary and the special temporary authorization procedure outlined in § 5.61 must be used.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -380,21 +380,21 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.54-1_",
+    "id": "47-5-5.54-e_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.54",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(e)(1)",
     "text": "Testing of radio frequency devices, and",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.54-2_",
+    "id": "47-5-5.54-e_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.54",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(e)(2)",
     "text": "Testing of radio frequency equipment in an Open Area Test Site.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -450,21 +450,21 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.55-1_",
+    "id": "47-5-5.55-c_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.55",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(c)(1)",
     "text": "Conventional and Spectrum Horizons license and STA applications shall be specific as to station location, proposed equipment, power, antenna height, and operating frequencies.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.55-2_",
+    "id": "47-5-5.55-c_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.55",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(c)(2)",
     "text": "Broadcast license applicants shall comply with the requirements in subpart D of this part; Program license applicants shall comply with the requirements in subpart E of this part; Medical Testing license applicants shall comply with the requirements in subpart F of this part; Compliance Testing license applicants shall comply with the requirements in subpart G of this part; and Spectrum Horizons license applicants shall comply with the requirements in subpart I of this part.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -480,31 +480,31 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.55-1_",
+    "id": "47-5-5.55-d_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.55",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(d)(1)",
     "text": "Applications for radio station authorization shall be submitted electronically through the Office of Engineering and Technology website http://www.fcc.gov/els.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.55-2_",
+    "id": "47-5-5.55-d_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.55",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(d)(2)",
     "text": "Applications for special temporary authorization shall be filed in accordance with the procedures of § 5.61.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.55-3_",
+    "id": "47-5-5.55-d_3_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.55",
-    "paragraphPath": "(3)",
+    "paragraphPath": "(d)(3)",
     "text": "Any correspondence relating thereto that cannot be submitted electronically shall instead be submitted to the Commission's Office of Engineering and Technology, Washington, DC 20554.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -580,41 +580,41 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.59-2_",
+    "id": "47-5-5.59-a_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.59",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(a)(2)",
     "text": "Application for renewal of experimental authorization. Application for renewal of station license shall be submitted on FCC Form 405. Unless otherwise directed by the Commission, each application for renewal of license shall be filed at least 60 days prior to the expiration date of the license to be renewed.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.59-3_",
+    "id": "47-5-5.59-a_3_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.59",
-    "paragraphPath": "(3)",
+    "paragraphPath": "(a)(3)",
     "text": "Application for consent to assign an experimental authorization. Application for consent to assign shall be submitted on FCC Form 702 when the legal right to control the use and operation of a station is to be transferred as a result of a voluntary act (contract or other agreement) or an involuntary act (death or legal disability) of the grantee of a station authorization or by involuntary assignment of the physical property constituting the station under a court decree in bankruptcy proceedings, or other court order, or by operation of law in any other manner.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.59-4_",
+    "id": "47-5-5.59-a_4_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.59",
-    "paragraphPath": "(4)",
+    "paragraphPath": "(a)(4)",
     "text": "Application for consent to transfer control of Corporation holding experimental authorization. Application for consent to transfer control shall be submitted on FCC Form 703 whenever it is proposed to change the control of a corporation holding a station authorization.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.59-5_",
+    "id": "47-5-5.59-a_5_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.59",
-    "paragraphPath": "(5)",
+    "paragraphPath": "(a)(5)",
     "text": "Application for product development and market trials. Application for product development and market trials shall be submitted on FCC Form 442.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -630,21 +630,21 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.59-2_",
+    "id": "47-5-5.59-b_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.59",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(b)(2)",
     "text": "Application for a license. An application for a license to cover a construction permit for a broadcast experimental station must be submitted on FCC Form 310.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.59-3_",
+    "id": "47-5-5.59-b_3_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.59",
-    "paragraphPath": "(3)",
+    "paragraphPath": "(b)(3)",
     "text": "Application for renewal of license. An application for renewal of station license for a broadcast experimental station must be submitted on FCC Form 311. Unless otherwise directed by the Commission, each application for renewal of license shall be filed at least 60 days prior to the expiration date of the license to be renewed.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -660,21 +660,21 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.61-2_",
+    "id": "47-5-5.61-a_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.61",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(a)(2)",
     "text": "Applications for STA must be submitted electronically through the Office of Engineering and Technology Web site http://www.fcc.gov/els at least 10 days prior to the proposed operation. Applications filed less than 10 days prior to the proposed operation date will be accepted only upon a showing of good cause.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.61-3_",
+    "id": "47-5-5.61-a_3_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.61",
-    "paragraphPath": "(3)",
+    "paragraphPath": "(a)(3)",
     "text": "In special situations, as defined in § 1.915(b)(1) of this chapter, a request for STA may be made by telephone or electronic media provided a properly signed application is filed within 10 days of such request.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -690,111 +690,111 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.61-1_",
+    "id": "47-5-5.61-b_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.61",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(b)(1)",
     "text": "Name, address, phone number (also email address and facsimile number, if available) of the applicant.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.61-2_",
+    "id": "47-5-5.61-b_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.61",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(b)(2)",
     "text": "Explanation of why an STA is needed.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.61-3_",
+    "id": "47-5-5.61-b_3_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.61",
-    "paragraphPath": "(3)",
+    "paragraphPath": "(b)(3)",
     "text": "Description of the operation to be conducted and its purpose.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.61-4_",
+    "id": "47-5-5.61-b_4_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.61",
-    "paragraphPath": "(4)",
+    "paragraphPath": "(b)(4)",
     "text": "Time and dates of proposed operation.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.61-5_",
+    "id": "47-5-5.61-b_5_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.61",
-    "paragraphPath": "(5)",
+    "paragraphPath": "(b)(5)",
     "text": "Class(es) of station (e.g., fixed, mobile, or both) and call sign of station (if applicable).",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.61-6_",
+    "id": "47-5-5.61-b_6_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.61",
-    "paragraphPath": "(6)",
+    "paragraphPath": "(b)(6)",
     "text": "Description of the location(s) and, if applicable, geographical coordinates of the proposed operation.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.61-7_",
+    "id": "47-5-5.61-b_7_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.61",
-    "paragraphPath": "(7)",
+    "paragraphPath": "(b)(7)",
     "text": "Equipment to be used, including name of manufacturer, model and number of units.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.61-8_",
+    "id": "47-5-5.61-b_8_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.61",
-    "paragraphPath": "(8)",
+    "paragraphPath": "(b)(8)",
     "text": "Frequency (or frequency bands) requested.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.61-9_",
+    "id": "47-5-5.61-b_9_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.61",
-    "paragraphPath": "(9)",
+    "paragraphPath": "(b)(9)",
     "text": "Maximum effective radiated power (ERP) or equivalent isotropically radiated power (EIRP).",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.61-10_",
+    "id": "47-5-5.61-b_10_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.61",
-    "paragraphPath": "(10)",
+    "paragraphPath": "(b)(10)",
     "text": "Emission designator (see § 2.201 of this chapter) or describe emission (bandwidth, modulation, etc.)",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.61-11_",
+    "id": "47-5-5.61-b_11_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.61",
-    "paragraphPath": "(11)",
+    "paragraphPath": "(b)(11)",
     "text": "Overall height of antenna structure above the ground (if greater than 6 meters above the ground or an existing structure, see part 17 of this chapter concerning notification to the FAA).",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -850,41 +850,41 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.63-1_",
+    "id": "47-5-5.63-c_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.63",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(c)(1)",
     "text": "A narrative statement describing in detail the program of research and experimentation proposed, the specific objectives sought to be accomplished; and how the program of experimentation has a reasonable promise of contribution to the development, extension, or expansion, or use of the radio art, or is along lines not already investigated.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.63-2_",
+    "id": "47-5-5.63-c_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.63",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(c)(2)",
     "text": "If the authorization is to be used for the purpose of fulfilling the requirements of a contract with an agency of the United States Government, a narrative statement describing the project, the name of the contracting agency, and the contract number.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.63-3_",
+    "id": "47-5-5.63-c_3_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.63",
-    "paragraphPath": "(3)",
+    "paragraphPath": "(c)(3)",
     "text": "If the authorization is to be used for the sole purpose of developing equipment for exportation to be employed by stations under the jurisdiction of a foreign government, a narrative statement describing the project, any associated contract number, and the name of the foreign government concerned.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.63-4_",
+    "id": "47-5-5.63-c_4_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.63",
-    "paragraphPath": "(4)",
+    "paragraphPath": "(c)(4)",
     "text": "If the authorization is to be used with a satellite system, a narrative statement containing the information required in § 5.64.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -900,31 +900,31 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.63-1_",
+    "id": "47-5-5.63-d_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.63",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(d)(1)",
     "text": "A narrative statement describing how the applicant meets the eligibility criteria set forth in subpart E of this part.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.63-2_",
+    "id": "47-5-5.63-d_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.63",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(d)(2)",
     "text": "If the authorization is to be used for the purpose of fulfilling the requirements of a contract with an agency of the United States Government, a narrative statement describing the project, the name of the contracting agency, and the contract number.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.63-3_",
+    "id": "47-5-5.63-d_3_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.63",
-    "paragraphPath": "(3)",
+    "paragraphPath": "(d)(3)",
     "text": "If the authorization is to be used for the sole purpose of developing equipment for exportation to be employed by stations under the jurisdiction of a foreign government, a narrative statement describing the project, any associated contract number, and the name of the foreign government concerned.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -960,251 +960,251 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-1_",
+    "id": "47-5-5.64-b_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(b)(1)",
     "text": "A statement that the space station operator has assessed and limited the amount of debris released in a planned manner during normal operations. Where applicable, this statement must include an orbital debris mitigation disclosure for any separate deployment devices, distinct from the space station launch vehicle, that may become a source of orbital debris;",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-2_",
+    "id": "47-5-5.64-b_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(b)(2)",
     "text": "A statement indicating whether the space station operator has assessed and limited the probability that the space station(s) will become a source of debris by collision with small debris or meteoroids that would cause loss of control and prevent disposal. The statement must indicate whether this probability for an individual space station is 0.01 (1 in 100) or less, as calculated using the NASA Debris Assessment Software or a higher fidelity assessment tool;",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-3_",
+    "id": "47-5-5.64-b_3_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(3)",
+    "paragraphPath": "(b)(3)",
     "text": "A statement that the space station operator has assessed and limited the probability, during and after completion of mission operations, of accidental explosions or of release of liquids that will persist in droplet form. This statement must include a demonstration that debris generation will not result from the conversion of energy sources on board the spacecraft into energy that fragments the spacecraft. Energy sources include chemical, pressure, and kinetic energy. This demonstration should address whether stored energy will be removed at the spacecraft's end of life, by depleting residual fuel and leaving all fuel line valves open, venting any pressurized system, leaving all batteries in a permanent discharge state, and removing any remaining source of stored energy, or through other equivalent procedures specifically disclosed in the application;",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-4_",
+    "id": "47-5-5.64-b_4_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(4)",
+    "paragraphPath": "(b)(4)",
     "text": "A statement that the space station operator has assessed and limited the probability of the space station(s) becoming a source of debris by collisions with large debris or other operational space stations.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-i_",
+    "id": "47-5-5.64-b_4_i_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(i)",
+    "paragraphPath": "(b)(4)(i)",
     "text": "Where the application is for an NGSO space station or system, the following information must also be included:",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-A_",
+    "id": "47-5-5.64-b_4_i_A_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(A)",
+    "paragraphPath": "(b)(4)(i)(A)",
     "text": "A demonstration that the space station operator has assessed and limited the probability of collision between any space station of the system and other large objects (10 cm or larger in diameter) during the total orbital lifetime of the space station, including any de-orbit phases, to less than 0.001 (1 in 1,000). The probability shall be calculated using the NASA Debris Assessment Software or a higher fidelity assessment tool. The collision risk may be assumed zero for a space station during any period in which the space station will be maneuvered effectively to avoid colliding with large objects.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-B_",
+    "id": "47-5-5.64-b_4_i_B_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(B)",
+    "paragraphPath": "(b)(4)(i)(B)",
     "text": "The statement must identify characteristics of the space station(s)' orbits that may present a collision risk, including any planned and/or operational space stations in those orbits, and indicate what steps, if any, have been taken to coordinate with the other spacecraft or system, or what other measures the operator plans to use to avoid collision.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-C_",
+    "id": "47-5-5.64-b_4_i_C_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(C)",
+    "paragraphPath": "(b)(4)(i)(C)",
     "text": "If at any time during the space station(s)' mission or de-orbit phase the space station(s) will transit through the orbits used by any inhabitable spacecraft, including the International Space Station, the statement must describe the design and operational strategies, if any, that will be used to minimize the risk of collision and avoid posing any operational constraints to the inhabitable spacecraft.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-D_",
+    "id": "47-5-5.64-b_4_i_D_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(D)",
+    "paragraphPath": "(b)(4)(i)(D)",
     "text": "The statement must disclose the accuracy, if any, with which orbital parameters will be maintained, including apogee, perigee, inclination, and the right ascension of the ascending node(s). In the event that a system will not maintain orbital tolerances, e.g., its propulsion system will not be used for orbital maintenance, that fact should be included in the debris mitigation disclosure. Such systems must also indicate the anticipated evolution over time of the orbit of the proposed satellite or satellites. All systems must describe the extent of satellite maneuverability, whether or not the space station design includes a propulsion system.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-E_",
+    "id": "47-5-5.64-b_4_i_E_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(E)",
+    "paragraphPath": "(b)(4)(i)(E)",
     "text": "The space station operator must certify that upon receipt of a space situational awareness conjunction warning, the operator will review and take all possible steps to assess the collision risk, and will mitigate the collision risk if necessary. As appropriate, steps to assess and mitigate the collision risk should include, but are not limited to: contacting the operator of any active spacecraft involved in such a warning; sharing ephemeris data and other appropriate operational information with any such operator; and modifying space station attitude and/or operations.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-ii_",
+    "id": "47-5-5.64-b_4_ii_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(ii)",
+    "paragraphPath": "(b)(4)(ii)",
     "text": "Where a space station requests the assignment of a geostationary orbit location, it must assess whether there are any known satellites located at, or reasonably expected to be located at, the requested orbital location, or assigned in the vicinity of that location, such that the station keeping volumes of the respective satellites might overlap or touch. If so, the statement must include a statement as to the identities of those parties and the measures that will be taken to prevent collisions.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-5_",
+    "id": "47-5-5.64-b_5_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(5)",
+    "paragraphPath": "(b)(5)",
     "text": "A statement addressing the trackability of the space station(s). Space station(s) operating in low-Earth orbit will be presumed trackable if each individual space station is 10 cm or larger in its smallest dimension, exclusive of deployable components. Where the application is for an NGSO space station or system, the statement shall also disclose the following:",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-i_",
+    "id": "47-5-5.64-b_5_i_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(i)",
+    "paragraphPath": "(b)(5)(i)",
     "text": "How the operator plans to identify the space station(s) following deployment and whether space station tracking will be active or passive;",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-ii_",
+    "id": "47-5-5.64-b_5_ii_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(ii)",
+    "paragraphPath": "(b)(5)(ii)",
     "text": "Whether, prior to deployment, the space station(s) will be registered with the 18th Space Control Squadron or successor entity; and",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-iii_",
+    "id": "47-5-5.64-b_5_iii_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(iii)",
+    "paragraphPath": "(b)(5)(iii)",
     "text": "The extent to which the space station operator plans to share information regarding initial deployment, ephemeris, and/or planned maneuvers with the 18th Space Control Squadron or successor entity, other entities that engage in space situational awareness or space traffic management functions, and/or other operators.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-6_",
+    "id": "47-5-5.64-b_6_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(6)",
+    "paragraphPath": "(b)(6)",
     "text": "A statement disclosing planned proximity operations, if any, and addressing debris generation that will or may result from the proposed operations, including any planned release of debris, the risk of accidental explosions, the risk of accidental collision, and measures taken to mitigate those risks.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-7_",
+    "id": "47-5-5.64-b_7_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(7)",
+    "paragraphPath": "(b)(7)",
     "text": "A statement detailing the disposal plans for the space station, including the quantity of fuel—if any—that will be reserved for disposal maneuvers. In addition, the following specific provisions apply:",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-i_",
+    "id": "47-5-5.64-b_7_i_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(i)",
+    "paragraphPath": "(b)(7)(i)",
     "text": "For geostationary orbit space stations, the statement must disclose the altitude selected for a disposal orbit and the calculations that are used in deriving the disposal altitude.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-ii_",
+    "id": "47-5-5.64-b_7_ii_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(ii)",
+    "paragraphPath": "(b)(7)(ii)",
     "text": "For space stations terminating operations in an orbit in or passing through the low-Earth orbit region below 2,000 km altitude, the statement must disclose whether the spacecraft will be disposed of either through atmospheric re-entry, specifying if direct retrieval of the spacecraft will be used. The statement must also disclose the expected time in orbit for the space station following the completion of the mission.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-iii_",
+    "id": "47-5-5.64-b_7_iii_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(iii)",
+    "paragraphPath": "(b)(7)(iii)",
     "text": "For space stations not covered by either paragraph (b)(7)(i) or (ii) of this section, the statement must indicate whether disposal will involve use of a storage orbit or long-term atmospheric re-entry and rationale for the selected disposal plan.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-iv_",
+    "id": "47-5-5.64-b_7_iv_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(iv)",
+    "paragraphPath": "(b)(7)(iv)",
     "text": "For all NGSO space stations under paragraph (b)(7)(ii) or (iii) of this section, the following additional specific provisions apply:",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-A_",
+    "id": "47-5-5.64-b_7_iv_A_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(A)",
+    "paragraphPath": "(b)(7)(iv)(A)",
     "text": "The statement must include a demonstration that the probability of success of the chosen disposal method will be 0.9 or greater for any individual space station. For space station systems consisting of multiple space stations, the demonstration should include additional information regarding efforts to achieve a higher probability of success, with a goal, for large systems, of a probability of success for any individual space station of 0.99 or better. For space stations under paragraph (b)(7)(ii) of this section that will be terminating operations in or passing through the low-Earth orbit region below 2000 km altitude, successful disposal is defined, for the purposes of this paragraph (b)(7)(iv)(A), as atmospheric re-entry of the spacecraft as soon as practicable, but no later than five years following completion of the mission. For space stations under paragraph (b)(7)(iii) of this section, successful disposal will be assessed on a case-by-case basis.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-B_",
+    "id": "47-5-5.64-b_7_iv_B_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(B)",
+    "paragraphPath": "(b)(7)(iv)(B)",
     "text": "If planned disposal is by atmospheric re-entry, the statement must also include:",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-1_",
+    "id": "47-5-5.64-b_7_iv_B_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(b)(7)(iv)(B)(1)",
     "text": "A disclosure indicating whether the atmospheric re-entry will be an uncontrolled re-entry or a controlled targeted reentry.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.64-2_",
+    "id": "47-5-5.64-b_7_iv_B_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.64",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(b)(7)(iv)(B)(2)",
     "text": "An assessment as to whether portions of any individual spacecraft will survive atmospheric re-entry and impact the surface of the Earth with a kinetic energy in excess of 15 joules, and demonstration that the calculated casualty risk for an individual spacecraft using the NASA Debris Assessment Software or a higher fidelity assessment tool is less than 0.0001 (1 in 10,000).",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -1240,21 +1240,21 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.65-1_",
+    "id": "47-5-5.65-c_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.65",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(c)(1)",
     "text": "A petition to amend any rule, regulation, or requirement with which the application is in conflict; or",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.65-2_",
+    "id": "47-5-5.65-c_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.65",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(c)(2)",
     "text": "A request for waiver of any rule, regulation, or requirement with which the application is in conflict. Such request shall show the nature of the waiver desired and set forth the reasons in support thereof.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -1300,21 +1300,21 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.69-1_",
+    "id": "47-5-5.69-a_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.69",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(a)(1)",
     "text": "An application for a conventional license has been timely filed in accordance with § 5.61; and",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.69-2_",
+    "id": "47-5-5.69-a_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.69",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(a)(2)",
     "text": "The application for conventional license is for the same facilities and technical limitations as the existing STA.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -1340,11 +1340,11 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.71-2_",
+    "id": "47-5-5.71-a_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.71",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(a)(2)",
     "text": "A license may be renewed for an additional term not exceeding 5 years, upon an adequate showing of need to complete the experiment.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -1390,21 +1390,21 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.73-1_",
+    "id": "47-5-5.73-a_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.73",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(a)(1)",
     "text": "The Commission may, as a condition of authorization, request that the licensee forward periodic reports in order to evaluate the progress of the experimental program.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.73-2_",
+    "id": "47-5-5.73-a_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.73",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(a)(2)",
     "text": "An applicant may request that the Commission withhold from the public certain reports and associated material and the Commission will do so unless the public interest requires otherwise. These requests should follow the procedures for submission set forth in § 0.459 of this chapter.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -1440,31 +1440,31 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.77-1_",
+    "id": "47-5-5.77-a_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.77",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(a)(1)",
     "text": "That the operating frequency is not permitted to deviate more than the allowed tolerance;",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.77-2_",
+    "id": "47-5-5.77-a_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.77",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(a)(2)",
     "text": "That the emissions are not permitted outside the authorized band;",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.77-3_",
+    "id": "47-5-5.77-a_3_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.77",
-    "paragraphPath": "(3)",
+    "paragraphPath": "(a)(3)",
     "text": "That the ERP (or EIRP) and antenna complies with the license and the regulations governing the same; and",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -1490,21 +1490,21 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.77-1_",
+    "id": "47-5-5.77-c_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.77",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(c)(1)",
     "text": "Any change that will either increase the height of a structure supporting the radiating portion of the antenna or decrease the height of a lighted antenna structure.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.77-2_",
+    "id": "47-5-5.77-c_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.77",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(c)(2)",
     "text": "Any change in the location of an antenna when such relocation involves a change in the geographic coordinates of latitude or longitude by one second or more, or when such relocation involves a change in street address.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -1590,11 +1590,11 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.85-2_",
+    "id": "47-5-5.85-a_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.85",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(a)(2)",
     "text": "Applications to use any frequency or frequency band exclusively allocated to the passive services (including the radio astronomy service) must include an explicit justification of why nearby bands that have non-passive allocations are not adequate for the experiment. Such applications must also state that the applicant acknowledges that long term or multiple location use of passive bands is not possible and that the applicant intends to transition any long-term use to a band with appropriate allocations.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -1620,11 +1620,11 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.85-2_",
+    "id": "47-5-5.85-c_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.85",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(c)(2)",
     "text": "Except as indicated only frequencies allocated to broadcasting service are assigned. If an experiment cannot be feasibly conducted on frequencies allocated to a broadcasting service, an experimental station may be authorized to operate on other frequencies upon a satisfactory showing of the need therefore and a showing that the proposed operation can be conducted without causing harmful interference to established services.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -1640,11 +1640,11 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.85-2_",
+    "id": "47-5-5.85-d_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.85",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(d)(2)",
     "text": "Program experimental licenses. A program licensee shall plan a program of experimentation that avoids use of public safety frequencies, and may only operate on such frequencies when it can make a compelling showing that use of such frequencies is in the public interest. A licensee planning to operate on public safety frequencies must incorporate its public interest showing into the narrative statement it prepares under § 5.309(a)(1), and must coordinate, prior to operating, with the appropriate frequency coordinator or all of the public safety licensees that operate on the frequencies in question in the program experimental licensee's proposed area of operation",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -1670,71 +1670,71 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.85-2_",
+    "id": "47-5-5.85-f_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.85",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(f)(2)",
     "text": "In the event that calculated value of expected field strength exceeds a direct wave fundamental field strength of greater than 10 mV/m in the authorized bandwidth of service (−65.8 dBW/m\n2 power flux density assuming a free space characteristic impedance of 120π ohms) at the reference coordinates, or if there is any question whether field strength levels might exceed the threshold value, the applicant should call the FCC, telephone 1-888-225-5322 (1-888-CALL FCC).",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.85-3_",
+    "id": "47-5-5.85-f_3_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.85",
-    "paragraphPath": "(3)",
+    "paragraphPath": "(f)(3)",
     "text": "Coordination is suggested particularly for those applicants who have no reliable data that indicates whether the field strength or power flux density figure indicated in paragraph (f)(2) of this section would be exceeded by their proposed radio facilities (except mobile stations). The following is a suggested guide for determining whether coordination is needed:",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.85-i_",
+    "id": "47-5-5.85-f_3_i_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.85",
-    "paragraphPath": "(i)",
+    "paragraphPath": "(f)(3)(i)",
     "text": "All stations within 2.4 kilometers (1.5 statute miles);",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.85-ii_",
+    "id": "47-5-5.85-f_3_ii_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.85",
-    "paragraphPath": "(ii)",
+    "paragraphPath": "(f)(3)(ii)",
     "text": "Stations within 4.8 kilometers (3 statute miles) with 50 watts or more average ERP in the primary plane of polarization in the azimuthal direction of the Monitoring Station;",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.85-iii_",
+    "id": "47-5-5.85-f_3_iii_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.85",
-    "paragraphPath": "(iii)",
+    "paragraphPath": "(f)(3)(iii)",
     "text": "Stations within 16 kilometers (10 statute miles) with 1 kW or more average ERP in the primary plane of polarization in the azimuthal direction of the Monitoring Station;",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.85-iv_",
+    "id": "47-5-5.85-f_3_iv_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.85",
-    "paragraphPath": "(iv)",
+    "paragraphPath": "(f)(3)(iv)",
     "text": "Stations within 80 kilometers (50 statute miles) with 25 kW or more average ERP in the primary plane of polarization in the azimuthal direction of the Monitoring Station.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.85-4_",
+    "id": "47-5-5.85-f_4_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.85",
-    "paragraphPath": "(4)",
+    "paragraphPath": "(f)(4)",
     "text": "Advance coordination for stations operating above 1000 MHz is recommended only where the proposed station is in the vicinity of a monitoring station designated as a satellite monitoring facility in § 0.121(b) of this chapter and also meets the criteria outlined in paragraphs (f)(2) and (3) of this section.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -1950,21 +1950,21 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.115-1_",
+    "id": "47-5-5.115-c_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.115",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(c)(1)",
     "text": "Stations may transmit identifying information sufficient to identify the license holder and the geographic coordinates of the station. This information shall be transmitted at the end of each complete transmission except that: this information is not required at the end of each transmission for projects requiring continuous, frequent, or extended use of the transmitting apparatus, if, during such periods and in connection with such use, the information is transmitted at least once every thirty minutes. The station identification shall be transmitted in clear voice or Morse code. All digital encoding and digital modulation shall be disabled during station identification; or",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.115-2_",
+    "id": "47-5-5.115-c_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.115",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(c)(2)",
     "text": "Stations may post information sufficient to identify it on the Commission's program experimental registration Web site.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -1980,11 +1980,11 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.121-2_",
+    "id": "47-5-5.121-a_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.121",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(a)(2)",
     "text": "For Spectrum Horizons experimental radio stations, the licensee is solely responsible for retaining the current authorization as a permanent part of the station records but need not be posted. Station records are required to be kept for a period of at least one year after license expiration.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -2000,21 +2000,21 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.121-1_",
+    "id": "47-5-5.121-b_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.121",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(b)(1)",
     "text": "Information concerning the nature of the experimental operation and the periods in which it is being conducted; and",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.121-2_",
+    "id": "47-5-5.121-b_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.121",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(b)(2)",
     "text": "Information concerning any specific data requested by the FCC.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -2080,61 +2080,61 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.203-1_",
+    "id": "47-5-5.203-c_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.203",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(c)(1)",
     "text": "The authorized power of the station may not be exceeded more than 5 percent above the maximum power specified, except as specifically authorized for the experimental operations.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.203-2_",
+    "id": "47-5-5.203-c_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.203",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(c)(2)",
     "text": "Emissions outside the authorized bandwidth must be attenuated to the degree required for the particular type of station.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.203-3_",
+    "id": "47-5-5.203-c_3_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.203",
-    "paragraphPath": "(3)",
+    "paragraphPath": "(c)(3)",
     "text": "The experimental operations may be conducted at any time the licensed station is authorized to operate, but the minimum required schedule of programming for the class and type of station must be met. AM stations also may conduct experimental operations during the experimental period (12 midnight local time to local sunrise) and at additional hours if permitted by the experimental authorization provided no interference is caused to other stations maintaining a regular operating schedule within such period(s).",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.203-4_",
+    "id": "47-5-5.203-c_4_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.203",
-    "paragraphPath": "(4)",
+    "paragraphPath": "(c)(4)",
     "text": "If a licensed station's experimental authorization permits the use of additional facilities or hours of operation for experimental purposes, no sponsored programs or commercial announcements may be transmitted during such experimentation.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.203-5_",
+    "id": "47-5-5.203-c_5_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.203",
-    "paragraphPath": "(5)",
+    "paragraphPath": "(c)(5)",
     "text": "The licensee may transmit regularly scheduled programming concurrently with the experimental transmission if there is no significant impairment of service.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.203-6_",
+    "id": "47-5-5.203-c_6_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.203",
-    "paragraphPath": "(6)",
+    "paragraphPath": "(c)(6)",
     "text": "No charges may be made, either directly or indirectly, for the experimentation; however, normal charges may be made for regularly scheduled programming transmitted concurrently with the experimental transmissions.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -2160,41 +2160,41 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.205-1_",
+    "id": "47-5-5.205-a_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.205",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(a)(1)",
     "text": "That the applicant has a definite program of research and experimentation in the technical phases of broadcasting which indicates reasonable promise of substantial contribution to the developments of the broadcasting art.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.205-2_",
+    "id": "47-5-5.205-a_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.205",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(a)(2)",
     "text": "That upon the authorization of the proposed station the applicant can and will proceed immediately with its program of research and experimentation.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.205-3_",
+    "id": "47-5-5.205-a_3_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.205",
-    "paragraphPath": "(3)",
+    "paragraphPath": "(a)(3)",
     "text": "That the transmission of signals by radio is essential to the proposed program of research and experimentation.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.205-4_",
+    "id": "47-5-5.205-a_4_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.205",
-    "paragraphPath": "(4)",
+    "paragraphPath": "(a)(4)",
     "text": "That the program of research and experimentation will be conducted by qualified personnel.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -2390,31 +2390,31 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.217-1_",
+    "id": "47-5-5.217-a_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.217",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(a)(1)",
     "text": "As used in this section, the word “program” includes any complete program or part thereof.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.217-2_",
+    "id": "47-5-5.217-a_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.217",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(a)(2)",
     "text": "The transmission of a program from its point of origin to a broadcast station entirely by common carrier facilities, whether by wire line or radio, is not considered a rebroadcast.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.217-3_",
+    "id": "47-5-5.217-a_3_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.217",
-    "paragraphPath": "(3)",
+    "paragraphPath": "(a)(3)",
     "text": "The broadcasting of a program relayed by a remote broadcast pickup station is not considered a rebroadcast.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -2600,21 +2600,21 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.307-1_",
+    "id": "47-5-5.307-a_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.307",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(a)(1)",
     "text": "Ensuring compliance with the notification requirements of § 5.309 of this part; and",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.307-2_",
+    "id": "47-5-5.307-a_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.307",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(a)(2)",
     "text": "Ensuring compliance with all applicable FCC rules.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -2660,111 +2660,111 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.309-1_",
+    "id": "47-5-5.309-a_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.309",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(a)(1)",
     "text": "A narrative statement describing the experiment, including a description and explanation of measures taken to avoid causing harmful interference to any existing service licensee;",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.309-2_",
+    "id": "47-5-5.309-a_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.309",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(a)(2)",
     "text": "Contact information for the researcher-in-charge of the described experiment;",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.309-3_",
+    "id": "47-5-5.309-a_3_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.309",
-    "paragraphPath": "(3)",
+    "paragraphPath": "(a)(3)",
     "text": "Contact information for a “stop buzzer”; and",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.309-4_",
+    "id": "47-5-5.309-a_4_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.309",
-    "paragraphPath": "(4)",
+    "paragraphPath": "(a)(4)",
     "text": "Technical details including:",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.309-i_",
+    "id": "47-5-5.309-a_4_i_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.309",
-    "paragraphPath": "(i)",
+    "paragraphPath": "(a)(4)(i)",
     "text": "The frequency or frequency bands;",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.309-ii_",
+    "id": "47-5-5.309-a_4_ii_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.309",
-    "paragraphPath": "(ii)",
+    "paragraphPath": "(a)(4)(ii)",
     "text": "The maximum equivalent isotropically radiated power (EIRP) or effective radiated power (ERP) under consideration;",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.309-iii_",
+    "id": "47-5-5.309-a_4_iii_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.309",
-    "paragraphPath": "(iii)",
+    "paragraphPath": "(a)(4)(iii)",
     "text": "The emission designators to be used;",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.309-iv_",
+    "id": "47-5-5.309-a_4_iv_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.309",
-    "paragraphPath": "(iv)",
+    "paragraphPath": "(a)(4)(iv)",
     "text": "A description of the geographic area in which the test will be conducted;",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.309-v_",
+    "id": "47-5-5.309-a_4_v_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.309",
-    "paragraphPath": "(v)",
+    "paragraphPath": "(a)(4)(v)",
     "text": "The number of units to be used; and",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.309-vi_",
+    "id": "47-5-5.309-a_4_vi_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.309",
-    "paragraphPath": "(vi)",
+    "paragraphPath": "(a)(4)(vi)",
     "text": "A mitigation plan as required by § 5.311, if necessary.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.309-5_",
+    "id": "47-5-5.309-a_5_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.309",
-    "paragraphPath": "(5)",
+    "paragraphPath": "(a)(5)",
     "text": "For program license experiments that may affect frequency bands used for the provision of commercial mobile services, emergency notifications, or public safety purposes, a list of those critical service licensees that are authorized to operate in the same bands and geographic area of the planned experiment.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -2810,11 +2810,11 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.309-2_",
+    "id": "47-5-5.309-e_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.309",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(e)(2)",
     "text": "All information submitted pursuant to this section will be treated as routinely available for publicly inspection, within the meaning of § 0.459 of this chapter. Licensees are permitted to request that information requested by the Commission pursuant to this section be withheld from public inspection. The Commission will consider such requests pursuant to the procedures set forth in § 0.459 of this chapter.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
@@ -3200,31 +3200,31 @@
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.602-1_",
+    "id": "47-5-5.602-d_1_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.602",
-    "paragraphPath": "(1)",
+    "paragraphPath": "(d)(1)",
     "text": "The licensees may sell equipment to each other, e.g., manufacturer to service provider,",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.602-2_",
+    "id": "47-5-5.602-d_2_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.602",
-    "paragraphPath": "(2)",
+    "paragraphPath": "(d)(2)",
     "text": "The licensees may lease equipment to trial participants for purposes of the study, and",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
   },
   {
-    "id": "47-5-5.602-3_",
+    "id": "47-5-5.602-d_3_",
     "cfrTitle": 47,
     "part": 5,
     "section": "5.602",
-    "paragraphPath": "(3)",
+    "paragraphPath": "(d)(3)",
     "text": "The number of devices to be marketed shall be the minimum quantity of devices necessary to conduct the market trial as approved by the Commission.",
     "amddate": "2026-08-13",
     "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"

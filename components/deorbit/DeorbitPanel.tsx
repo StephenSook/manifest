@@ -173,14 +173,10 @@ function SwingRow({
   f107Label: string;
 }) {
   // Derive verdict for this scenario from its lifetime vs the limit
-  let swingVerdict: Verdict;
-  if (lifetimeYears <= fccLimitYears) {
-    swingVerdict = 'OK';
-  } else if (lifetimeYears <= fccLimitYears * 1.2) {
-    swingVerdict = 'AT_RISK';
-  } else {
-    swingVerdict = 'VIOLATED';
-  }
+    // The FCC five-year rule is binary: within the limit or not. Do not
+  // introduce an at-risk band that the regulation does not contain.
+  const swingVerdict: Verdict =
+    lifetimeYears <= fccLimitYears ? 'OK' : 'VIOLATED';
 
   return (
     <tr>
@@ -318,9 +314,8 @@ export function DeorbitPanel({
           Five-year rule does not apply
         </p>
         <p style={MUTED_NOTE}>
-          This orbit is above the 2000 km threshold. The five-year disposal
-          rule applies only to low Earth orbit satellites. No reentry lifetime
-          calculation is required.
+                    This orbit is above the altitude threshold where the five-year
+          disposal rule applies.
         </p>
         <CitationBlock result={result} />
       </div>

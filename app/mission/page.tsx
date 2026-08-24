@@ -16,6 +16,7 @@ import { useState, useEffect, useId } from 'react';
 import type { MissionInput, Pathway } from '@/engine/types';
 import { saveMission, loadMission, clearMission } from '@/lib/store';
 import { DeadlineBanner } from '@/components/deadline-banner/DeadlineBanner';
+import { DependencyGraph } from '@/components/graph/DependencyGraph';
 
 // ---------------------------------------------------------------------------
 // Styles: reuse globals.css tokens exactly. No new colors introduced.
@@ -453,6 +454,30 @@ export default function MissionPage() {
           today={today}
           projectStart={today}
         />
+      )}
+
+      {/* Graph: visible only when a mission is saved and today is known.
+          Renders nothing when no mission has been saved. */}
+      {savedMission && today && (
+        <div style={{ marginBottom: '1rem' }}>
+          <p
+            style={{
+              fontSize: '11px',
+              fontWeight: 600,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: 'var(--color-muted)',
+              margin: '0 0 0.5rem',
+            }}
+          >
+            Dependency graph
+          </p>
+          <DependencyGraph
+            mission={savedMission}
+            today={today}
+            projectStart={today}
+          />
+        </div>
       )}
 
       <form onSubmit={handleSubmit} noValidate aria-label="Mission setup form">

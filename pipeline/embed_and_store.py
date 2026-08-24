@@ -76,6 +76,30 @@ def embed_batch_mock(texts: list[str]) -> list[list[float]]:
     return [rng.random(EMBEDDING_DIM).tolist() for _ in texts]
 
 
+def embed_batch_hash(texts: list[str]) -> list[list[float]]:
+    """
+    Content-addressed hashing-trick embeddings, dim 768.
+
+    Used when watsonx Lite cannot afford a 3524-chunk embed (see PLAN Q2).
+    Query embedding in app/api/ask/lib.ts MUST use the same token regex and
+    md5 little-endian bucket so cosine retrieval stays aligned.
+    """
+    import hashlib
+    import re
+
+    token_re = re.compile(r"[a-z0-9]+")
+    out: list[list[float]] = []
+    for text in texts:
+        vec = np.zeros(EMBEDDING_DIM, dtype=np.float32)
+        for tok in token_re.findall(text.lower()):
+            digest = hashlib.md5(tok.encode("utf-8")).digest()
+            idx = int.from_bytes(digest[:4], "little") % EMBEDDING_DIM
+            vec[idx] += 1.0
+        norm = float(np.linalg.norm(vec)) or 1.0
+        out.append((vec / norm).tolist())
+    return out
+
+
 def write_sqlite(chunks: list[dict], output_path: Path) -> None:
     conn = sqlite3.connect(str(output_path))
     conn.execute("""
@@ -125,12 +149,12 @@ def write_vectors_f32(embeddings: list[list[float]], output_path: Path) -> None:
     output_path.write_bytes(arr.tobytes())
 
 
-def write_schema(chunks: list[dict], n: int, mock: bool, output_path: Path) -> None:
+def write_schema(chunks: list[dict], n: int, model_name: str, output_path: Path) -> None:
     amdates = sorted(set(c.get("amddate", "") for c in chunks if c.get("amddate")))
     schema = {
         "dim": EMBEDDING_DIM,
         "count": n,
-        "model": EMBEDDING_MODEL if not mock else "mock",
+        "model": model_name,
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "amddate_range": {
             "min": amdates[0] if amdates else "",
@@ -146,6 +170,8 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--mock-embeddings", action="store_true",
                         help="Use deterministic mock embeddings (no watsonx call)")
+    parser.add_argument("--hash-embeddings", action="store_true",
+                        help="Use hashing-trick embeddings (no watsonx call, keyword-aligned)")
     args = parser.parse_args()
 
     print("Loading chunks...")
@@ -161,6 +187,7 @@ def main() -> None:
     texts = [c["text"] for c in chunks]
 
     # --- Embed ---
+    model_name = EMBEDDING_MODEL
     if args.mock_embeddings:
         print(f"Generating MOCK embeddings (dim={EMBEDDING_DIM})...")
         all_embeddings: list[list[float]] = []
@@ -169,11 +196,23 @@ def main() -> None:
             all_embeddings.extend(embed_batch_mock(batch))
             if i % 256 == 0:
                 print(f"  {i}/{len(texts)}")
+        model_name = "mock"
+    elif args.hash_embeddings or not os.environ.get("WATSONX_API_KEY"):
+        print(f"Generating hashing-trick embeddings (dim={EMBEDDING_DIM})...")
+        all_embeddings = []
+        for i in range(0, len(texts), BATCH_SIZE):
+            batch = texts[i:i + BATCH_SIZE]
+            all_embeddings.extend(embed_batch_hash(batch))
+            if i % 256 == 0:
+                print(f"  {i}/{len(texts)}")
+        model_name = "hashing-trick-768"
+        if not args.hash_embeddings:
+            print("  NOTE: WATSONX_API_KEY unset; hashing-trick used (Q2 Lite cap).")
     else:
         # Real watsonx embeddings
         for var in ("WATSONX_API_KEY", "WATSONX_PROJECT_ID", "WATSONX_REGION"):
             if not os.environ.get(var):
-                print(f"ERROR: {var} not set. Use --mock-embeddings for local testing.")
+                print(f"ERROR: {var} not set. Use --hash-embeddings for local testing.")
                 sys.exit(1)
 
         from ibm_watsonx_ai import APIClient, Credentials
@@ -213,7 +252,7 @@ def main() -> None:
 
     # --- Write schema.json ---
     schema_path = OUTPUT_DIR / "schema.json"
-    write_schema(chunks, len(all_embeddings), args.mock_embeddings, schema_path)
+    write_schema(chunks, len(all_embeddings), model_name, schema_path)
     print(f"  schema.json written")
 
     print("\nCorpus bundle complete.")

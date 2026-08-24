@@ -1,8 +1,8 @@
 {
   "dim": 768,
   "count": 3524,
-  "model": "mock",
-  "generatedAt": "2026-08-24T15:51:30.396777+00:00",
+  "model": "hashing-trick-768",
+  "generatedAt": "2026-08-24T16:37:32.913198+00:00",
   "amddate_range": {
     "min": "2017-08-01",
     "max": "2026-08-18"

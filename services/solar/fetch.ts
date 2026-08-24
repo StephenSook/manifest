@@ -1,6 +1,6 @@
 // services/solar/fetch.ts
 // Live NOAA SWPC solar flux fetch + predicted-flux envelope.
-// CORS is permissive (Access-Control-Allow-Origin: *) — verified 2026-08-16.
+// CORS is permissive (Access-Control-Allow-Origin: *), verified 2026-08-16.
 // Runs browser-side in the web app and in the Capacitor static export.
 // No API key, no auth.
 //
@@ -87,7 +87,7 @@ export function parsePredictedForTest(
  * Returns a SolarConditions object with the current F10.7 and the predicted
  * envelope for the next FORWARD_MONTHS months.
  *
- * On network failure, throws — callers should fall back to loadCachedConditions().
+ * On network failure, throws, callers should fall back to loadCachedConditions().
  */
 export async function fetchSolarConditions(): Promise<SolarConditions> {
   const [observed, predictedRaw] = await Promise.all([
@@ -122,7 +122,7 @@ export async function loadCachedConditions(): Promise<SolarConditions> {
   const res = await fetch('/data/solar-conditions.json');
   if (!res.ok) {
     throw new Error(
-      `solar/fetch: cache file not found — run scripts/cache-solar.ts first`,
+      `solar/fetch: cache file not found, run scripts/cache-solar.ts first`,
     );
   }
   const data = (await res.json()) as SolarConditions;
@@ -132,7 +132,7 @@ export async function loadCachedConditions(): Promise<SolarConditions> {
 /**
  * Fetch live solar conditions, falling back to the committed cache on failure.
  * This is the function the rest of the app should call.
- * Always returns valid SolarConditions — never throws.
+ * Always returns valid SolarConditions, never throws.
  */
 export async function getSolarConditions(): Promise<SolarConditions> {
   try {

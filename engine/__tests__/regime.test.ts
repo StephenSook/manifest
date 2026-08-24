@@ -1,5 +1,5 @@
 // engine/__tests__/regime.test.ts
-// Dual-regime layer test — per PLAN.md task 2.15.
+// Dual-regime layer test, per PLAN.md task 2.15.
 // Done means: flipping the flag changes every Part 25 node's badge
 // and changes nothing else.
 
@@ -32,7 +32,7 @@ afterEach(() => {
   REGIME_FLAG.part100Active = false;
 });
 
-describe('regime flag — getRegimeBadge', () => {
+describe('regime flag, getRegimeBadge', () => {
   it('returns PART_25_PENDING_BADGE for a Part 25 node when flag is false', () => {
     REGIME_FLAG.part100Active = false;
     const { nodes } = buildGraph({ ...BASE_INPUT, pathway: 'part-25' });
@@ -43,7 +43,7 @@ describe('regime flag — getRegimeBadge', () => {
 
   it('returns PART_100_ACTIVE_BADGE for a Part 25 node when flag is true', () => {
     // Build the graph while Part 25 governs (flag false) so pendingPart100 is true,
-    // then flip the flag — getRegimeBadge reads REGIME_FLAG at call time.
+    // then flip the flag, getRegimeBadge reads REGIME_FLAG at call time.
     REGIME_FLAG.part100Active = false;
     const { nodes } = buildGraph({ ...BASE_INPUT, pathway: 'part-25' });
     const fccNode = nodes.get('fcc-grant')!;
@@ -61,7 +61,7 @@ describe('regime flag — getRegimeBadge', () => {
   });
 });
 
-describe('regime flag — applyRegimeFlag', () => {
+describe('regime flag, applyRegimeFlag', () => {
   it('flipping the flag changes Part 25 node badges and nothing else', () => {
     const { nodes } = buildGraph({ ...BASE_INPUT, pathway: 'part-25' });
 

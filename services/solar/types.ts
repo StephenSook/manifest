@@ -1,5 +1,5 @@
 // services/solar/types.ts
-// SolarConditions contract — shared between Stephen (producer) and Tylin/Khadim (consumers)
+// SolarConditions contract, shared between Stephen (producer) and Tylin/Khadim (consumers)
 // CONTRACT: changes require announcement before committing. See PLAN.md Shared Contracts.
 
 export interface SolarConditions {
@@ -12,12 +12,12 @@ export interface SolarConditions {
    */
   f107Predicted: number[];
   /**
-   * Low quantile (pessimistic solar activity — longer orbital lifetime, compliance risk)
+   * Low quantile (pessimistic solar activity, longer orbital lifetime, compliance risk)
    * Parallel array to f107Predicted.
    */
   envelopeLow: number[];
   /**
-   * High quantile (optimistic solar activity — shorter orbital lifetime, safer compliance)
+   * High quantile (optimistic solar activity, shorter orbital lifetime, safer compliance)
    * Parallel array to f107Predicted.
    */
   envelopeHigh: number[];

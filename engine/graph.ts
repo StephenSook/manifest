@@ -5,7 +5,7 @@
 //
 // NOTE: Every duration labeled DOCUMENTED comes from a primary source.
 //       Every duration labeled ESTIMATED carries a stated basis.
-//       CubeSat 101 figures are DOCUMENTED but dated 2017 — flagged inline.
+//       CubeSat 101 figures are DOCUMENTED but dated 2017, flagged inline.
 //
 // The deorbit compliance node (id: 'deorbit-compliance') is computed by
 // engine/interlocks/deorbit-compliance.ts and injected at runtime.
@@ -29,7 +29,7 @@ function cfr(
   return { cfrTitle, part, section, paragraphPath, amddate, sourceUrl };
 }
 
-// Placeholder AMDDATE — replaced by Tylin's eCFR snapshot AMDDATE in task 1.1
+// Placeholder AMDDATE, replaced by Tylin's eCFR snapshot AMDDATE in task 1.1
 const SNAPSHOT = 'VERIFY_FROM_SNAPSHOT';
 const ECFR_BASE = 'https://www.ecfr.gov/current/title-';
 
@@ -79,7 +79,7 @@ export function buildGraph(input: MissionInput): {
       // 4-8 weeks observed in practice per CubeSat 101 (2017, flag age)
       durationDays: 42,
       durationBasis: 'ESTIMATED',
-      source: 'CubeSat 101 Ch 2.6 (2017, age flagged) — 4 to 8 weeks typical',
+      source: 'CubeSat 101 Ch 2.6 (2017, age flagged), 4 to 8 weeks typical',
       citation: cfr(47, 97, '97.207', '(c)', SNAPSHOT, `${ECFR_BASE}47/part-97/section-97.207`),
       feeUsd: null,
       reworkTriggers: ['Frequency change forces re-coordination from scratch'],
@@ -98,7 +98,7 @@ export function buildGraph(input: MissionInput): {
       agency: 'FCC',
       durationDays: 0, // Point-in-time submission
       durationBasis: 'DOCUMENTED',
-      source: '47 CFR 25.114(d) — ITU filing coordinated through FCC International Bureau',
+      source: '47 CFR 25.114(d), ITU filing coordinated through FCC International Bureau',
       citation: cfr(47, 25, '25.114', '(d)', SNAPSHOT, `${ECFR_BASE}47/part-25/section-25.114`),
       feeUsd: null,
       reworkTriggers: ['Frequency change requires re-filing'],
@@ -118,7 +118,7 @@ export function buildGraph(input: MissionInput): {
       // DOCUMENTED: 2-3 months per 47 CFR 25.114(d) and post-WRC-23 practice
       durationDays: 75, // 2.5 months midpoint; ESTIMATED basis
       durationBasis: 'ESTIMATED',
-      source: 'CubeSat 101 Ch 2.6 (2017, age flagged) — 2-3 months; shortening post-WRC-23',
+      source: 'CubeSat 101 Ch 2.6 (2017, age flagged), 2-3 months; shortening post-WRC-23',
       citation: cfr(47, 25, '25.114', '(d)', SNAPSHOT, `${ECFR_BASE}47/part-25/section-25.114`),
       feeUsd: null,
       reworkTriggers: [],
@@ -138,7 +138,7 @@ export function buildGraph(input: MissionInput): {
       // ESTIMATED: no regulatory clock; 2-4 weeks for a well-resourced team
       durationDays: 21,
       durationBasis: 'ESTIMATED',
-      source: 'CubeSat 101 Ch 2.6 (2017, age flagged) — preparation is team-driven',
+      source: 'CubeSat 101 Ch 2.6 (2017, age flagged), preparation is team-driven',
       citation: isPart97
         ? cfr(47, 97, '97.207', '(g)', SNAPSHOT, `${ECFR_BASE}47/part-97/section-97.207`)
         : cfr(47, 25, '25.114', '', SNAPSHOT, `${ECFR_BASE}47/part-25/section-25.114`),
@@ -182,7 +182,7 @@ export function buildGraph(input: MissionInput): {
       // Manifest computes an independent NRLMSISE-00 estimate (D4)
       durationDays: 14,
       durationBasis: 'ESTIMATED',
-      source: 'NASA-STD-8719.14C; DAS 3.2.7 requires SUA — Manifest uses independent NRLMSISE-00 estimate',
+      source: 'NASA-STD-8719.14C; DAS 3.2.7 requires SUA, Manifest uses independent NRLMSISE-00 estimate',
       citation: null, // NASA standard, not CFR
       feeUsd: null,
       reworkTriggers: ['Orbit change requires re-assessment'],
@@ -194,7 +194,7 @@ export function buildGraph(input: MissionInput): {
       pendingPart100: false,
     },
 
-    // 8. Deorbit compliance verdict (the innovation node — D1)
+    // 8. Deorbit compliance verdict (the innovation node, D1)
     // This node is COMPUTED by engine/interlocks/deorbit-compliance.ts
     // and is a hard prerequisite of FCC grant.
     // Its verdict changes based on the solar cycle and mission orbit.
@@ -205,7 +205,7 @@ export function buildGraph(input: MissionInput): {
       // DOCUMENTED: FCC 22-74; the compliance check itself takes seconds
       durationDays: 1,
       durationBasis: 'DOCUMENTED',
-      source: 'FCC 22-74 (2022); 47 CFR 25.283(e) — 5-year post-mission disposal rule',
+      source: 'FCC 22-74 (2022); 47 CFR 25.283(e), 5-year post-mission disposal rule',
       citation: cfr(47, 25, '25.283', '(e)', SNAPSHOT, `${ECFR_BASE}47/part-25/section-25.283`),
       feeUsd: null,
       reworkTriggers: ['Orbit change above 600 km re-triggers compliance check', 'Launch date change re-triggers (solar cycle position changes)'],
@@ -217,7 +217,7 @@ export function buildGraph(input: MissionInput): {
       pendingPart100: part100Pending && isPart25,
     },
 
-    // 9. NOAA CRSRA application (imaging missions only — injected conditionally)
+    // 9. NOAA CRSRA application (imaging missions only, injected conditionally)
     ...(input.imagingEarth
       ? [
           {
@@ -226,7 +226,7 @@ export function buildGraph(input: MissionInput): {
             agency: 'NOAA' as const,
             durationDays: 0,
             durationBasis: 'DOCUMENTED' as const,
-            source: '15 CFR Part 960 — NOAA Commercial Remote Sensing Regulatory Affairs',
+            source: '15 CFR Part 960, NOAA Commercial Remote Sensing Regulatory Affairs',
             citation: cfr(15, 960, '960.4', '', SNAPSHOT, `${ECFR_BASE}15/part-960/section-960.4`),
             feeUsd: null,
             reworkTriggers: ['Change to imaging payload requires re-application'],
@@ -241,10 +241,10 @@ export function buildGraph(input: MissionInput): {
             id: 'noaa-crsra-license',
             label: 'NOAA CRSRA License Issued',
             agency: 'NOAA' as const,
-            // DOCUMENTED: 15 CFR 960.8 — 60-day statutory clock after completeness determination
+            // DOCUMENTED: 15 CFR 960.8, 60-day statutory clock after completeness determination
             durationDays: 60,
             durationBasis: 'DOCUMENTED' as const,
-            source: '15 CFR 960.8 — 60-day statutory review clock after completeness',
+            source: '15 CFR 960.8, 60-day statutory review clock after completeness',
             citation: cfr(15, 960, '960.8', '', SNAPSHOT, `${ECFR_BASE}15/part-960/section-960.8`),
             feeUsd: null,
             reworkTriggers: [],
@@ -267,7 +267,7 @@ export function buildGraph(input: MissionInput): {
       // CubeSat 101 (2017, age flagged): 3-6 months after complete application
       durationDays: 120,
       durationBasis: 'ESTIMATED',
-      source: 'CubeSat 101 Ch 2.6 (2017, age flagged) — 3 to 6 months after complete filing',
+      source: 'CubeSat 101 Ch 2.6 (2017, age flagged), 3 to 6 months after complete filing',
       citation: isPart97
         ? cfr(47, 97, '97.207', '(g)', SNAPSHOT, `${ECFR_BASE}47/part-97/section-97.207`)
         : cfr(47, 25, '25.114', '', SNAPSHOT, `${ECFR_BASE}47/part-25/section-25.114`),
@@ -281,18 +281,18 @@ export function buildGraph(input: MissionInput): {
       pendingPart100: part100Pending && isPart25,
     },
 
-    // 11. Launch-provider delivery (terminal node — the wall)
+    // 11. Launch-provider delivery (terminal node, the wall)
     {
       id: 'delivery',
       label: 'Launch Provider Delivery',
       agency: 'LAUNCH_PROVIDER',
       durationDays: 0,
       durationBasis: 'DOCUMENTED',
-      source: 'Launch provider manifest contract; CubeSat 101 — "consequence of missing delivery is demanifest"',
+      source: 'Launch provider manifest contract; CubeSat 101, "consequence of missing delivery is demanifest"',
       citation: null,
       feeUsd: null,
       reworkTriggers: ['Launch slip recomputes every clock in the graph'],
-      latenessConsequence: 'Demanifest — documented in CubeSat 101 including a deployer-disable near-miss',
+      latenessConsequence: 'Demanifest, documented in CubeSat 101 including a deployer-disable near-miss',
       verdict: 'OK',
       earliestStart: null,
       latestStart: null,

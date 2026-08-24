@@ -1,5 +1,5 @@
 // engine/interlocks/rework.ts
-// Rework trigger logic — per PLAN.md task 1.16 and CLAUDE.md section 4 interlock 6.
+// Rework trigger logic, per PLAN.md task 1.16 and CLAUDE.md section 4 interlock 6.
 //
 // Three rework triggers:
 //   1. Frequency change  -> IARU re-coordination must restart from the beginning
@@ -44,7 +44,7 @@ export function getOrbitReworkNodes(apogeeKm: number): OrbitReworkResult {
 /**
  * Launch slip rework: returns a descriptive string explaining that all clocks
  * recompute. The actual recomputation happens by calling computeCriticalPath
- * with the updated MissionInput — there is no separate function needed.
+ * with the updated MissionInput, there is no separate function needed.
  */
 export function getLaunchSlipReworkDescription(): string {
   return (

@@ -1,5 +1,5 @@
 // engine/types.ts
-// Shared contracts — consumers: Khadim (graph UI), Tylin (corpus/API)
+// Shared contracts, consumers: Khadim (graph UI), Tylin (corpus/API)
 // Changes to this file are CONTRACT changes: announce before committing.
 
 // ---------------------------------------------------------------------------
@@ -16,7 +16,7 @@ export type Verdict = 'OK' | 'AT_RISK' | 'VIOLATED' | 'ABSTAIN';
 export type DurationBasis = 'DOCUMENTED' | 'ESTIMATED';
 
 // ---------------------------------------------------------------------------
-// Citation — every regulatory claim carries one or the product abstains
+// Citation, every regulatory claim carries one or the product abstains
 // ---------------------------------------------------------------------------
 
 export interface Citation {
@@ -36,28 +36,28 @@ export interface Citation {
 export type Pathway = 'part-97-amateur' | 'part-5-experimental' | 'part-25';
 
 // ---------------------------------------------------------------------------
-// Mission input — everything the engine needs from the user
+// Mission input, everything the engine needs from the user
 // ---------------------------------------------------------------------------
 
 export interface MissionInput {
-  /** ISO date string — immovable wall */
+  /** ISO date string, immovable wall */
   launchDate: string;
-  /** ISO date string — hard terminal deadline */
+  /** ISO date string, hard terminal deadline */
   deliveryDate: string;
   /** ISO date string or null if not yet determined */
   lvDeterminationDate: string | null;
-  /** ISO date string — integration start */
+  /** ISO date string, integration start */
   integrationDate: string | null;
   pathway: Pathway;
   /** Primary downlink frequency in MHz */
   frequencyMHz: number;
-  /** True if the mission images the Earth — triggers NOAA CRSRA prerequisite */
+  /** True if the mission images the Earth, triggers NOAA CRSRA prerequisite */
   imagingEarth: boolean;
   /** Apogee altitude in km */
   apogeeKm: number;
   /** Perigee altitude in km */
   perigeeKm: number;
-  /** Ballistic coefficient in kg/m^2 — used for decay estimate */
+  /** Ballistic coefficient in kg/m^2, used for decay estimate */
   ballisticCoefficient: number;
 }
 
@@ -73,7 +73,7 @@ export interface GraphNode {
   /** Duration in calendar days */
   durationDays: number;
   durationBasis: DurationBasis;
-  /** Source for the duration — required when basis is DOCUMENTED */
+  /** Source for the duration, required when basis is DOCUMENTED */
   source: string;
   /** Governing citation */
   citation: Citation | null;
@@ -83,20 +83,20 @@ export interface GraphNode {
   reworkTriggers: string[];
   /** Documented consequence of this node being late */
   latenessConsequence: string;
-  /** Computed verdict — set by the engine */
+  /** Computed verdict, set by the engine */
   verdict: Verdict;
   /** Computed earliest start date (ISO) */
   earliestStart: string | null;
   /** Computed latest start date without slipping the terminal node (ISO) */
   latestStart: string | null;
-  /** Float in days — 0 means on the critical path */
+  /** Float in days, 0 means on the critical path */
   float: number | null;
   /** True if Part 25 and pending Part 100 transition */
   pendingPart100: boolean;
 }
 
 // ---------------------------------------------------------------------------
-// Graph edge — hard prerequisite
+// Graph edge, hard prerequisite
 // ---------------------------------------------------------------------------
 
 export interface GraphEdge {
@@ -120,12 +120,12 @@ export interface CriticalPathResult {
 }
 
 // ---------------------------------------------------------------------------
-// Regime flag — D3: Part 100 transition
+// Regime flag, D3: Part 100 transition
 // ---------------------------------------------------------------------------
 
 export interface RegimeFlag {
   part100Active: boolean;
-  /** Verbatim D3 copy string — Khadim renders this, engine supplies it */
+  /** Verbatim D3 copy string, Khadim renders this, engine supplies it */
   part100CopyString: string;
 }
 

@@ -1,6 +1,6 @@
 // services/solar/__tests__/fetch.test.ts
 // Integration tests for the NOAA solar fetch.
-// These hit the real NOAA endpoints — run locally only, not in CI.
+// These hit the real NOAA endpoints, run locally only, not in CI.
 // CI uses the committed cache artifact instead.
 // Marked with .skipIf(process.env.CI) so they never block a PR.
 
@@ -12,11 +12,11 @@ import { fetchSolarConditions, parsePredictedForTest } from '../fetch';
 
 // Live test only runs when LIVE_TESTS=1 is explicitly set.
 // Never runs in CI or in the normal `npm test` / `npm run test:engine` suite.
-describe('solar/fetch — live NOAA integration (LIVE_TESTS=1 only)', () => {
+describe('solar/fetch, live NOAA integration (LIVE_TESTS=1 only)', () => {
   it.skipIf(!process.env.LIVE_TESTS)('fetches real F10.7 and returns a valid SolarConditions', async () => {
     const conditions = await fetchSolarConditions();
 
-    // F10.7 is typically between 65 and 300 sfu — outside this means something is wrong
+    // F10.7 is typically between 65 and 300 sfu, outside this means something is wrong
     expect(conditions.f107Current).toBeGreaterThan(60);
     expect(conditions.f107Current).toBeLessThan(400);
 
@@ -38,13 +38,13 @@ describe('solar/fetch — live NOAA integration (LIVE_TESTS=1 only)', () => {
   }, 10_000); // 10s timeout for network
 });
 
-describe('solar/fetch — predicted envelope parsing (unit, no network)', () => {
+describe('solar/fetch, predicted envelope parsing (unit, no network)', () => {
   // Fixture modelled on the real NOAA predicted-solar-cycle.json shape
   const FIXTURE = [
-    // Past months — should be filtered out
+    // Past months, should be filtered out
     { time_tag: '2025-01', 'predicted_f10.7': 130, 'low_f10.7': 110, 'high_f10.7': 150 },
     { time_tag: '2025-06', 'predicted_f10.7': 140, 'low_f10.7': 115, 'high_f10.7': 165 },
-    // Current and future months — should be included
+    // Current and future months, should be included
     { time_tag: '2026-08', 'predicted_f10.7': 155, 'low_f10.7': 125, 'high_f10.7': 185 },
     { time_tag: '2026-09', 'predicted_f10.7': 158, 'low_f10.7': 128, 'high_f10.7': 188 },
     { time_tag: '2026-10', 'predicted_f10.7': 152, 'low_f10.7': 122, 'high_f10.7': 182 },

@@ -1,5 +1,5 @@
 // engine/interlocks/__tests__/rework.test.ts
-// Rework triggers — per PLAN.md task 1.16 and CLAUDE.md section 4 interlock 6.
+// Rework triggers, per PLAN.md task 1.16 and CLAUDE.md section 4 interlock 6.
 // A frequency change forces IARU re-coordination.
 // An orbit above ~600 km forces a propulsion/drag decision.
 // A launch slip recomputes every clock.
@@ -25,7 +25,7 @@ const BASE_INPUT: MissionInput = {
   ballisticCoefficient: 50,
 };
 
-describe('rework trigger — frequency change', () => {
+describe('rework trigger, frequency change', () => {
   it('frequency change returns iaru-request and iaru-letter as nodes requiring rework', () => {
     const nodes = getFrequencyChangeReworkNodes();
     expect(nodes).toContain('iaru-request');
@@ -47,7 +47,7 @@ describe('rework trigger — frequency change', () => {
   });
 });
 
-describe('rework trigger — orbit above 600 km', () => {
+describe('rework trigger, orbit above 600 km', () => {
   it('orbit at 550 km does NOT trigger the propulsion/drag rework', () => {
     const result = getOrbitReworkNodes(550);
     expect(result.requiresPropulsionReview).toBe(false);
@@ -58,8 +58,8 @@ describe('rework trigger — orbit above 600 km', () => {
     expect(result.requiresPropulsionReview).toBe(true);
   });
 
-  it('orbit at 600 km is on the boundary — treated as requiring review', () => {
-    // The rule is "above roughly 600 km" — at exactly 600 we are conservative
+  it('orbit at 600 km is on the boundary, treated as requiring review', () => {
+    // The rule is "above roughly 600 km", at exactly 600 we are conservative
     const result = getOrbitReworkNodes(600);
     expect(result.requiresPropulsionReview).toBe(true);
   });
@@ -72,13 +72,13 @@ describe('rework trigger — orbit above 600 km', () => {
   });
 });
 
-describe('rework trigger — launch slip', () => {
+describe('rework trigger, launch slip', () => {
   it('a later deliveryDate shifts all critical path dates forward', () => {
     const { nodes: original } = buildGraph(BASE_INPUT);
     const slipped: MissionInput = { ...BASE_INPUT, deliveryDate: '2027-02-01' };
     const { nodes: shifted } = buildGraph(slipped);
 
-    // Both graphs build successfully — the clock recompute is verified by
+    // Both graphs build successfully, the clock recompute is verified by
     // computeCriticalPath which is integration-tested in critical-path.test.ts
     // Here we just confirm the graph itself builds with the new date
     expect(shifted.has('delivery')).toBe(true);

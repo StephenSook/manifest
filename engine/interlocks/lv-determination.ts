@@ -8,7 +8,7 @@
 // Both clocks must be satisfied. The binding deadline is whichever fires earlier.
 // Entering an LV determination date opens the window and sets both deadlines.
 //
-// Authority: 47 CFR 97.207(g) — VERIFY paragraph path against eCFR snapshot (task 1.1)
+// Authority: 47 CFR 97.207(g), VERIFY paragraph path against eCFR snapshot (task 1.1)
 
 export interface LvDeterminationDeadlines {
   /** 30 days after LV determination (Clock A). Null if lvDeterminationDate is null. */

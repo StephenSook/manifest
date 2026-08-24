@@ -44,7 +44,7 @@ Re-run 2026-08-24 searched those paths for the claim list below.
 
 ## .env.example
 
-File is still absent. Task 1.18 is Khadim. Audit result: plan-tier secret names still live only in PLAN.md and TYLIN_TASKS.md. When .env.example lands it must list placeholder keys only (WATSONX_API_KEY, WATSONX_PROJECT_ID, WATSONX_REGION, BLOB_READ_WRITE_TOKEN) with no values. No VAPID (2.11 cut).
+File present. Placeholder keys only, empty values: WATSONX_API_KEY, WATSONX_PROJECT_ID, WATSONX_REGION, BLOB_READ_WRITE_TOKEN. No VAPID (2.11 cut). MANIFEST_DEPLOY_URL is documented as a GitHub Actions variable, not an app secret. Vercel and GitHub secret provisioning is still Khadim 1.18.
 
 ## Honesty line for README
 

@@ -1,4 +1,4 @@
-# Rules — Plan Mode
+# Rules, Plan Mode
 
 Rules applied when Bob is in Plan mode. These supplement the root AGENTS.md.
 

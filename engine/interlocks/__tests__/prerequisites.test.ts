@@ -1,5 +1,5 @@
 // engine/interlocks/__tests__/prerequisites.test.ts
-// Interlocks 4 and 5 — plain graph edge prerequisites.
+// Interlocks 4 and 5, plain graph edge prerequisites.
 // Interlock 4: IARU coordination letter precedes Part 97 pathway
 // Interlock 5: ITU API filing precedes FCC grant
 // Per PLAN.md task 1.16 and CLAUDE.md section 4 interlocks 3-5.
@@ -21,7 +21,7 @@ const BASE_INPUT: MissionInput = {
   ballisticCoefficient: 50,
 };
 
-describe('interlock 4 — IARU letter precedes Part 97 pathway', () => {
+describe('interlock 4, IARU letter precedes Part 97 pathway', () => {
   it('iaru-letter -> fcc-application-prepared edge exists for Part 97', () => {
     const { edges } = buildGraph({ ...BASE_INPUT, pathway: 'part-97-amateur' });
     const edge = edges.find(
@@ -44,7 +44,7 @@ describe('interlock 4 — IARU letter precedes Part 97 pathway', () => {
   });
 });
 
-describe('interlock 5 — ITU API filing precedes FCC grant', () => {
+describe('interlock 5, ITU API filing precedes FCC grant', () => {
   it('itu-api-published -> fcc-application-prepared edge exists', () => {
     const { edges } = buildGraph(BASE_INPUT);
     const edge = edges.find(
@@ -71,7 +71,7 @@ describe('interlock 5 — ITU API filing precedes FCC grant', () => {
   });
 });
 
-describe('interlock 6 — delivery is the terminal wall', () => {
+describe('interlock 6, delivery is the terminal wall', () => {
   it('fcc-grant -> delivery edge exists', () => {
     const { edges } = buildGraph(BASE_INPUT);
     const edge = edges.find(

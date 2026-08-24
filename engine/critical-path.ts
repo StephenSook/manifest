@@ -1,6 +1,6 @@
 // engine/critical-path.ts
 // Backward critical path computation from a fixed terminal delivery date.
-// Pure TypeScript — no network, no infrastructure, runs in the browser.
+// Pure TypeScript, no network, no infrastructure, runs in the browser.
 
 import type { GraphNode, GraphEdge, CriticalPathResult, Verdict } from './types';
 
@@ -172,7 +172,7 @@ export function computeCriticalPath(
   const nodeIds = Array.from(nodes.keys());
   const sorted = topologicalSort(nodeIds, edges);
 
-  // Identify the terminal node — the one with no outgoing edges
+  // Identify the terminal node, the one with no outgoing edges
   const hasOutgoing = new Set(edges.map((e) => e.from));
   const terminalCandidates = nodeIds.filter((id) => !hasOutgoing.has(id));
   if (terminalCandidates.length !== 1) {

@@ -1,5 +1,5 @@
 // engine/regime.ts
-// Dual-regime layer — Part 25 to Part 100 transition flag.
+// Dual-regime layer, Part 25 to Part 100 transition flag.
 // Per PLAN.md task 2.15 and Decision D3.
 //
 // The regime switch is ONE config flag keyed to a future FCC Space Bureau
@@ -16,10 +16,10 @@ import { REGIME_FLAG } from './types';
 
 /**
  * Badge text shown on every Part 25 node when Part 100 is not yet active.
- * Khadim renders this string — do not add markup here.
+ * Khadim renders this string, do not add markup here.
  */
 export const PART_25_PENDING_BADGE =
-  'Part 25 (Part 100 pending — not yet effective)';
+  'Part 25 (Part 100 pending, not yet effective)';
 
 /**
  * Badge text shown on Part 25 nodes after Part 100 is activated.
@@ -35,7 +35,7 @@ export const PART_100_ACTIVE_BADGE = 'Part 100';
  *
  * The node's pendingPart100 field is set at graph-build time when Part 25
  * governs. After Part 100 activates (flag flips), pendingPart100 becomes false
- * on newly-built nodes — but getRegimeBadge is called on the live node map
+ * on newly-built nodes, but getRegimeBadge is called on the live node map
  * which was built before the flip. The flag is the source of truth at render time.
  */
 export function getRegimeBadge(node: GraphNode): string | null {
@@ -57,9 +57,9 @@ export function applyRegimeFlag(
 ): Map<string, GraphNode> {
   const result = new Map<string, GraphNode>();
   for (const [id, node] of nodes) {
-    result.set(id, { ...node }); // copy only — regime flag read at render time
+    result.set(id, { ...node }); // copy only, regime flag read at render time
   }
-  // The flag is on REGIME_FLAG (singleton) — Khadim reads getRegimeBadge(node)
+  // The flag is on REGIME_FLAG (singleton), Khadim reads getRegimeBadge(node)
   // We return a shallow copy so callers get a stable reference
   REGIME_FLAG.part100Active = part100Active;
   return result;

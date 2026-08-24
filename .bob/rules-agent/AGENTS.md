@@ -1,4 +1,4 @@
-# Rules — Agent Mode
+# Rules, Agent Mode
 
 Rules applied when Bob is in Agent (Code) mode. These supplement the root AGENTS.md.
 
@@ -45,6 +45,6 @@ Examples:
 - `feat(engine): fire 97.207(g) dual clock on LV date entry`
 - `test(engine): add diamond fixture for critical-path algorithm`
 - `feat(solar): live F10.7 fetch and NOAA predicted-flux envelope`
-- `status: [1.7] done — engine core and critical path green`
+- `status: [1.7] done, engine core and critical path green`
 
 Never use em-dashes in commit messages.

@@ -1,4 +1,4 @@
-# Rules — Ask Mode
+# Rules, Ask Mode
 
 Rules applied when Bob is in Ask mode. These supplement the root AGENTS.md.
 

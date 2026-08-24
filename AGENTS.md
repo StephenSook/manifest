@@ -1,4 +1,4 @@
-# AGENTS.md — Manifest
+# AGENTS.md, Manifest
 
 Operating rules for any AI agent (Bob, Claude CLI, Codex, or other) working in this repository.
 

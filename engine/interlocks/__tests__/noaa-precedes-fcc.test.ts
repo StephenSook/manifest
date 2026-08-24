@@ -1,7 +1,7 @@
 // engine/interlocks/__tests__/noaa-precedes-fcc.test.ts
 // Interlock 2: if the mission images Earth, the NOAA CRSRA license node
 // becomes a hard prerequisite of FCC grant.
-// Test first — per PLAN.md task 1.9 and CLAUDE.md section 4 interlock 2.
+// Test first, per PLAN.md task 1.9 and CLAUDE.md section 4 interlock 2.
 
 import { describe, it, expect } from 'vitest';
 import { buildGraph } from '../../graph';
@@ -20,7 +20,7 @@ const BASE_INPUT: MissionInput = {
   ballisticCoefficient: 50,
 };
 
-describe('interlock 2 — FCC waits for NOAA (imaging missions)', () => {
+describe('interlock 2, FCC waits for NOAA (imaging missions)', () => {
   it('NOAA nodes are ABSENT when imagingEarth is false', () => {
     const { nodes, edges } = buildGraph({ ...BASE_INPUT, imagingEarth: false });
 

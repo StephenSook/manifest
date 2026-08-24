@@ -1,6 +1,6 @@
 customModes:
   # ---------------------------------------------------------------------------
-  # corpus-engineer — Tylin's lane
+  # corpus-engineer, Tylin's lane
   # Corpus pipeline, API ask/push routes, all pipeline except Stephen's 3 files
   # ---------------------------------------------------------------------------
   - slug: corpus-engineer
@@ -40,7 +40,7 @@ customModes:
       - mcp
 
   # ---------------------------------------------------------------------------
-  # regulatory-engine — Stephen's primary lane
+  # regulatory-engine, Stephen's primary lane
   # Engine, eval, services/solar, data, scripts, app/api/status and /solar,
   # tests (not e2e), pipeline/decay.py + surya_infer.py + tests/test_decay.py
   # ---------------------------------------------------------------------------
@@ -88,7 +88,7 @@ customModes:
       - mcp
 
   # ---------------------------------------------------------------------------
-  # mobile-shell — Stephen's mobile lane
+  # mobile-shell, Stephen's mobile lane
   # Capacitor 8 variant: mobile/, android/, ios/, capacitor.config.ts,
   # next.config.mobile.ts
   # ---------------------------------------------------------------------------
@@ -134,7 +134,7 @@ customModes:
       - mcp
 
   # ---------------------------------------------------------------------------
-  # frontend — Khadim's lane
+  # frontend, Khadim's lane
   # app/ (except api/), components/, lib/, public/, sw.ts, tests/e2e/
   # ---------------------------------------------------------------------------
   - slug: frontend
@@ -168,7 +168,7 @@ customModes:
       comments; (2) all regulatory statements come from citation props, never
       hardcoded; (3) client components only for React Flow, vis-timeline, and
       any chart containers (SSR sizing gotcha); (4) abstention is a feature not
-      an error; (5) dense regulatory instrument aesthetic — no gradient-and-glass
+      an error; (5) dense regulatory instrument aesthetic, no gradient-and-glass
       landing page energy.
     groups:
       - read
@@ -178,7 +178,7 @@ customModes:
       - mcp
 
   # ---------------------------------------------------------------------------
-  # evidence-writer — any team member
+  # evidence-writer, any team member
   # docs/ and README.md only (anchored so it cannot match docs-anything)
   # ---------------------------------------------------------------------------
   - slug: evidence-writer
@@ -205,7 +205,7 @@ customModes:
       fileRegex write scope:
       ^docs/|^README\.md$
       Hard rules: (1) no em-dashes anywhere; (2) every number comes from
-      docs/FACTS.json — run scripts/facts.py first if the file does not exist;
+      docs/FACTS.json, run scripts/facts.py first if the file does not exist;
       (3) the architecture section describes only what /api/status self-reports,
       never a code path that is not running; (4) no PII in any file under docs/
       (no names, emails, or institutions without explicit per-surface consent);

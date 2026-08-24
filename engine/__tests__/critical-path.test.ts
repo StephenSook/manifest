@@ -1,5 +1,5 @@
 // engine/__tests__/critical-path.test.ts
-// Diamond fixture test — hand-computed values asserted BEFORE the 12 real nodes.
+// Diamond fixture test, hand-computed values asserted BEFORE the 12 real nodes.
 // The algorithm produces the headline number, so this is the one thing that
 // cannot be untested. Per PLAN.md task 1.7.
 
@@ -44,18 +44,18 @@ function makeNode(id: string, durationDays: number): GraphNode {
 //
 // Forward pass (earliest start):
 //   A: day 0  (2026-01-01)
-//   B: day 10 (2026-01-11)  — after A finishes
-//   C: day 10 (2026-01-11)  — after A finishes
-//   D: day 30 (2026-01-31)  — after B finishes (B takes 20 days, so B done at day 30)
-//              NOTE: C finishes at day 15, B finishes at day 30 — D waits for B
+//   B: day 10 (2026-01-11) , after A finishes
+//   C: day 10 (2026-01-11) , after A finishes
+//   D: day 30 (2026-01-31) , after B finishes (B takes 20 days, so B done at day 30)
+//              NOTE: C finishes at day 15, B finishes at day 30, D waits for B
 //
 // Backward pass (latest start, working back from deliveryDate day 59):
-//   D: day 49 (2026-02-19)  — 59 - 10 = day 49
-//   B: day 29 (2026-01-30)  — 49 - 20 = day 29
-//   C: day 44 (2026-02-14)  — 49 - 5  = day 44
-//   A: day  9 (2026-01-10)  — min(29, 44) - 10 = 19; wait — backward: LS_A = min(LS_B, LS_C) - duration_A
-//              LS_B = day 29, LS_C = day 44 — min is day 29 — so LS_A = day 29 - 10 = day 19
-//              Hmm — let me recount from calendar dates:
+//   D: day 49 (2026-02-19) , 59 - 10 = day 49
+//   B: day 29 (2026-01-30) , 49 - 20 = day 29
+//   C: day 44 (2026-02-14) , 49 - 5  = day 44
+//   A: day  9 (2026-01-10) , min(29, 44) - 10 = 19; wait, backward: LS_A = min(LS_B, LS_C) - duration_A
+//              LS_B = day 29, LS_C = day 44, min is day 29, so LS_A = day 29 - 10 = day 19
+//              Hmm, let me recount from calendar dates:
 //
 // Re-doing with exact calendar dates (UTC):
 //   projectStart  = 2026-01-01
@@ -79,7 +79,7 @@ function makeNode(id: string, durationDays: number): GraphNode {
 //   C: LS_C - ES_C = day 44 - day 10 = 34 days   <-- OFF the critical path
 //   D: LS_D - ES_D = day 49 - day 30 = 19 days
 //
-// Critical path: A -> B -> D  (all have float 19 — but that means none have float 0!)
+// Critical path: A -> B -> D  (all have float 19, but that means none have float 0!)
 // The terminal node's float = LS_D - ES_D = 49 - 30 = 19.
 //
 // KEY INSIGHT: float is measured relative to a delivery date that has slack built in.
@@ -107,7 +107,7 @@ function makeNode(id: string, durationDays: number): GraphNode {
 // Now:
 //   A: float = 0   (critical)
 //   B: float = 0   (critical)
-//   C: float = 15  (NOT critical — 15 days of slack)
+//   C: float = 15  (NOT critical, 15 days of slack)
 //   D: float = 0   (critical, terminal)
 //
 // Critical path: A -> B -> D
@@ -118,7 +118,7 @@ function makeNode(id: string, durationDays: number): GraphNode {
 const PROJECT_START = '2026-01-01';
 const DELIVERY_DATE = '2026-02-10'; // Exactly tight: D finishes on this date
 
-describe('critical-path — diamond fixture (hand-computed)', () => {
+describe('critical-path, diamond fixture (hand-computed)', () => {
   const nodes = new Map<string, GraphNode>([
     ['A', makeNode('A', 10)],
     ['B', makeNode('B', 20)],
@@ -190,10 +190,10 @@ describe('critical-path — diamond fixture (hand-computed)', () => {
 // Violated schedule fixture
 // Same diamond but deliveryDate is 10 days BEFORE D can finish.
 // D's ES is day 30, duration 10, so it needs until day 40.
-// Set deliveryDate = day 35 (2026-02-05) — 5 days short.
+// Set deliveryDate = day 35 (2026-02-05), 5 days short.
 // ---------------------------------------------------------------------------
 
-describe('critical-path — violated schedule fixture', () => {
+describe('critical-path, violated schedule fixture', () => {
   const nodes = new Map<string, GraphNode>([
     ['A', makeNode('A', 10)],
     ['B', makeNode('B', 20)],
@@ -230,7 +230,7 @@ describe('critical-path — violated schedule fixture', () => {
 // Cycle detection
 // ---------------------------------------------------------------------------
 
-describe('critical-path — cycle detection', () => {
+describe('critical-path, cycle detection', () => {
   it('throws on a cyclic graph', () => {
     const nodes = new Map<string, GraphNode>([
       ['X', makeNode('X', 5)],

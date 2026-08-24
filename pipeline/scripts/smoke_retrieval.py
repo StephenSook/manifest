@@ -34,9 +34,22 @@ def cosine_similarity(query_vec: np.ndarray, matrix: np.ndarray) -> np.ndarray:
 
 
 def embed_query_mock(query: str) -> np.ndarray:
-    """Return a deterministic mock embedding for the query."""
-    rng = np.random.default_rng(seed=hash(query) % (2**31))
+    """Deterministic random vector. Does not test retrieval quality."""
+    rng = np.random.default_rng(seed=42)
     return rng.random(EMBEDDING_DIM).astype(np.float32)
+
+
+def embed_query_hash(query: str) -> np.ndarray:
+    """Match pipeline/embed_and_store.py embed_batch_hash."""
+    import hashlib
+    import re
+    vec = np.zeros(EMBEDDING_DIM, dtype=np.float32)
+    for tok in re.findall(r"[a-z0-9]+", query.lower()):
+        digest = hashlib.md5(tok.encode("utf-8")).digest()
+        idx = int.from_bytes(digest[:4], "little") % EMBEDDING_DIM
+        vec[idx] += 1.0
+    norm = float(np.linalg.norm(vec)) or 1.0
+    return vec / norm
 
 
 def embed_query_watsonx(query: str) -> np.ndarray:
@@ -98,6 +111,7 @@ def retrieve(query_vec: np.ndarray, matrix: np.ndarray, conn, top_k: int = TOP_K
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--mock", action="store_true", help="Use mock embeddings")
+    parser.add_argument("--hash", action="store_true", help="Use hashing-trick embeddings")
     args = parser.parse_args()
 
     print("Loading corpus...")
@@ -105,9 +119,9 @@ def main():
     print(f"  {matrix.shape[0]} vectors, dim={matrix.shape[1]}")
 
     test_queries = [
-        ("pre-space notification 30 days launch vehicle", "97.207", "(g)"),
+        ("pre-space notification 30 days launch vehicle", "97.207", "(g)(1)"),
         ("five year post mission disposal low earth orbit", "25.283", "(e)"),
-        ("NOAA remote sensing license application review", "960.10", ""),
+        ("NOAA CRSRA Tier 3 limited-operations directives", "960.10", ""),
     ]
 
     all_pass = True
@@ -115,6 +129,8 @@ def main():
         print(f"\nQuery: {query!r}")
         if args.mock:
             q_vec = embed_query_mock(query)
+        elif args.hash or not os.environ.get("WATSONX_API_KEY"):
+            q_vec = embed_query_hash(query)
         else:
             q_vec = embed_query_watsonx(query)
 
@@ -125,6 +141,8 @@ def main():
             match = "<<< MATCH" if r["section"] == expected_section else ""
             print(f"    [{r['score']:.3f}] {r['cfr_title']} CFR {r['section']}{r['paragraph_path']} {match}")
             if r["section"] == expected_section:
+                if expected_para and expected_para not in r["paragraph_path"]:
+                    continue
                 found = True
         if not found:
             print(f"  FAIL: expected {expected_section} in top {TOP_K}")

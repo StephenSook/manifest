@@ -2,13 +2,13 @@
   "dim": 768,
   "count": 3524,
   "model": "hashing-trick-768",
-  "generatedAt": "2026-08-25T01:49:42.444212+00:00",
+  "generatedAt": "2026-08-25T14:22:52.271614+00:00",
   "amddate_range": {
     "min": "2017-08-01",
     "max": "2026-08-18"
   },
-  "deployment": "vercel-blob",
-  "q6_decision": "build in CI, store in Vercel Blob, route handler fetches on cold start",
+  "deployment": "committed-freeze",
+  "q6_decision": "hashing-trick freeze committed; /api/ask reads local files, Blob is optional overlay",
   "bucketIdf": [
     2.983487,
     1.490699,

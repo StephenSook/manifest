@@ -39,15 +39,24 @@ def embed_query_mock(query: str) -> np.ndarray:
     return rng.random(EMBEDDING_DIM).astype(np.float32)
 
 
-def embed_query_hash(query: str) -> np.ndarray:
-    """Match pipeline/embed_and_store.py embed_batch_hash."""
+def embed_query_hash(query: str, bucket_idf: list[float] | None = None) -> np.ndarray:
+    """Match pipeline/embed_and_store.py embed_hash_idf (unigrams, bigrams, IDF)."""
     import hashlib
+    import json
     import re
     vec = np.zeros(EMBEDDING_DIM, dtype=np.float32)
-    for tok in re.findall(r"[a-z0-9]+", query.lower()):
+    toks = re.findall(r"[a-z0-9]+", query.lower())
+    grams = toks + [f"{toks[i]}_{toks[i + 1]}" for i in range(len(toks) - 1)]
+    for tok in grams:
         digest = hashlib.md5(tok.encode("utf-8")).digest()
         idx = int.from_bytes(digest[:4], "little") % EMBEDDING_DIM
         vec[idx] += 1.0
+    weights = bucket_idf
+    if weights is None:
+        schema = json.loads((CORPUS_DIR / "schema.json").read_text(encoding="utf-8"))
+        weights = schema.get("bucketIdf")
+    if weights:
+        vec *= np.array(weights, dtype=np.float32)
     norm = float(np.linalg.norm(vec)) or 1.0
     return vec / norm
 

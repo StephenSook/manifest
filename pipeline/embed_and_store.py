@@ -7,9 +7,10 @@ the watsonx SDK, then write:
   corpus/vectors.f32      - raw little-endian Float32Array (dim x N)
   corpus/schema.json      - dimensions, count, model, amddate_range
 
-Q6 decision: artifacts are NOT committed to git. They are uploaded to
-Vercel Blob by the corpus-build CI workflow (.github/workflows/corpus-build.yml).
-The route handler fetches from Blob on cold start and caches in memory.
+The hashing-trick freeze (manifest.sqlite + vectors.f32 + schema.json) is
+committed so Vercel packs it into /api/ask. corpus-build.yml can still
+upload a later Granite re-embed to Vercel Blob; the route tries local
+files first and falls back to Blob.
 
 Usage (requires WATSONX_API_KEY, WATSONX_PROJECT_ID, WATSONX_REGION):
   uv run --python 3.12 --project pipeline python pipeline/embed_and_store.py
@@ -199,8 +200,8 @@ def write_schema(chunks: list[dict], n: int, model_name: str, output_path: Path,
             "min": amdates[0] if amdates else "",
             "max": amdates[-1] if amdates else "",
         },
-        "deployment": "vercel-blob",
-        "q6_decision": "build in CI, store in Vercel Blob, route handler fetches on cold start",
+        "deployment": "committed-freeze",
+        "q6_decision": "hashing-trick freeze committed; /api/ask reads local files, Blob is optional overlay",
     }
     if bucket_idf is not None:
         # Query-side hashEmbed must apply these same per-bucket weights.
@@ -298,7 +299,8 @@ def main() -> None:
     print(f"  SQLite: {sqlite_path}")
     print(f"  vectors.f32: {vec_path}")
     print(f"  schema.json: {schema_path}")
-    print("\nNext: run the corpus-build CI workflow to upload to Vercel Blob.")
+    print("\nCommit corpus/manifest.sqlite, corpus/vectors.f32, and corpus/schema.json.")
+    print("Optional: run corpus-build.yml to upload a Blob overlay.")
 
 
 if __name__ == "__main__":

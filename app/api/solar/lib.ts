@@ -129,10 +129,11 @@ export function parseNoaaPredicted(
     const lo = strictNumber(e['low_f10.7']);
     const hi = strictNumber(e['high_f10.7']);
     if (p === null || lo === null || hi === null) return false;
-    // NOAA publishes low and high as quantiles around the prediction. A row
-    // that violates that ordering is not a reading we understand, so it is
-    // not one we republish.
-    return lo <= hi;
+    // NOAA publishes low and high as quantiles AROUND the prediction, which
+    // is what the disclosure tells a reader. Checking only lo <= hi let a row
+    // through whose prediction sat outside its own bounds, and it shipped as
+    // live NOAA data. Enforce the ordering actually advertised.
+    return lo <= p && p <= hi;
   });
 
   return {
@@ -152,14 +153,24 @@ export function parseNoaaPredicted(
  * of which `Number()` would silently turn into 0 or NaN.
  */
 export function strictNumber(value: unknown): number | null {
-  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
-  if (typeof value === 'string') {
-    const trimmed = value.trim();
-    if (trimmed === '') return null;
-    const parsed = Number(trimmed);
-    return Number.isFinite(parsed) ? parsed : null;
-  }
-  return null;
+  const n = (() => {
+    if (typeof value === 'number') return value;
+    if (typeof value !== 'string') return null;
+    const t = value.trim();
+    // An explicit decimal grammar. `Number()` parses 0x10, 0b10 and 0o10 into
+    // integers, so a hexadecimal payload could have been published as a flux
+    // reading. Optional exponent is allowed because NOAA products use it.
+    if (!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(t)) return null;
+    return Number(t);
+  })();
+
+  if (n === null || !Number.isFinite(n)) return null;
+  // F10.7 is a solar radio flux in solar flux units. It is strictly positive.
+  // A negative or zero value is not a measurement, it is a parse accident or
+  // a sentinel, and publishing one beside solar_source NOAA_SWPC_LIVE would
+  // be exactly the fabricated reading this endpoint refuses.
+  if (n <= 0) return null;
+  return n;
 }
 
 /**

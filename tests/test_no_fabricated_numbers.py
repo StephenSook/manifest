@@ -61,6 +61,99 @@ def status_route_text() -> str:
 
 
 # ---------------------------------------------------------------------------
+# Claim extractors, shared by the guards below.
+#
+# These exist as named functions rather than inline regexes because Codex
+# round 2 found the inline version had been narrowed until it matched NOTHING
+# in the README, and a pattern that matches nothing passes vacuously. Tests in
+# Test 7 assert these extractors fire on the EXACT sentences the docs use.
+# ---------------------------------------------------------------------------
+
+def _prose(text: str) -> str:
+    """Strip link targets, code fences and inline code.
+
+    A shields.io badge URL contains `tests-154%20passing`, where the encoded
+    space makes `154%` read as a percentage. Prose is what is being audited.
+    """
+    t = re.sub(r'\]\([^)]*\)', '](link)', text)
+    t = re.sub(r'```.*?```', '', t, flags=re.S)
+    t = re.sub(r'`[^`]*`', '', t)
+    return t
+
+
+# A count claim: a number, then up to a few intervening words naming the
+# suite, then the word test or tests. The intervening span deliberately
+# excludes sentence punctuation so a count cannot bind across sentences.
+_COUNT_RE = re.compile(
+    r'(?<![\w.])(\d{1,4})\s+(?:\*\*\s*)?((?:[A-Za-z/-]+\s+){0,4}?)tests?\b',
+    re.IGNORECASE,
+)
+
+
+def find_test_count_claims(text: str):
+    """Return [(value, suite)] for every "<n> ... tests" claim in the text.
+
+    suite is 'engine', 'ask', 'total' or None when the context does not say.
+    Binding the value to a suite matters: 73 and 81 are both real measured
+    numbers, so accepting any measured value regardless of context would let
+    "73 engine and mobile tests" pass while being false.
+    """
+    out = []
+    prose = _prose(text)
+    for m in _COUNT_RE.finditer(prose):
+        value = int(m.group(1))
+        window = prose[max(0, m.start() - 90): m.end() + 60].lower()
+        if 'ask' in window or 'ask-route' in window or 'ask route' in window:
+            suite = 'ask'
+        elif 'engine' in window or 'mobile' in window:
+            suite = 'engine'
+        elif 'total' in window or 'both suites' in window or 'in total' in window:
+            suite = 'total'
+        else:
+            suite = None
+        out.append((value, suite))
+    return out
+
+
+# The aspirational bar is identified SYNTACTICALLY, by the words immediately
+# following the number, not by a wide context window. A wide window was wrong:
+# in "the eval scores 53.6 percent, not the 90 percent bar", the word measured
+# appears near BOTH numbers, so a window-based rule either lets a false 90
+# through or flags the legitimate bar.
+_BAR_SUFFIX = re.compile(
+    r'^\s*(?:percent|%)?\s*(?:submission\s+)?(?:bar|target|threshold)\b',
+    re.IGNORECASE,
+)
+
+
+def eval_score_claims(text: str):
+    """Return percentages asserted as the MEASURED eval score.
+
+    The 90 percent submission bar is legitimately quoted in these docs and is
+    not today's score. Allowlisting the VALUE alone was wrong: it let
+    "Current eval score is 90 percent" pass. 90 is exempt only when the words
+    immediately after it name it as a bar, target or threshold.
+    """
+    offenders = []
+    prose = _prose(text)
+    for m in re.finditer(r'(\d{1,3}(?:\.\d+)?)\s*(?:percent|%)', prose):
+        value = float(m.group(1))
+        window = prose[max(0, m.start() - 90): m.end() + 90].lower()
+        if not any(w in window for w in ('eval', 'score', 'trap', 'abstention')):
+            continue
+        # Look only at what immediately follows the percentage.
+        if _BAR_SUFFIX.match(prose[m.end(): m.end() + 40]):
+            continue
+        offenders.append(value)
+    return offenders
+
+
+def judge_md_text() -> str:
+    with open(JUDGE_MD) as f:
+        return f.read()
+
+
+# ---------------------------------------------------------------------------
 # Test 1: FACTS.json exists and has the required keys
 # ---------------------------------------------------------------------------
 
@@ -284,11 +377,6 @@ class TestModelInventoryConsistency:
 # does, could never have caught a wrong number in the README.
 # ---------------------------------------------------------------------------
 
-def judge_md_text() -> str:
-    with open(JUDGE_MD) as f:
-        return f.read()
-
-
 class TestJudgeFacingCountsMatchFacts:
     """Every test count quoted to a judge must equal the measured count."""
 
@@ -304,32 +392,39 @@ class TestJudgeFacingCountsMatchFacts:
         )
 
     @pytest.mark.parametrize("surface", ["README.md", "JUDGE.md"])
-    def test_quoted_engine_test_count_matches_facts(self, surface):
-        """Any "<n> tests" claim must equal one of the measured counts.
+    def test_quoted_test_counts_match_the_measured_suite(self, surface):
+        """Every "<n> ... tests" claim must equal the count for ITS suite.
 
-        The first version of this guard keyed on the number appearing BEFORE
-        the word engine, so an ordinary rephrasing such as "the engine and
-        mobile suite passes 79 tests" slipped straight through. Presentation
-        coupling in an anti-fabrication guard is the guard failing quietly, so
-        this now matches any "<n> test/tests" phrasing and requires it to be
-        one of the three measured counts.
+        Binding to the suite matters. 73 and 81 are both real measured
+        numbers, so accepting any measured value regardless of context would
+        let "73 engine and mobile tests" pass while being false.
         """
         engine = load_facts()["engine"]
-        allowed = {
-            engine["test_count"],
-            engine["ask_route_test_count"],
-            engine["test_count_total"],
+        by_suite = {
+            "engine": engine["test_count"],
+            "ask": engine["ask_route_test_count"],
+            "total": engine["test_count_total"],
         }
+        allowed = set(by_suite.values())
         text = readme_text() if surface == "README.md" else judge_md_text()
 
-        for m in re.finditer(r'(\d+)\s+(?:\*\*\s*)?tests?\b', text, re.IGNORECASE):
-            value = int(m.group(1))
-            assert value in allowed, (
-                f"{surface} quotes {value} tests but the measured counts are "
-                f"{sorted(allowed)}. A count stated to a judge must equal a "
-                f"measured count. Run: python3 scripts/facts.py, then update "
-                f"{surface}."
-            )
+        claims = find_test_count_claims(text)
+        assert claims, (
+            f"{surface} states test counts but the extractor found none. A "
+            "pattern that matches nothing passes vacuously."
+        )
+        for value, suite in claims:
+            if suite in by_suite:
+                assert value == by_suite[suite], (
+                    f"{surface} claims {value} tests for the {suite} suite, "
+                    f"but FACTS.json measured {by_suite[suite]}. Run: "
+                    f"python3 scripts/facts.py, then update {surface}."
+                )
+            else:
+                assert value in allowed, (
+                    f"{surface} claims {value} tests with no suite named, and "
+                    f"{value} is not any measured count {sorted(allowed)}."
+                )
 
     def test_readme_badge_total_matches_facts(self):
         """The README tests badge must equal the measured total."""
@@ -381,45 +476,179 @@ class TestEvalScoreIsPublishedAndConsistent:
 
     @pytest.mark.parametrize("surface", ["README.md", "JUDGE.md"])
     def test_quoted_eval_score_matches_facts(self, surface):
-        """Any percentage quoted as the eval score must equal the measured one."""
-        block = load_facts()["eval"]
-        measured = block["score_pct"]
+        """Any percentage asserted as the measured eval score must match."""
+        measured = load_facts()["eval"]["score_pct"]
         text = readme_text() if surface == "README.md" else judge_md_text()
-
-        # The first version required exactly one decimal place, so an integer
-        # claim such as "the eval score is 54%" was invisible to it. Integers
-        # and any number of decimals are matched now.
-        #
-        # SUBMISSION_BAR is the one other percentage legitimately quoted in
-        # this band: the 90 percent aspirational bar from CLAUDE.md section 5,
-        # which is deliberately NOT today's measured score. It is allowlisted
-        # by value rather than by phrasing, so a typo in the bar still fails.
-        SUBMISSION_BAR = 90.0
-
-        # Scope by PROXIMITY, not by numeric band. A band alone is wrong in
-        # both directions: it fired on "roughly 40% of university CubeSat
-        # missions fail", which is a real sourced statistic about something
-        # else entirely, and it would still have missed an eval claim stated
-        # below the band. A percentage is treated as an eval-score claim only
-        # when the words eval, score or trap appear near it.
-        WINDOW = 90
-
-        # Strip markdown link targets first. A shields.io badge URL contains
-        # `tests-154%20passing`, where the URL-encoded space makes `154%` read
-        # as "154 percent". Prose is the thing being audited here; a URL is
-        # not a claim a judge reads as a number.
-        prose = re.sub(r'\]\([^)]*\)', '](link)', text)
-
-        for m in re.finditer(r'(\d{1,3}(?:\.\d+)?)\s*(?:percent|%)', prose):
-            value = float(m.group(1))
-            context = prose[max(0, m.start() - WINDOW): m.end() + WINDOW].lower()
-            if not any(w in context for w in ('eval', 'score', 'trap', 'abstention')):
-                continue
-            if abs(value - SUBMISSION_BAR) < 0.001:
-                continue
+        for value in eval_score_claims(text):
             assert abs(value - measured) < 0.05, (
-                f"{surface} states {value} percent as an eval score where "
-                f"FACTS.json measured {measured}. If this is a different "
-                f"quantity, it needs its own name and its own source. Run: "
-                f"python3 scripts/facts.py, then update {surface}."
+                f"{surface} states {value} percent as the measured eval score "
+                f"where FACTS.json measured {measured}. If this is a different "
+                f"quantity it needs its own name and its own source."
+            )
+
+
+
+# ---------------------------------------------------------------------------
+# Test 7: the guard must catch the phrasings actually used, not phrasings
+# that happen to suit the regex.
+#
+# Codex round 2 found that the "widened" pattern in Test 6 matched NOTHING in
+# README.md, because it required the number to sit immediately before the word
+# tests while every real claim reads "81 engine and mobile tests". The guard
+# had been passing vacuously: a pattern that matches nothing always passes.
+# That is the same false-green class this file exists to catch, introduced
+# while hardening this file.
+#
+# These fixtures are the EXACT sentences from the shipped docs. If a future
+# edit narrows the pattern again, these fail.
+# ---------------------------------------------------------------------------
+
+REAL_CLAIM_PHRASINGS = [
+    ("| **{n} engine and mobile tests passing** | `npm install`", "engine"),
+    ("| **Technical Execution** | {n} engine and mobile tests passing (`npm run test:engine`).", "engine"),
+    ("The engine and mobile suite passes {n} tests", "engine"),
+    ("Expected: **{n} tests passing**, 0 failures.", "engine"),
+    ("the ask-route suite runs {n} tests", "ask"),
+    ("{n} tests in total across both suites", "total"),
+]
+
+
+class TestGuardActuallyMatchesRealPhrasings:
+    """A guard that matches nothing passes everything. Prove it matches."""
+
+    def test_the_pattern_finds_the_readme_real_claims(self):
+        """The shipped README must produce at least one count match."""
+        found = find_test_count_claims(readme_text())
+        assert found, (
+            "The test-count pattern found NO claims in README.md, but the "
+            "README does state test counts. A pattern that matches nothing "
+            "passes vacuously, which is exactly the failure this file guards "
+            "against."
+        )
+
+    def test_the_pattern_finds_the_judge_md_real_claims(self):
+        found = find_test_count_claims(judge_md_text())
+        assert found, "The test-count pattern found NO claims in JUDGE.md."
+
+    @pytest.mark.parametrize("template,suite", REAL_CLAIM_PHRASINGS)
+    def test_a_wrong_number_in_each_real_phrasing_is_caught(self, template, suite):
+        """Every phrasing actually used in the docs must be detectable."""
+        sentence = template.format(n=999)
+        found = find_test_count_claims(sentence)
+        assert 999 in [v for v, _ in found], (
+            f"A wrong count in this real phrasing slips past the guard: "
+            f"{sentence!r}"
+        )
+
+    def test_a_count_bound_to_the_wrong_suite_is_caught(self):
+        """A real measured value attached to the WRONG suite must still fail.
+
+        Accepting any measured value regardless of context would let a claim
+        like "162 engine and mobile tests" pass, because 162 is a genuine
+        measured number: it is the total across both suites, not the engine
+        count.
+
+        The value is chosen dynamically because a hardcoded one went vacuous
+        the moment two suites happened to measure the same number. A fixture
+        that no longer exercises its case is a test that passes for free.
+        """
+        engine = load_facts()["engine"]
+        candidates = [
+            engine["test_count_total"],
+            engine["ask_route_test_count"],
+        ]
+        wrong = next((c for c in candidates if c != engine["test_count"]), None)
+        assert wrong is not None, (
+            "no measured value differs from the engine count, so this case "
+            "cannot be exercised right now. Do not delete this test: it will "
+            "become meaningful again as soon as the suites diverge."
+        )
+
+        found = find_test_count_claims(f"{wrong} engine and mobile tests passing")
+        assert found, "the claim was not detected at all"
+        value, suite = found[0]
+        assert suite == "engine", "context should resolve to the engine suite"
+        assert value != engine["test_count"], (
+            "fixture is not exercising the mismatch it was written for"
+        )
+
+
+class TestSubmissionBarCannotLaunderAFalseScore:
+    """90 is allowlisted as the aspirational bar, not as a measured result."""
+
+    def test_ninety_stated_as_a_measured_score_is_caught(self):
+        text = "Current eval score is 90 percent on the fixtures."
+        offenders = eval_score_claims(text)
+        assert 90.0 in offenders, (
+            "'Current eval score is 90 percent' passed the guard. The 90 "
+            "allowlist is for the aspirational submission bar, and it must "
+            "not launder a false claim about the measured score."
+        )
+
+    def test_ninety_stated_as_the_bar_is_allowed(self):
+        text = "The 90 percent submission bar applies to the full watsonx pipeline."
+        offenders = eval_score_claims(text)
+        assert 90.0 not in offenders, (
+            "The legitimate aspirational bar was flagged as a false score."
+        )
+
+    def test_the_shipped_docs_are_clean_under_this_rule(self):
+        measured = load_facts()["eval"]["score_pct"]
+        for surface, text in (("README.md", readme_text()), ("JUDGE.md", judge_md_text())):
+            for v in eval_score_claims(text):
+                assert abs(v - measured) < 0.05, (
+                    f"{surface} states {v} percent as a measured eval score; "
+                    f"FACTS.json measured {measured}."
+                )
+
+
+# ---------------------------------------------------------------------------
+# Test 8: the Surya application claim must not come back.
+#
+# The claim that Surya "narrows" the NOAA envelope was cut once and survived
+# in four other places, including data/surya-outlook.json, whose `notes` field
+# app/api/solar serializes verbatim into every response. The live API was
+# returning the false claim inside surya_outlook.notes while its own
+# `disclosure` field denied it, in the same payload.
+#
+# No code applies the activity index to the envelope or to the verdict. Until
+# some code does, no surface may say otherwise. A negation is allowed, because
+# stating plainly that it is NOT applied is the honest form.
+# ---------------------------------------------------------------------------
+
+SURYA_CLAIM_SURFACES = [
+    "README.md", "JUDGE.md",
+    "docs/FACTS.json", "docs/submission.md", "docs/claims-audit.md",
+    "data/surya-outlook.json",
+    ".bob/rules-ask/AGENTS.md", ".bob/rules-agent/AGENTS.md",
+    ".bob/rules-plan/AGENTS.md", ".bob/custom_modes.yaml",
+    "app/api/solar/lib.ts", "app/api/solar/route.ts",
+    "pipeline/surya_infer.py",
+]
+
+_APPLY_VERBS = ("narrow", "adjusts the envelope", "applied to the envelope",
+                "tightens the envelope", "modifies the envelope")
+_NEGATION_CUES = ("not applied", "no code applies", "does not", "is not",
+                  "never", "not adjust", "rather than", "reported for context",
+                  "reported alongside", "reported beside")
+
+
+class TestSuryaIsNotClaimedToBeApplied:
+    """Grep every judge-readable surface for a reinstated application claim."""
+
+    @pytest.mark.parametrize("relpath", SURYA_CLAIM_SURFACES)
+    def test_no_unnegated_surya_application_claim(self, relpath):
+        path = REPO_ROOT / relpath
+        if not path.exists():
+            pytest.skip(f"{relpath} is not present in this tree")
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for sentence in re.split(r'(?<=[.!?])\s+|\n', text):
+            low = sentence.lower()
+            if not any(v in low for v in _APPLY_VERBS):
+                continue
+            assert any(c in low for c in _NEGATION_CUES), (
+                f"{relpath} states that Surya is applied to the NOAA envelope:\n"
+                f"  {sentence.strip()[:200]}\n"
+                "No shipped code does this. Either wire it and prove it with a "
+                "test, or state plainly that it is reported for context."
             )

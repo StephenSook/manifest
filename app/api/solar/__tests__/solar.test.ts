@@ -14,6 +14,7 @@ import {
   parseNoaaPredicted,
   buildSolarPayload,
   readObservedFlux,
+  strictNumber,
   type NoaaPredictedEntry,
   type SuryaOutlook,
 } from '../lib';
@@ -248,5 +249,66 @@ describe('readObservedFlux requires a real timestamp', () => {
   it('refuses a non-finite flux', () => {
     expect(readObservedFlux([{ flux: null, time_tag: 'x' }])).toBeNull();
     expect(readObservedFlux([{ flux: '', time_tag: 'x' }])).toBeNull();
+  });
+});
+
+describe('parseNoaaPredicted enforces the ordering it advertises', () => {
+  // The filter checked only low <= high, so a row where the PREDICTION sits
+  // outside its own quantiles survived and shipped as live NOAA data, while
+  // the disclosure describes low and high as quantiles around the prediction.
+  it('rejects a row whose prediction is above its own high bound', () => {
+    const parsed = parseNoaaPredicted(
+      [{ 'time-tag': '2026-09', 'predicted_f10.7': 200, 'low_f10.7': 100, 'high_f10.7': 150 }],
+      '2026-08',
+    );
+    expect(parsed.months).toEqual([]);
+  });
+
+  it('rejects a row whose prediction is below its own low bound', () => {
+    const parsed = parseNoaaPredicted(
+      [{ 'time-tag': '2026-09', 'predicted_f10.7': 50, 'low_f10.7': 100, 'high_f10.7': 150 }],
+      '2026-08',
+    );
+    expect(parsed.months).toEqual([]);
+  });
+
+  it('keeps a row where low <= predicted <= high', () => {
+    const parsed = parseNoaaPredicted(
+      [{ 'time-tag': '2026-09', 'predicted_f10.7': 133.7, 'low_f10.7': 124.9, 'high_f10.7': 141.1 }],
+      '2026-08',
+    );
+    expect(parsed.months).toEqual(['2026-09']);
+  });
+});
+
+describe('strictNumber refuses values that are not plausible flux readings', () => {
+  // Number.isFinite admits negatives, and Number() happily parses 0x10 and
+  // 0b10 into integers. Either could have been published with
+  // solar_source: NOAA_SWPC_LIVE. F10.7 is a positive radio flux; a negative
+  // or hexadecimal one is not a measurement, it is a parse accident.
+  it('rejects a negative flux', () => {
+    expect(strictNumber(-143)).toBeNull();
+    expect(strictNumber('-143')).toBeNull();
+  });
+
+  it('rejects hexadecimal, binary and octal literal strings', () => {
+    expect(strictNumber('0x10')).toBeNull();
+    expect(strictNumber('0b10')).toBeNull();
+    expect(strictNumber('0o10')).toBeNull();
+  });
+
+  it('rejects Infinity in either form', () => {
+    expect(strictNumber(Infinity)).toBeNull();
+    expect(strictNumber('Infinity')).toBeNull();
+  });
+
+  it('still accepts ordinary decimals and exponent notation', () => {
+    expect(strictNumber(143)).toBe(143);
+    expect(strictNumber('133.7')).toBe(133.7);
+    expect(strictNumber('1.337e2')).toBe(133.7);
+  });
+
+  it('rejects a negative observed flux end to end', () => {
+    expect(readObservedFlux([{ flux: -143, time_tag: '2026-08-25T20:00:00' }])).toBeNull();
   });
 });

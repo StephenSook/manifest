@@ -5,7 +5,7 @@ Surya heliophysics foundation model inference.
 Role in Manifest (per PLAN.md Shared Contracts and Decision D7):
   NOAA's predicted-flux envelope drives the orbital lifetime bounds in
   pipeline/decay.py. Surya supplies a near-term solar activity outlook
-  that narrows the near-term end of that envelope and is shown beside it
+  that is reported beside that envelope for context, not applied to it
   in the deorbit compliance panel (component 2.7) with both sources labelled.
 
   If Surya is absent, the verdict still computes from NOAA alone and the
@@ -488,7 +488,8 @@ def run_surya_inference(
             "~Oct 2014 reference level. This is a scalar proxy for near-term "
             "flare-associated EUV activity, not a calibrated X-ray flux value. "
             "Source: Roy et al. 2025 Surya-1.0, NASA SDO bench, AIA 94A channel. "
-            "Used only to NARROW the near-term end of NOAA predicted-flux envelope; "
+            "REPORTED ALONGSIDE the NOAA predicted-flux envelope for context; "
+            "no code applies this index to the envelope or to the verdict. "
             "the deorbit compliance verdict computes from NOAA alone if this is absent."
         ),
     }

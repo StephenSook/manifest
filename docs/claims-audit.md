@@ -66,3 +66,41 @@ Do not treat this mid-phase pass as the 4.1 audit. After Stephen 3.7 fixes land,
 | watsonx generation, Guardian audit, granite embedding | app/api/ask/route.ts | WIRED IN CODE, NOT CREDENTIALED. The route calls `granite-4-h-small` and `granite-guardian-3-8b` when `WATSONX_API_KEY` and `WATSONX_PROJECT_ID` are present. Neither is set anywhere: `gh secret list` is empty. `/api/status` now returns a `runtime` block naming the backend that actually answered, so configured-versus-running is one unauthenticated request to check. Submission copy states the credential condition explicitly. |
 | Corpus on the deployment | app/api/ask/route.ts loadCorpus, next.config.ts outputFileTracingIncludes, corpus/manifest.sqlite | SUPERSEDED THE SAME DAY by Tylin's `564dc22`. The frozen hashing-trick bundle is now COMMITTED (3.5 MB sqlite, 10.3 MB vectors), `loadCorpus` reads the local files first and treats Blob as an optional overlay, and `next.config.ts` names the three files in `outputFileTracingIncludes` for `/api/ask` because Next's file tracing cannot follow a `process.cwd()` join. The repo claim "the corpus ships with the app" is therefore TRUE again. **Production is a separate question and currently still fails**: at 2026-08-25 10:50 ET `POST /api/ask` returns 503 with `ENOENT ... /var/task/corpus/manifest.sqlite`, which is the pre-fix build still being served. Verify against the live URL after the next deploy before claiming it anywhere. |
 | `corpus_amddate` | app/api/status/route.ts | FIXED 2026-08-25. The endpoint returned the literal `PENDING_CORPUS_FREEZE` on a judge-facing surface while hard rule 1 promises a pinned AMDDATE. It now reads `amddate_range` from the committed freeze at request time and returns the real span (`2017-08-01 to 2026-08-18`). If the corpus is ever absent it returns the NAMED absence `CORPUS_NOT_BUNDLED` rather than a date-shaped placeholder, so a missing corpus cannot read as a verified snapshot. |
+
+## Post-rival-audit pass, 2026-08-25 (Claude, Stephen's lane)
+
+A whole-repo claims pass plus a forensic grading of the live gallery produced a
+checklist of failure modes drawn from other submissions, then ran each one back
+against Manifest. Diff-scoped adversarial review had run fourteen clean rounds
+and was structurally blind to all of this, because every file involved was
+individually correct when it was written. What drifted was the relationship
+between them.
+
+### Refuted and now fixed
+
+| Claim | Was | Verdict | Fix |
+|---|---|---|---|
+| `GET /api/solar` returns `f107_live`, `predicted_envelope`, `surya_outlook` | Printed on `app/judge/page.tsx` step 4 as a judge verify command | **REFUTED.** `git log --all -- 'app/api/solar*'` was EMPTY: the route had never existed in any commit on any branch, and returned 404 | Route BUILT (312060a) with exactly those field names, pinned by test. The claim is now true rather than the sentence edited |
+| Surya artifact "that the demo reads" | `README.md:78` | **REFUTED.** `data/surya-outlook.json` was read by no shipped code; its only TypeScript reference was a comment | Now genuinely read and served by `/api/solar` |
+| Verdict "computed from live NOAA solar flux" | `README.md` in three places | **REFUTED.** `services/solar/fetch.ts` had ZERO importers; the verdict imports a frozen table | README rewritten to describe both accurately: frozen NRLMSISE-00 integration across NOAA's published bounds, live reading served separately at `/api/solar` |
+| `services/solar/fetch.ts` parses NOAA correctly | Unit-tested, green | **REFUTED, and worse than dead.** The predicted product spells the month key `time-tag` with a HYPHEN. The parser read `time_tag`, so `undefined >= "2026-08"` was false for every row and it returned an EMPTY envelope for healthy live data. Its test passed because the fixture was written from the same assumption as the code | Fixed (4960688) with a fixture captured from the live endpoint. The observed product also returns a single-element ARRAY, not an object |
+| "CI asserts the self-report matches the README" | `docs/submission.md:51` and `app/api/status/route.ts` in three places | **REFUTED.** No workflow ran pytest at all. `tests/test_no_fabricated_numbers.py` had NEVER executed in CI | `fabricated-numbers` job added to `eval-gate.yml`, every step bare, presence asserted before a pass is trusted |
+| "79 engine and mobile tests" | `README.md` twice, `JUDGE.md` once | **REFUTED.** Measured 81. The README badge said 128 against a measured 144 | Corrected, and the guard now compares judge-facing surfaces to FACTS rather than only FACTS to the code. Proven by injecting 77 and watching it fail |
+| Eval score "is there" in `docs/FACTS.json` | `app/judge/page.tsx` step 3 | **REFUTED.** The file had no `eval`, `score`, `trap` or `abstention` key | `scripts/facts.py` now runs the bank and writes a real eval block. Claim made true rather than edited |
+| `runtime.corpus_source` | `/api/status` | **REFUTED.** Derived from `BLOB_READ_WRITE_TOKEN` alone, so it answered `not-configured` while the committed freeze was serving | Reports what actually loaded |
+| `.bob/` names the stack | `custom_modes.yaml` | **REFUTED.** Named shadcn/ui (never initialised) and vis-timeline (zero imports), and advertised a cut `/api/push` route in five places | Cut. `.bob/` is judge-read Bob evidence, so a wrong claim here costs more than one in the README |
+| `python eval/runner.py --backend ollama` | `.bob/rules-agent/AGENTS.md` | **REFUTED.** No such flag. The same file documented `python tests/test_no_fabricated_numbers.py`, which has no `__main__` block, so it collects nothing and exits 0. Bob was told to verify our anti-fabrication guard with a command that always passes | Replaced with the commands CI runs |
+| Corpus "stored in Vercel Blob" | `README.md:76` vs `docs/submission.md:83` | **REFUTED.** Two judge-facing files contradicted each other; `corpus/schema.json` sides with submission.md | README corrected |
+| `pip install -r pipeline/requirements.txt` | `README.md` | **REFUTED.** No such file | Replaced with the `uv sync` command |
+| Decay table reproducible in under 3 minutes | `README.md` Judge Quick Access | **REFUTED.** Fails with `ModuleNotFoundError: No module named 'pkg_resources'`; setuptools 81 removed it and `pyatmos` imports it | Documented command now carries the verified `setuptools<81` pin. Permanent fix is a pyproject declaration, which is Tylin's lane, in the handoff |
+
+### Still open, out of Stephen's lane
+
+| Item | Owner | What is needed |
+|---|---|---|
+| `pipeline/pyproject.toml` declares neither `pyatmos` nor a setuptools pin, though `pipeline/decay.py:90` imports pyatmos | **Tylin** | Add `pyatmos==1.2.7` and `setuptools<81`. Verified locally that the pin fixes the import |
+| `.github/workflows/ci.yml` runs no `services/` suite and no pytest job | **Tylin** | The new `eval-gate.yml` job covers pytest; `services/solar` still runs in no CI job |
+| `.bob/skills/noaa-crsra/SKILL.md` points at `engine/interlocks/noaa-precedes-fcc.ts`, which does not exist | **Tylin** | Repoint at `engine/graph.ts:339-342`, where the behaviour actually lives |
+| `package.json` carries four dependencies with zero first-party references: `@tanstack/react-table`, `vis-timeline`, `@playwright/test`, `happy-dom` | **Khadim** | Cut them, or wire them. `docs/THIRD_PARTY_NOTICES.md` lists three as if in use |
+| `docs/bob-evidence/` is missing the plan-mode transcript (1.13) and the Orchestrator transcript (2.22) | **Khadim** | Both are named in the README evidence table, now marked "not yet committed". 2.22 is prize-bearing |
+| `app/judge/page.tsx` step 5 promises an Orchestrator transcript | **Khadim** | Resolves when 2.22 lands. Steps 3 and 4 are now TRUE with no edit needed, because the artifacts they name were built rather than the sentences rewritten |

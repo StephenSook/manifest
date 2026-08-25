@@ -231,10 +231,47 @@ traced into `/api/ask`, so this unblocks on the next production deploy without
 waiting on `BLOB_READ_WRITE_TOKEN`. Blob remains an optional overlay for a later
 Granite re-embed (Khadim 1.18).
 
+**Runbook for BLOCKER 1, because the token is needed in TWO places and only one
+of them is Stephen's.** Checked 2026-08-25: there is no `manifest-web` project in
+Stephen's Vercel account, so the deployment at `manifest-web-roan.vercel.app`
+belongs to Khadim's account, and the Blob store has to be created there.
+
+1. **Khadim, in the Vercel dashboard**: open the project that serves
+   `manifest-web-roan.vercel.app`, go to the **Storage** tab, **Create Database**,
+   choose **Blob**, and connect it to that project. Connecting writes
+   `BLOB_READ_WRITE_TOKEN` into the project's environment variables
+   automatically, which is what the running route reads. Redeploy so the running
+   deployment picks the variable up.
+2. **Khadim, same screen**: copy the token value (Storage, the Blob store,
+   `.env.local` tab, or Project Settings, Environment Variables) and send it to
+   Stephen over a private channel. It is a write credential: never paste it into
+   the repository, an issue, or the plan.
+3. **Stephen, in the repository**: `gh secret set BLOB_READ_WRITE_TOKEN` and paste
+   the value at the prompt, so `corpus-build.yml` can upload.
+4. **Then**: `gh workflow run corpus-build.yml -f hash_embeddings=true`, watch it
+   to completion, and confirm with
+   `curl -s -X POST https://manifest-web-roan.vercel.app/api/ask -H 'content-type: application/json' -d '{"question":"When is the pre-space notification due?"}'`
+   returning 200 with a citation rather than 503.
+5. **Also set the `WATSONX_*` trio** in both places if 0.13 credentials arrive.
+   The status route now reports which backend actually answered, so the upgrade
+   is visible in one request.
+
 **BLOCKER 2, watsonx remains unwired (0.13).** Same missing-secrets root cause. Note
 the Official Rules make **IBM Bob** the core requirement and list watsonx and Granite
 as optional additions, so this costs less than it appears, but it does keep the eval
 at the extractive 53.6 percent ceiling.
+
+**PRIORITY CHANGE for 2.22, from the Official Rules re-read (2026-08-25).** Two of
+the four monthly awards are named for the sponsor's tool: **Best Technical Use of
+IBM Bob** and **Most Innovative Use of IBM Bob**, $750 each, winnable alongside a
+placing prize, and the rules make IBM Bob "the core component of all project
+submissions" while listing watsonx and Granite as optional additions. That makes
+2.22 (the Bobalytics screenshot and the Orchestrator delegation transcript) prize
+-bearing evidence rather than a nice-to-have, and it is the strongest remaining
+lever on the Technical Execution criterion. 3.5, the architecture diagram, sits
+just behind it: at an online-judged event the submission package is the design
+deliverable. Both are Khadim's. `docs/submission.md` now carries a written
+argument for each Bob prize by name.
 
 **A sentinel is live on a judge-facing surface.** `/api/status` currently returns
 `"corpus_amddate": "PENDING_CORPUS_FREEZE"`, and the deorbit panel shows

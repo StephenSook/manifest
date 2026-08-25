@@ -29,6 +29,7 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parent.parent
 FACTS_JSON = REPO_ROOT / "docs" / "FACTS.json"
 README = REPO_ROOT / "README.md"
+JUDGE_MD = REPO_ROOT / "JUDGE.md"
 STATUS_ROUTE = REPO_ROOT / "app" / "api" / "status" / "route.ts"
 DECAY_TABLE = REPO_ROOT / "data" / "decay-table.json"
 
@@ -265,4 +266,129 @@ class TestModelInventoryConsistency:
                     f"FACTS.json declares model {model!r} but it is not in "
                     "app/api/status/route.ts MODEL_INVENTORY. "
                     "Run: python scripts/facts.py after updating the route."
+                )
+
+
+# ---------------------------------------------------------------------------
+# Test 6: judge-facing test counts and eval score match FACTS.json
+#
+# WHY THIS EXISTS. README.md and JUDGE.md both stated "79 engine and mobile
+# tests" while the suite actually ran 81 and docs/FACTS.json correctly said 81.
+# Three judge-readable surfaces, two of them wrong, and nothing caught it,
+# because this file has never executed in CI: no workflow ran pytest at all.
+#
+# A count is a claim. The moment a claim is stated to a judge it needs a guard,
+# and the guard has to compare the judge-facing surface against the measured
+# source of truth, not merely check that the source of truth is internally
+# consistent. Comparing FACTS to the code, which is what the rest of this file
+# does, could never have caught a wrong number in the README.
+# ---------------------------------------------------------------------------
+
+def judge_md_text() -> str:
+    with open(JUDGE_MD) as f:
+        return f.read()
+
+
+class TestJudgeFacingCountsMatchFacts:
+    """Every test count quoted to a judge must equal the measured count."""
+
+    def test_facts_carries_measured_counts(self):
+        engine = load_facts()["engine"]
+        assert isinstance(engine.get("test_count"), int), (
+            "FACTS.json engine.test_count is not a measured integer. "
+            "Run: python3 scripts/facts.py"
+        )
+        assert isinstance(engine.get("test_count_total"), int), (
+            "FACTS.json engine.test_count_total is not a measured integer. "
+            "Run: python3 scripts/facts.py"
+        )
+
+    @pytest.mark.parametrize("surface", ["README.md", "JUDGE.md"])
+    def test_quoted_engine_test_count_matches_facts(self, surface):
+        """A phrase like "81 engine and mobile tests" must equal FACTS."""
+        engine = load_facts()["engine"]
+        measured = engine["test_count"]
+        text = readme_text() if surface == "README.md" else judge_md_text()
+
+        # Any "<n> engine ... test" or "<n> tests passing" phrasing is a claim
+        # about this count and must match it exactly.
+        patterns = [
+            r'(\d+)\s+engine[^.\n]{0,40}?tests?',
+            r'\*\*(\d+)\s+tests?\s+passing\*\*',
+        ]
+        found = []
+        for pat in patterns:
+            found.extend(int(m.group(1)) for m in re.finditer(pat, text, re.IGNORECASE))
+
+        for value in found:
+            assert value == measured, (
+                f"{surface} quotes {value} engine tests but FACTS.json measured "
+                f"{measured}. A count stated to a judge must equal the measured "
+                f"count. Run: python3 scripts/facts.py, then update {surface}."
+            )
+
+    def test_readme_badge_total_matches_facts(self):
+        """The README tests badge must equal the measured total."""
+        total = load_facts()["engine"]["test_count_total"]
+        text = readme_text()
+        for m in re.finditer(r'tests-(\d+)[%-]', text):
+            assert int(m.group(1)) == total, (
+                f"README tests badge says {m.group(1)} but FACTS.json measured "
+                f"{total} in total. Run: python3 scripts/facts.py."
+            )
+
+
+class TestEvalScoreIsPublishedAndConsistent:
+    """The eval block the judge page points at must exist and be measured."""
+
+    def test_facts_has_an_eval_block(self):
+        facts = load_facts()
+        assert "eval" in facts, (
+            "docs/FACTS.json has no eval block, but app/judge/page.tsx step 3 "
+            "tells a judge the eval score and trap results are in this file. "
+            "Run: python3 scripts/facts.py"
+        )
+
+    def test_eval_score_was_actually_measured(self):
+        block = load_facts()["eval"]
+        assert block.get("score_pct") is not None, (
+            "FACTS.json eval.score_pct is a named absence, so the runner did "
+            "not complete. Do not quote a score until it is regenerated."
+        )
+
+    def test_every_bank_row_was_scored(self):
+        """A partial run published as a score is a false green."""
+        block = load_facts()["eval"]
+        bank = REPO_ROOT / "eval" / "bank.jsonl"
+        expected = sum(1 for line in bank.read_text().splitlines() if line.strip())
+        assert block["rows_scored"] == expected, (
+            f"FACTS.json reports {block['rows_scored']} rows scored but the "
+            f"bank holds {expected}. A partial run must never be published as "
+            "a full score."
+        )
+
+    def test_all_abstention_traps_abstained(self):
+        block = load_facts()["eval"]
+        assert block["traps_abstained"] == block["traps_total"], (
+            f"only {block['traps_abstained']} of {block['traps_total']} "
+            "abstention traps abstained. Cite-or-abstain is a hard product "
+            "rule, not a target."
+        )
+
+    @pytest.mark.parametrize("surface", ["README.md", "JUDGE.md"])
+    def test_quoted_eval_score_matches_facts(self, surface):
+        """Any percentage quoted as the eval score must equal the measured one."""
+        block = load_facts()["eval"]
+        measured = block["score_pct"]
+        text = readme_text() if surface == "README.md" else judge_md_text()
+
+        # "53.6 percent" or "53.6%" stated near the word eval or score.
+        for m in re.finditer(r'(\d{1,3}\.\d)\s*(?:percent|%)', text):
+            value = float(m.group(1))
+            # Only values in the plausible eval-score band are claims about it.
+            if 40.0 <= value <= 100.0:
+                assert abs(value - measured) < 0.05, (
+                    f"{surface} quotes {value} percent where FACTS.json measured "
+                    f"{measured}. Run: python3 scripts/facts.py, then update "
+                    f"{surface}."
                 )

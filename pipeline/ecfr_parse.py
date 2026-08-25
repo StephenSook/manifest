@@ -111,6 +111,24 @@ def reconstruct_nested_paths(chunks: list[dict]) -> list[dict]:
     by sibling-continuation of the CFR hierarchy (letter / number / roman / cap).
     Idempotent if paths are already nested.
     """
+    # Idempotency guard: this transform consumes RAW labels, where the
+    # overwhelming majority are single innermost segments. Reconstructed
+    # output is 57 to 70 percent multi-segment. Re-running the transform on
+    # its own output corrupts valid hierarchy, so refuse input that is
+    # already reconstructed and return it unchanged.
+    labeled = [c for c in chunks if c.get("paragraphPath")]
+    if labeled:
+        multi = sum(
+            1 for c in labeled
+            if len(re.findall(r"\(", c["paragraphPath"])) > 1
+        )
+        if multi / len(labeled) > 0.4:
+            print(
+                "  reconstruct_nested_paths: input already reconstructed "
+                f"({multi}/{len(labeled)} multi-segment), returning unchanged"
+            )
+            return chunks
+
     by_section: dict[tuple, list[dict]] = {}
     order: list[tuple] = []
     for c in chunks:
@@ -263,20 +281,18 @@ def main():
 
 
 def repair_committed_chunks() -> None:
-    """Rebuild nested paragraphPath values on already-committed chunk JSON."""
-    output_dir = Path("corpus/chunks")
-    files = [
-        "title47-part5.json",
-        "title47-part25.json",
-        "title47-part97.json",
-        "title15-part960.json",
-    ]
-    for name in files:
-        path = output_dir / name
-        chunks = json.loads(path.read_text(encoding="utf-8"))
-        repaired = reconstruct_nested_paths(chunks)
-        path.write_text(json.dumps(repaired, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        print(f"  repaired {name}: {len(repaired)} chunks")
+    """REFUSED: in-place repair of reconstructed paths loses information.
+
+    Reconstruction consumes RAW innermost labels. Committed chunks carry
+    reconstructed absolute paths; re-running the transform over them
+    corrupts valid hierarchy (Codex round-3: a second pass changed 1,461
+    paths). The only safe repair is regeneration from the raw XML:
+    download to pipeline/raw/ and run this script with no flags.
+    """
+    print("--repair-only is refused: reconstructed paths cannot be safely")
+    print("re-reconstructed in place. Regenerate from pipeline/raw/ECFR-*.xml")
+    print("by running pipeline/ecfr_parse.py with no flags.")
+    sys.exit(2)
 
 
 if __name__ == "__main__":

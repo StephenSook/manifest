@@ -188,3 +188,17 @@ class TestParagraphReconstruction:
         paths = {c["paragraphPath"] for c in chunks if c["section"] == "25.114"}
         for expected in ("(a)(1)", "(b)", "(c)(4)(vi)(C)", "(d)(14)(vii)(D)(1)"):
             assert expected in paths, f"25.114 missing {expected}"
+
+    def test_reconstruction_is_idempotent_on_reconstructed_input(self):
+        """Codex round-3: a second pass over reconstructed chunks must be a
+        no-op (the guard refuses already-reconstructed input)."""
+        import sys as _sys
+        _sys.path.insert(0, str(Path(__file__).parent.parent))
+        from ecfr_parse import reconstruct_nested_paths
+
+        for name in ("title47-part97.json", "title47-part25.json"):
+            chunks = json.loads((CHUNKS_DIR / name).read_text(encoding="utf-8"))
+            again = reconstruct_nested_paths(chunks)
+            assert [c["paragraphPath"] for c in again] == [
+                c["paragraphPath"] for c in chunks
+            ], f"{name}: second reconstruction pass changed paths"

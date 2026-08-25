@@ -181,6 +181,70 @@ export function topK(scores: Float32Array, k: number): number[] {
     .slice(0, k);
 }
 
+export interface CfrReference {
+  section: string;
+  /** Normalized parenthetical path, lowercase, no whitespace: "(a)(41)" */
+  path: string;
+}
+
+/**
+ * Parse every CFR reference in generated text with canonical,
+ * whitespace-tolerant boundaries: "97.3(a)(41)", "97.3 (a)(41)", and
+ * "97.3 (a) (41)" all yield section 97.3 path (a)(41). Digit boundaries
+ * prevent substring collisions (297.31 never yields 97.3).
+ */
+export function parseCfrReferences(answer: string): CfrReference[] {
+  const refs: CfrReference[] = [];
+  const re = /(?<!\d)(\d{1,3}\.\d+)((?:\s*\([a-zA-Z0-9]+\))*)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(answer))) {
+    const segs = (m[2].match(/\(([a-zA-Z0-9]+)\)/g) ?? []).map((s) =>
+      s.toLowerCase().replace(/\s/g, ''),
+    );
+    refs.push({ section: m[1], path: segs.join('') });
+  }
+  return refs;
+}
+
+/**
+ * Resolve generated-answer CFR references to retrieved chunks.
+ * A pathed reference attaches only the chunk with that EXACT section and
+ * paragraph path. A section-only reference attaches that section's
+ * retrieved chunks, but only when the answer contains no pathed reference
+ * to the same section (a pathed answer must earn its exact citation, never
+ * fall back to section-mates). Cite or abstain: an unresolvable answer
+ * returns an empty array and the caller abstains.
+ */
+export function resolveCfrCitations(
+  answer: string,
+  contextChunks: ChunkRow[],
+): ChunkRow[] {
+  const refs = parseCfrReferences(answer);
+  const pathedSections = new Set(
+    refs.filter((r) => r.path).map((r) => r.section),
+  );
+  const out: ChunkRow[] = [];
+  const seen = new Set<string>();
+  const push = (c: ChunkRow) => {
+    const key = `${c.section}|${c.paragraph_path}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      out.push(c);
+    }
+  };
+  for (const ref of refs) {
+    for (const c of contextChunks) {
+      if (c.cfr_title === 0 || c.section !== ref.section) continue;
+      if (ref.path) {
+        if (c.paragraph_path.toLowerCase() === ref.path) push(c);
+      } else if (!pathedSections.has(ref.section)) {
+        push(c);
+      }
+    }
+  }
+  return out;
+}
+
 export function chunkToCitation(c: ChunkRow): Citation {
   // Document chunks (CubeSat 101, DAS guide, FCC orders) carry no CFR path.
   // Cite them by their source document name so every answer is citable

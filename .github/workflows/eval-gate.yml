@@ -35,27 +35,50 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Assert the baseline itself was not lowered
+        env:
+          # Event boundary, not HEAD^: a multi-commit push must compare
+          # against the pre-push tip, or a mid-push commit could lower the
+          # baseline invisibly. Zero-SHA means branch creation.
+          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
         run: |
           python3 - << 'PY'
-          import json, subprocess, sys
+          import json, os, subprocess, sys
           current = set(json.load(open("eval/baseline_passing.json"))["passing"])
+          base = os.environ.get("BASE_SHA") or ""
+          if not base or set(base) == {"0"}:
+              print("no event base (branch creation or manual dispatch): comparing against HEAD^")
+              base = "HEAD^"
+          exists = subprocess.run(
+              ["git", "cat-file", "-e", f"{base}:eval/baseline_passing.json"],
+              capture_output=True,
+          )
+          if exists.returncode != 0:
+              # Fail closed unless the absence is positively verified: the
+              # BASE COMMIT must exist; only the FILE may be absent.
+              commit_ok = subprocess.run(
+                  ["git", "cat-file", "-e", f"{base}^{{commit}}"], capture_output=True,
+              )
+              if commit_ok.returncode != 0:
+                  print(f"::error::base commit {base} unreadable; failing closed")
+                  sys.exit(1)
+              print(f"baseline file absent at {base}: first introduction, ok")
+              sys.exit(0)
           proc = subprocess.run(
-              ["git", "show", "HEAD^:eval/baseline_passing.json"],
+              ["git", "show", f"{base}:eval/baseline_passing.json"],
               capture_output=True, text=True,
           )
           if proc.returncode != 0:
-              # File did not exist at the parent commit: nothing to compare.
-              print("no parent baseline: first commit of the file")
-              sys.exit(0)
+              print(f"::error::could not read baseline at {base}; failing closed")
+              sys.exit(1)
           parent = set(json.loads(proc.stdout)["passing"])
           removed = sorted(parent - current)
           if removed:
               print(f"::error::baseline ids were REMOVED, violating raise-only: {removed}")
               sys.exit(1)
-          print(f"ok: baseline is a superset of the parent ({len(parent)} -> {len(current)} ids)")
+          print(f"ok: baseline is a superset of {base} ({len(parent)} -> {len(current)} ids)")
           PY
 
       - name: Run eval bank (fixtures, offline)

@@ -196,7 +196,7 @@ _TENS = {'twenty': 20, 'thirty': 30, 'forty': 40, 'fifty': 50, 'sixty': 60,
          'seventy': 70, 'eighty': 80, 'ninety': 90}
 
 _WORD_NUM = re.compile(
-    r'\b(?:(?P<hundred>one\s+hundred|a\s+hundred)'
+    r'\b(?:(?P<hundred>(?:one|a)\s+hundred(?:\s+and\s+(?P<h_rest>[a-z-]+(?:[\s-]+[a-z]+)?))?)'
     r'|(?P<tens>' + '|'.join(_TENS) + r')(?:[\s-]+(?P<tens_ones>' + '|'.join(_ONES) + r'))?'
     r'|(?P<ones>' + '|'.join(sorted(_ONES, key=len, reverse=True)) + r'))'
     r'(?:\s+point\s+(?P<dec>(?:' + '|'.join(sorted(_ONES, key=len, reverse=True)) + r')(?:\s+\w+)*?))?'
@@ -217,6 +217,20 @@ def _normalise_number_words(text: str) -> str:
     def repl(m: 're.Match') -> str:
         if m.group('hundred'):
             whole = 100
+            # "one hundred and five percent" previously parsed as 5: the
+            # parser matched the tail and dropped the hundred. It failed
+            # safe, because 5 mismatches the measured score and the guard
+            # still fired, but it named the wrong number in the message.
+            rest = m.group('h_rest')
+            if rest:
+                token = rest.strip().lower().replace('-', ' ')
+                parts = token.split()
+                if parts and parts[0] in _TENS:
+                    whole += _TENS[parts[0]]
+                    if len(parts) > 1 and parts[1] in _ONES:
+                        whole += _ONES[parts[1]]
+                elif parts and parts[0] in _ONES:
+                    whole += _ONES[parts[0]]
         elif m.group('tens'):
             whole = _TENS[m.group('tens').lower()]
             if m.group('tens_ones'):
@@ -868,4 +882,24 @@ class TestReproducedBypassesStayClosed:
         assert any(c in low for c in _NEGATION_CUES), (
             "the honest phrasing must remain sayable, or the guard will be "
             "weakened by whoever hits it next"
+        )
+
+    @pytest.mark.parametrize("phrase,expected", [
+        ("eval score of one hundred and five percent", 105.0),
+        ("eval score of one hundred percent", 100.0),
+        ("eval score is nineteen percent", 19.0),
+        ("eval score of seventy-seven percent", 77.0),
+        ("eval score of thirteen percent", 13.0),
+    ])
+    def test_number_word_parser_returns_the_right_value(self, phrase, expected):
+        """A parser that returns the WRONG number is worse than one that misses.
+
+        "one hundred and five percent" previously parsed as 5, because the
+        pattern matched the tail and dropped the hundred. It failed safe, since
+        5 mismatches the measured score and the guard still fired, but it named
+        the wrong figure in its own error message, which is how a person is
+        sent looking in the wrong place.
+        """
+        assert expected in eval_score_claims(phrase), (
+            f"{phrase!r} did not yield {expected}: got {eval_score_claims(phrase)}"
         )

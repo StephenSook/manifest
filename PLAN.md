@@ -231,30 +231,29 @@ traced into `/api/ask`, so this unblocks on the next production deploy without
 waiting on `BLOB_READ_WRITE_TOKEN`. Blob remains an optional overlay for a later
 Granite re-embed (Khadim 1.18).
 
-**Runbook for BLOCKER 1, because the token is needed in TWO places and only one
-of them is Stephen's.** Checked 2026-08-25: there is no `manifest-web` project in
-Stephen's Vercel account, so the deployment at `manifest-web-roan.vercel.app`
-belongs to Khadim's account, and the Blob store has to be created there.
+**What BLOCKER 1 needs now: one production deploy, and it is Khadim's.** Verified
+2026-08-25 10:50 ET, after `564dc22` landed: `POST /api/ask` still returns 503,
+and the error has changed to `ENOENT ... /var/task/corpus/manifest.sqlite`. That
+is the pre-fix build still being served, not a defect in the fix. Note also that
+there is no `manifest-web` project in Stephen's Vercel account, so the deployment
+belongs to Khadim's and only he can trigger it.
 
-1. **Khadim, in the Vercel dashboard**: open the project that serves
-   `manifest-web-roan.vercel.app`, go to the **Storage** tab, **Create Database**,
-   choose **Blob**, and connect it to that project. Connecting writes
-   `BLOB_READ_WRITE_TOKEN` into the project's environment variables
-   automatically, which is what the running route reads. Redeploy so the running
-   deployment picks the variable up.
-2. **Khadim, same screen**: copy the token value (Storage, the Blob store,
-   `.env.local` tab, or Project Settings, Environment Variables) and send it to
-   Stephen over a private channel. It is a write credential: never paste it into
-   the repository, an issue, or the plan.
-3. **Stephen, in the repository**: `gh secret set BLOB_READ_WRITE_TOKEN` and paste
-   the value at the prompt, so `corpus-build.yml` can upload.
-4. **Then**: `gh workflow run corpus-build.yml -f hash_embeddings=true`, watch it
-   to completion, and confirm with
+1. **Khadim**: deploy current `main` to production, then confirm with
    `curl -s -X POST https://manifest-web-roan.vercel.app/api/ask -H 'content-type: application/json' -d '{"question":"When is the pre-space notification due?"}'`
-   returning 200 with a citation rather than 503.
-5. **Also set the `WATSONX_*` trio** in both places if 0.13 credentials arrive.
-   The status route now reports which backend actually answered, so the upgrade
-   is visible in one request.
+   returning HTTP 200 with a citation rather than 503. Verify the deployed build,
+   never the dashboard's green tick.
+2. **Then re-dispatch the uptime workflow.** Its `/api/ask` content-check has been
+   red by design since the variable was set; it goes green on the same deploy.
+3. **`BLOB_READ_WRITE_TOKEN` is now optional**, not blocking. It matters only for a
+   later Granite re-embed, where `corpus-build.yml` uploads a bundle too large to
+   commit. If that happens: create the Blob store in the Vercel project's Storage
+   tab (which writes the variable into that project automatically), then have
+   Stephen run `gh secret set BLOB_READ_WRITE_TOKEN` so the workflow can upload.
+   It is a write credential: never paste it into the repository, an issue, or this
+   plan.
+4. **The `WATSONX_*` trio (0.13) is the same shape**: set it in the Vercel project
+   and, if CI ever needs it, as a repo secret. `/api/status` now reports which
+   backend actually answered, so that upgrade is visible in one request.
 
 **BLOCKER 2, watsonx remains unwired (0.13).** Same missing-secrets root cause. Note
 the Official Rules make **IBM Bob** the core requirement and list watsonx and Granite

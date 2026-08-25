@@ -68,6 +68,24 @@ const hasWatsonxCredentials = Boolean(
   process.env.WATSONX_API_KEY && process.env.WATSONX_PROJECT_ID,
 );
 
+// Corpus snapshot dates, read from the committed freeze at request time. Falls
+// back to a NAMED absence rather than a date-shaped placeholder, so a missing
+// corpus can never read as a verified snapshot.
+function readCorpusSnapshot(): string {
+  try {
+    const schema = require('../../../corpus/schema.json') as {
+      amddate_range?: { min?: string; max?: string };
+    };
+    const { min, max } = schema.amddate_range ?? {};
+    if (min && max) return min === max ? min : `${min} to ${max}`;
+    return 'CORPUS_SCHEMA_MISSING_AMDDATE';
+  } catch {
+    return 'CORPUS_NOT_BUNDLED';
+  }
+}
+
+const corpusSnapshot = readCorpusSnapshot();
+
 // ---------------------------------------------------------------------------
 // GET /api/status
 // ---------------------------------------------------------------------------
@@ -202,8 +220,11 @@ export async function GET(): Promise<NextResponse> {
         : 'watsonx credentials absent: answers come from the offline extractive path over the same corpus, cite-or-abstain still enforced, Guardian audit does not run.',
     },
 
-    // Corpus snapshot AMDDATE -- populated when Tylin's 1.1 corpus lands
-    corpus_amddate: 'PENDING_CORPUS_FREEZE',
+    // Corpus snapshot AMDDATE, read from the committed freeze rather than
+    // hardcoded. Hard rule 1 pins every citation to a dated snapshot, so a
+    // judge-facing endpoint must not answer with a placeholder once the
+    // corpus exists (the freeze landed in 564dc22).
+    corpus_amddate: corpusSnapshot,
 
     // Timestamps
     computed_at: new Date().toISOString(),

@@ -111,11 +111,29 @@ export function parseNoaaPredicted(
     })
     .slice(0, FORWARD_MONTHS);
 
+  // A row is kept only if all three quantiles read as finite numbers.
+  //
+  // Number(undefined) is NaN and JSON.stringify turns NaN into null, so a NOAA
+  // row missing one quantile used to publish `null` INSIDE the envelope: the
+  // parallel-array contract broke silently and a consumer indexing low[i] got
+  // null beside a real predicted[i]. Dropping the row keeps the four arrays
+  // parallel and keeps every published value a number somebody actually
+  // measured, which is the same rule the flux reading follows.
+  //
+  // If this empties the envelope the route treats it as an error rather than
+  // serving an empty envelope beside a healthy 200.
+  const usable = future.filter(
+    (e) =>
+      Number.isFinite(Number(e['predicted_f10.7'])) &&
+      Number.isFinite(Number(e['low_f10.7'])) &&
+      Number.isFinite(Number(e['high_f10.7'])),
+  );
+
   return {
-    months: future.map(monthTag),
-    predicted: future.map((e) => Number(e['predicted_f10.7'])),
-    low: future.map((e) => Number(e['low_f10.7'])),
-    high: future.map((e) => Number(e['high_f10.7'])),
+    months: usable.map(monthTag),
+    predicted: usable.map((e) => Number(e['predicted_f10.7'])),
+    low: usable.map((e) => Number(e['low_f10.7'])),
+    high: usable.map((e) => Number(e['high_f10.7'])),
   };
 }
 

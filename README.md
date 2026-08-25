@@ -202,7 +202,7 @@ Build it: `npm run build:mobile` then open `ios/App/App.xcodeproj` or `android/`
 /engine               Dependency graph and critical path (pure TypeScript, unit-tested)
 /corpus               Frozen corpus artifacts (SQLite, Float32 vectors, chunk JSON)
 /pipeline             Python batch: Docling ingest, eCFR lxml parse, embedding build
-/eval                 Eval bank (28 + 6), runner, MCP server for Context Forge
+/eval                 Eval bank (28 + 6), runner, MCP server (stdio, wired to IBM Bob)
 /mobile               Capacitor variant config and native projects
 /services             Solar data service (NOAA fetch, Surya interface)
 /data                 Frozen artifacts: decay-table.json, surya-outlook.json, missions
@@ -224,12 +224,9 @@ uv venv --python 3.12 pipeline/.venv
 source pipeline/.venv/bin/activate
 pip install -r pipeline/requirements.txt
 
-# Engine tests
+# Engine, mobile and ask-route tests
 npm run test:engine
-
-# E2E tests (requires a running dev server)
-npm run dev
-npm run test:e2e
+npm run test:ask
 
 # Eval against the committed fixtures (offline, no key)
 python3 eval/runner.py --mode fixtures

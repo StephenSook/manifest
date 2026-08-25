@@ -37,7 +37,7 @@ Re-run 2026-08-24 searched those paths for the claim list below.
 | NOAA SWPC F10.7 | services/solar/fetch.ts | WIRED (Stephen) |
 | pyatmos NRLMSISE-00 | pipeline/decay.py | WIRED (Stephen) |
 | ORBITM | no import in shipped tree | CUT FROM CODE. D4 names ORBITM. pipeline/orbitm_vendor/ is gitignored and empty of commits. decay.py uses pyatmos only. Ping Stephen (Q11) to cut ORBITM from README/D4 copy or pin a MIT commit. |
-| IBM Context Forge / eval MCP | .bob/mcp.json | CONFIG ONLY. eval/mcp_server.py is not in the tree (Stephen 3.2 still open). Do not claim Bob invokes the eval over Context Forge until 3.2 lands. |
+| IBM Context Forge / eval MCP | .bob/mcp.json, eval/mcp_server.py | SPLIT VERDICT, re-checked 2026-08-25. The stdio MCP server IS now in the tree and Bob-wired (`.bob/mcp.json` points at `eval.mcp_server`, tools `run_eval` and `eval_last_report`, verified returning real scores). The Context Forge GATEWAY layer is NOT registered and is not committed. Claim the stdio MCP server; do not claim Context Forge. README repo-layout line corrected 2026-08-25. |
 | web-push / VAPID | no app/api/push | CUT. Task 2.11 cut 2026-08-24 (cut list item 1). Deadline banner is the primary alert. |
 | elkjs | package.json, package-lock.json | ABSENT (required: no EPL/GPL). CI license-guard fails on a match. |
 | orbdetpy | pipeline/pyproject.toml, pipeline/uv.lock | ABSENT (required: no GPL-3.0). CI license-guard fails on a match. |
@@ -53,3 +53,16 @@ Production Q&A is granite-4-h-small plus Guardian when watsonx credentials are p
 ## Freeze re-run
 
 Do not treat this mid-phase pass as the 4.1 audit. After Stephen 3.7 fixes land, repeat the same grep against the post-fix tree. An audit from before those fixes has audited nothing.
+
+## Post-3.7 partial re-run, 2026-08-25 (Claude, Stephen's lane)
+
+3.7 closed at ten rounds (fix commits `d75575b` through `eb7f2cb`). This is a partial re-grep of the post-fix tree, covering what that pass touched plus three exposures the PLAN status audit surfaced the same day. It does not replace Tylin's full 4.1 re-run.
+
+| Claim | Grep | Verdict |
+|---|---|---|
+| `vis-timeline` | installed in package.json, zero imports in app/ components/ lib/ engine/ mobile/ | UNUSED DEPENDENCY. Task 2.3 never landed. No judge-facing document claims a timeline view, so this is not a false claim, but the dependency should be cut at the freeze or the view wired. Left in place here deliberately: package.json is Khadim's lane and a lockfile change inside the freeze window is not worth the risk. |
+| shadcn/ui | no components.json, no components/ui/, no radix or cva dependencies | NEVER INITIALISED. Named in the private architecture doc only. No judge-facing document claims it, so nothing to cut publicly. Do not add it to any Built With list. |
+| Playwright e2e | `@playwright/test` installed, `test:e2e` script present, zero spec files, no workflow step | CLAIM CUT 2026-08-25. The README "Running Locally" block documented `npm run test:e2e` with nothing behind it; that block now documents `test:engine` and `test:ask`, which do run. Task 3.9 remains open. |
+| watsonx generation, Guardian audit, granite embedding | app/api/ask/route.ts | WIRED IN CODE, NOT CREDENTIALED. The route calls `granite-4-h-small` and `granite-guardian-3-8b` when `WATSONX_API_KEY` and `WATSONX_PROJECT_ID` are present. Neither is set anywhere: `gh secret list` is empty. `/api/status` now returns a `runtime` block naming the backend that actually answered, so configured-versus-running is one unauthenticated request to check. Submission copy states the credential condition explicitly. |
+| Corpus on the deployment | app/api/ask/route.ts loadCorpus, .github/workflows/corpus-build.yml | NOT PRESENT IN PRODUCTION. `POST /api/ask` returns 503. `corpus-build.yml` is dispatch-only and has never run, and could not succeed without `BLOB_READ_WRITE_TOKEN`. This is Khadim 1.18. Any claim that the corpus ships with the app is false: it loads from Vercel Blob. |
+| `corpus_amddate` | app/api/status/route.ts | SENTINEL LIVE. Returns the literal `PENDING_CORPUS_FREEZE` on a judge-facing endpoint while hard rule 1 promises a pinned AMDDATE. Resolves with the corpus. |

@@ -209,8 +209,17 @@ Every number in this section is sourced. Unsourced figures do not ship.
 - **Web app:** [manifest-web-roan.vercel.app/mission](https://manifest-web-roan.vercel.app/mission)
 - **Judge page:** [manifest-web-roan.vercel.app/judge](https://manifest-web-roan.vercel.app/judge): numbered walkthrough, every claim reachable without login or key
 - **Status API:** [manifest-web-roan.vercel.app/api/status](https://manifest-web-roan.vercel.app/api/status): unauthenticated, recomputes the headline number on every request, self-reports which models are running
-- **iOS:** [**Join the TestFlight beta**](https://testflight.apple.com/join/huQrZpek). Native Capacitor build 1.0 (1), **approved by Apple** in external Beta App Review on 2026-08-25. Open on an iPhone or iPad, no account needed beyond a free Apple ID, no invite code.
-- **Android:** [**Download the signed APK**](https://github.com/StephenSook/manifest/releases/download/v1.0-beta.1/manifest-v1.0-release.apk) from the `v1.0-beta.1` release, or join through Firebase App Distribution. Release-signed, not a debug build.
+### Install it on a phone
+
+Scan from a phone camera, or tap the link. No account, no invite code, no tester limit.
+
+| Platform | Install | Scan |
+|---|---|---|
+| **Web** (works everywhere, installable as a PWA) | [manifest-web-roan.vercel.app/judge](https://manifest-web-roan.vercel.app/judge) | <img src="docs/qr/web-app.png" alt="QR code for the Manifest judge page" width="120"> |
+| **iOS** (TestFlight) | [testflight.apple.com/join/huQrZpek](https://testflight.apple.com/join/huQrZpek) | <img src="docs/qr/testflight-ios.png" alt="QR code for the iOS TestFlight beta" width="120"> |
+| **Android** (signed APK, direct) | [`v1.0-beta.1` release asset](https://github.com/StephenSook/manifest/releases/download/v1.0-beta.1/manifest-v1.0-release.apk) | <img src="docs/qr/android-apk.png" alt="QR code for the Android APK" width="120"> |
+
+iOS is Capacitor build 1.0 (1), **approved by Apple** in external Beta App Review on 2026-08-25; availability can lag briefly after a new build is uploaded, because Apple re-reviews. The Android APK is hosted as a **GitHub Release asset so the link does not expire**, unlike a build-service artifact with a retention window, and it is release-signed rather than a debug build. Firebase App Distribution is available as a second Android path.
 
 ---
 

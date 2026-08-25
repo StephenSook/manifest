@@ -44,6 +44,26 @@ function monthTag(entry: NoaaPredictedCycleEntry): string {
 // Internal fetchers
 // ---------------------------------------------------------------------------
 
+/**
+ * Read the observed summary NOAA actually sends.
+ *
+ * The 10cm-flux product returns a single-element ARRAY, verified live
+ * 2026-08-25: `[{"flux":143,"time_tag":"2026-08-24T20:00:00"}]`. This module
+ * used to cast that array straight to an object, so `observed.flux` was
+ * `undefined` and `fetchSolarConditions` would have returned a SolarConditions
+ * carrying an undefined flux with `live: true`. Returns null rather than a
+ * partial reading, so a caller cannot mistake an absence for a measurement.
+ */
+export function readObservedSummary(raw: unknown): NoaaFluxSummary | null {
+  const row = Array.isArray(raw) ? raw[0] : raw;
+  if (row === null || typeof row !== 'object') return null;
+  const flux = (row as Record<string, unknown>).flux;
+  if (typeof flux !== 'number' || !Number.isFinite(flux)) return null;
+  const timeTag = (row as Record<string, unknown>).time_tag;
+  if (typeof timeTag !== 'string' || timeTag.trim() === '') return null;
+  return { flux, time_tag: timeTag };
+}
+
 async function fetchObserved(): Promise<NoaaFluxSummary> {
   const res = await fetch(OBSERVED_URL);
   if (!res.ok) {
@@ -51,7 +71,13 @@ async function fetchObserved(): Promise<NoaaFluxSummary> {
       `solar/fetch: observed endpoint returned ${res.status} ${res.statusText}`,
     );
   }
-  return res.json() as Promise<NoaaFluxSummary>;
+  const parsed = readObservedSummary(await res.json());
+  if (parsed === null) {
+    throw new Error(
+      'solar/fetch: observed endpoint returned no usable flux reading',
+    );
+  }
+  return parsed;
 }
 
 async function fetchPredicted(): Promise<NoaaPredictedCycleEntry[]> {
@@ -135,27 +161,33 @@ export async function fetchSolarConditions(): Promise<SolarConditions> {
 }
 
 /**
- * Load solar conditions from a committed cache file (data/solar-conditions.json).
- * Used by the Capacitor static export and as a fallback when the network is unavailable.
- * The cache is written by scripts/cache-solar.ts on each deploy.
+ * NOT IMPLEMENTED, and it never was.
+ *
+ * This fetched the RELATIVE url `/data/solar-conditions.json`, which Node
+ * rejects outright server-side, pointing at a file that does not exist and
+ * has no generator (`scripts/cache-solar.ts` was never written). Leaving it
+ * shaped like a working fallback made `getSolarConditions` claim in its own
+ * docstring that it "never throws" while both of its branches were broken.
+ *
+ * It now rejects immediately and names the path that does work, so a future
+ * caller finds out at the first call rather than in production.
  */
 export async function loadCachedConditions(): Promise<SolarConditions> {
-  // In the browser this resolves to /data/solar-conditions.json (public dir)
-  // In Node (eval/tests) this resolves relative to cwd
-  const res = await fetch('/data/solar-conditions.json');
-  if (!res.ok) {
-    throw new Error(
-      `solar/fetch: cache file not found, run scripts/cache-solar.ts first`,
-    );
-  }
-  const data = (await res.json()) as SolarConditions;
-  return { ...data, live: false };
+  throw new Error(
+    'solar/fetch: loadCachedConditions is not implemented. There is no ' +
+      'committed solar cache artifact and no generator for one. Use the ' +
+      'GET /api/solar route, which reads NOAA live, validates every value ' +
+      'and returns a named absence when NOAA cannot be reached.',
+  );
 }
 
 /**
- * Fetch live solar conditions, falling back to the committed cache on failure.
- * This is the function the rest of the app should call.
- * Always returns valid SolarConditions, never throws.
+ * Fetch live solar conditions.
+ *
+ * The cache fallback is not implemented, so this THROWS when NOAA is
+ * unreachable. The previous docstring promised it "never throws", which was
+ * untrue in both branches. The supported live path for the app is the
+ * GET /api/solar route.
  */
 export async function getSolarConditions(): Promise<SolarConditions> {
   try {

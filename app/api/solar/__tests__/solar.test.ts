@@ -198,3 +198,55 @@ describe('parseNoaaPredicted rejects rows it cannot fully read', () => {
     expect(parsed.high).toHaveLength(n);
   });
 });
+
+describe('parseNoaaPredicted refuses values that only look numeric', () => {
+  // Number(null), Number('') and Number(false) are all 0, and 0 is finite.
+  // An isFinite check therefore accepts a blank, null or boolean quantile and
+  // publishes ZERO as though someone measured it. Zero is a plausible-looking
+  // flux value, which makes it worse than NaN: NaN serializes to null and is
+  // visibly wrong, while 0 reads as data.
+  const sneaky: NoaaPredictedEntry[] = [
+    { 'time-tag': '2026-09', 'predicted_f10.7': 133.7, 'low_f10.7': null as never, 'high_f10.7': 141.1 },
+    { 'time-tag': '2026-10', 'predicted_f10.7': 130.0, 'low_f10.7': '' as never, 'high_f10.7': 138.0 },
+    { 'time-tag': '2026-11', 'predicted_f10.7': 128.0, 'low_f10.7': false as never, 'high_f10.7': 136.0 },
+    { 'time-tag': '2026-12', 'predicted_f10.7': 126.0, 'low_f10.7': 118.0, 'high_f10.7': 134.0 },
+  ];
+
+  it('drops null, blank and boolean quantiles instead of publishing zero', () => {
+    const parsed = parseNoaaPredicted(sneaky, '2026-08');
+    expect(parsed.months).toEqual(['2026-12']);
+    expect(parsed.low).toEqual([118.0]);
+  });
+
+  it('never publishes a zero flux from an empty field', () => {
+    const parsed = parseNoaaPredicted(sneaky, '2026-08');
+    expect(parsed.low).not.toContain(0);
+  });
+
+  it('still accepts a numeric string, which NOAA has used before', () => {
+    const parsed = parseNoaaPredicted(
+      [{ 'time-tag': '2026-09', 'predicted_f10.7': '133.7', 'low_f10.7': '124.9', 'high_f10.7': '141.1' }],
+      '2026-08',
+    );
+    expect(parsed.predicted).toEqual([133.7]);
+  });
+
+  it('rejects a row whose bounds are inconsistent, low above high', () => {
+    const parsed = parseNoaaPredicted(
+      [{ 'time-tag': '2026-09', 'predicted_f10.7': 133.7, 'low_f10.7': 200, 'high_f10.7': 141.1 }],
+      '2026-08',
+    );
+    expect(parsed.months).toEqual([]);
+  });
+});
+
+describe('readObservedFlux requires a real timestamp', () => {
+  it('refuses a reading with no time_tag rather than inventing an empty one', () => {
+    expect(readObservedFlux([{ flux: 143 }])).toBeNull();
+  });
+
+  it('refuses a non-finite flux', () => {
+    expect(readObservedFlux([{ flux: null, time_tag: 'x' }])).toBeNull();
+    expect(readObservedFlux([{ flux: '', time_tag: 'x' }])).toBeNull();
+  });
+});

@@ -305,26 +305,30 @@ class TestJudgeFacingCountsMatchFacts:
 
     @pytest.mark.parametrize("surface", ["README.md", "JUDGE.md"])
     def test_quoted_engine_test_count_matches_facts(self, surface):
-        """A phrase like "81 engine and mobile tests" must equal FACTS."""
+        """Any "<n> tests" claim must equal one of the measured counts.
+
+        The first version of this guard keyed on the number appearing BEFORE
+        the word engine, so an ordinary rephrasing such as "the engine and
+        mobile suite passes 79 tests" slipped straight through. Presentation
+        coupling in an anti-fabrication guard is the guard failing quietly, so
+        this now matches any "<n> test/tests" phrasing and requires it to be
+        one of the three measured counts.
+        """
         engine = load_facts()["engine"]
-        measured = engine["test_count"]
+        allowed = {
+            engine["test_count"],
+            engine["ask_route_test_count"],
+            engine["test_count_total"],
+        }
         text = readme_text() if surface == "README.md" else judge_md_text()
 
-        # Any "<n> engine ... test" or "<n> tests passing" phrasing is a claim
-        # about this count and must match it exactly.
-        patterns = [
-            r'(\d+)\s+engine[^.\n]{0,40}?tests?',
-            r'\*\*(\d+)\s+tests?\s+passing\*\*',
-        ]
-        found = []
-        for pat in patterns:
-            found.extend(int(m.group(1)) for m in re.finditer(pat, text, re.IGNORECASE))
-
-        for value in found:
-            assert value == measured, (
-                f"{surface} quotes {value} engine tests but FACTS.json measured "
-                f"{measured}. A count stated to a judge must equal the measured "
-                f"count. Run: python3 scripts/facts.py, then update {surface}."
+        for m in re.finditer(r'(\d+)\s+(?:\*\*\s*)?tests?\b', text, re.IGNORECASE):
+            value = int(m.group(1))
+            assert value in allowed, (
+                f"{surface} quotes {value} tests but the measured counts are "
+                f"{sorted(allowed)}. A count stated to a judge must equal a "
+                f"measured count. Run: python3 scripts/facts.py, then update "
+                f"{surface}."
             )
 
     def test_readme_badge_total_matches_facts(self):
@@ -382,13 +386,40 @@ class TestEvalScoreIsPublishedAndConsistent:
         measured = block["score_pct"]
         text = readme_text() if surface == "README.md" else judge_md_text()
 
-        # "53.6 percent" or "53.6%" stated near the word eval or score.
-        for m in re.finditer(r'(\d{1,3}\.\d)\s*(?:percent|%)', text):
+        # The first version required exactly one decimal place, so an integer
+        # claim such as "the eval score is 54%" was invisible to it. Integers
+        # and any number of decimals are matched now.
+        #
+        # SUBMISSION_BAR is the one other percentage legitimately quoted in
+        # this band: the 90 percent aspirational bar from CLAUDE.md section 5,
+        # which is deliberately NOT today's measured score. It is allowlisted
+        # by value rather than by phrasing, so a typo in the bar still fails.
+        SUBMISSION_BAR = 90.0
+
+        # Scope by PROXIMITY, not by numeric band. A band alone is wrong in
+        # both directions: it fired on "roughly 40% of university CubeSat
+        # missions fail", which is a real sourced statistic about something
+        # else entirely, and it would still have missed an eval claim stated
+        # below the band. A percentage is treated as an eval-score claim only
+        # when the words eval, score or trap appear near it.
+        WINDOW = 90
+
+        # Strip markdown link targets first. A shields.io badge URL contains
+        # `tests-154%20passing`, where the URL-encoded space makes `154%` read
+        # as "154 percent". Prose is the thing being audited here; a URL is
+        # not a claim a judge reads as a number.
+        prose = re.sub(r'\]\([^)]*\)', '](link)', text)
+
+        for m in re.finditer(r'(\d{1,3}(?:\.\d+)?)\s*(?:percent|%)', prose):
             value = float(m.group(1))
-            # Only values in the plausible eval-score band are claims about it.
-            if 40.0 <= value <= 100.0:
-                assert abs(value - measured) < 0.05, (
-                    f"{surface} quotes {value} percent where FACTS.json measured "
-                    f"{measured}. Run: python3 scripts/facts.py, then update "
-                    f"{surface}."
-                )
+            context = prose[max(0, m.start() - WINDOW): m.end() + WINDOW].lower()
+            if not any(w in context for w in ('eval', 'score', 'trap', 'abstention')):
+                continue
+            if abs(value - SUBMISSION_BAR) < 0.001:
+                continue
+            assert abs(value - measured) < 0.05, (
+                f"{surface} states {value} percent as an eval score where "
+                f"FACTS.json measured {measured}. If this is a different "
+                f"quantity, it needs its own name and its own source. Run: "
+                f"python3 scripts/facts.py, then update {surface}."
+            )

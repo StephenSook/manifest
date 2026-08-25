@@ -71,22 +71,36 @@ def _classify_label(label: str, stack: list[tuple[str, str]]) -> tuple[str, str]
     return "other", inner
 
 
-def _is_next_sibling(typ: str, prev: str, tok: str) -> bool:
+_FIRST_TOKENS = {"num": "1", "letter": "a", "caps": "A", "roman": "i"}
+
+
+def _is_forward_sibling(typ: str, prev: str, tok: str) -> bool:
+    """tok continues prev's list at the same level, allowing gaps.
+
+    CFR numbering skips reserved and removed labels, so consecutive
+    ordinals cannot be assumed: 97.3(a) jumps from (2) to (4), and treating
+    (4) as a child of (2) corrupts every later path in the section.
+    """
     if typ in ("letter", "caps"):
-        return len(prev) == 1 and len(tok) == 1 and ord(tok) == ord(prev) + 1
+        return len(prev) == 1 and len(tok) == 1 and ord(tok) > ord(prev)
     if typ == "num":
-        return int(tok) == int(prev) + 1
+        return int(tok) > int(prev)
     if typ == "roman":
-        return _ROMAN.get(tok, -99) == _ROMAN.get(prev, -1) + 1
+        return _ROMAN.get(tok, -99) > _ROMAN.get(prev, -1)
     return False
 
 
 def _apply_label(stack: list[tuple[str, str]], typ: str, tok: str) -> None:
-    for i in range(len(stack) - 1, -1, -1):
-        if stack[i][0] == typ and _is_next_sibling(typ, stack[i][1], tok):
-            del stack[i + 1 :]
-            stack[i] = (typ, tok)
-            return
+    # A first ordinal ((1), (a), (i), (A)) opens a child level under the
+    # current top; lists never continue INTO their first ordinal. Any other
+    # ordinal continues the nearest open list of its type that it moves
+    # forward, even across numbering gaps.
+    if tok != _FIRST_TOKENS.get(typ):
+        for i in range(len(stack) - 1, -1, -1):
+            if stack[i][0] == typ and _is_forward_sibling(typ, stack[i][1], tok):
+                del stack[i + 1 :]
+                stack[i] = (typ, tok)
+                return
     stack.append((typ, tok))
 
 

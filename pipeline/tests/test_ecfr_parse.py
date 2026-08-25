@@ -140,3 +140,42 @@ class TestEcfrParse:
                 else:
                     # PDF chunks point to fcc.gov, nasa.gov, or orbitaldebris.jsc.nasa.gov
                     assert url, f"{fname.name} chunk {c['id']} has empty sourceUrl"
+
+
+class TestParagraphReconstruction:
+    """Regression tests for _apply_label gap handling (Codex round-1 finding).
+
+    CFR ordinals skip reserved and removed labels, so sibling continuation
+    must tolerate gaps: 97.3(a) jumps (2) to (4). The old consecutive-only
+    rule nested (4) under (2), corrupting every later path in the section.
+    """
+
+    def test_gap_in_numbering_stays_sibling(self):
+        import sys
+        sys.path.insert(0, str(Path(__file__).parent.parent))
+        from ecfr_parse import _apply_label
+
+        stack = [("letter", "a"), ("num", "2")]
+        _apply_label(stack, "num", "4")
+        assert stack == [("letter", "a"), ("num", "4")], stack
+
+    def test_first_ordinal_opens_child_level(self):
+        import sys
+        sys.path.insert(0, str(Path(__file__).parent.parent))
+        from ecfr_parse import _apply_label
+
+        stack = [("letter", "g")]
+        _apply_label(stack, "num", "1")
+        assert stack == [("letter", "g"), ("num", "1")], stack
+
+    def test_space_station_definition_path(self):
+        """97.3 Space station sits at (a)(41) in the 2026-08-13 snapshot."""
+        chunks = json.loads(
+            (CHUNKS_DIR / "title47-part97.json").read_text(encoding="utf-8")
+        )
+        space = [
+            c for c in chunks
+            if c["section"] == "97.3" and c["text"].startswith("Space station")
+        ]
+        assert space, "97.3 Space station definition chunk missing"
+        assert space[0]["paragraphPath"] == "(a)(41)", space[0]["paragraphPath"]

@@ -76,3 +76,48 @@ describe('solar/fetch, predicted envelope parsing (unit, no network)', () => {
     expect(result.high).toHaveLength(0);
   });
 });
+
+describe('solar/fetch, against the shape NOAA actually returns', () => {
+  // THE FIXTURE ABOVE IS WRONG, and it made this module's green suite
+  // meaningless. It spells the month key `time_tag`, matching what this
+  // parser assumed, so the test certified the assumption rather than the
+  // integration. The live endpoint spells it `time-tag` with a HYPHEN on
+  // this product only. Captured from
+  // services.swpc.noaa.gov/json/solar-cycle/predicted-solar-cycle.json
+  // on 2026-08-25; every other key on the same row uses an underscore,
+  // which is exactly why the wrong spelling reads as correct.
+  //
+  // Consequence before this fix: the filter compared `undefined >= "2026-08"`,
+  // which is false for every row, so the parser returned EMPTY arrays for
+  // live NOAA data while passing its own tests. The module was dead code and
+  // broken code at once, and wiring it up unexamined would have shipped an
+  // empty predicted envelope to a judge.
+  const LIVE_SHAPE = [
+    {
+      'time-tag': '2026-02',
+      'predicted_ssn': 102.6,
+      'predicted_f10.7': 140.7,
+      'high_f10.7': 149.0,
+      'low_f10.7': 134.5,
+    },
+    {
+      'time-tag': '2026-09',
+      'predicted_ssn': 100.1,
+      'predicted_f10.7': 133.7,
+      'high_f10.7': 141.1,
+      'low_f10.7': 124.9,
+    },
+  ];
+
+  it('reads the hyphenated month key the live endpoint actually sends', () => {
+    const result = parsePredictedForTest(LIVE_SHAPE, '2026-08');
+    expect(result.predicted).toEqual([133.7]);
+    expect(result.low).toEqual([124.9]);
+    expect(result.high).toEqual([141.1]);
+  });
+
+  it('does not silently return an empty envelope for a healthy live payload', () => {
+    const result = parsePredictedForTest(LIVE_SHAPE, '2026-01');
+    expect(result.predicted.length).toBe(2);
+  });
+});

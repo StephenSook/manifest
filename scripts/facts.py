@@ -157,6 +157,87 @@ def run_test_counts() -> dict | None:
     return counts
 
 
+def run_eval() -> dict | None:
+    """Measure the eval score by RUNNING the bank, never by hand.
+
+    app/judge/page.tsx step 3 tells a judge, in the product's own UI, that
+    "the eval score and trap results are there" in docs/FACTS.json. They were
+    not: the file had no eval key of any kind, so a judge following the
+    itinerary reached a dead end. Rather than edit the sentence, this makes
+    the sentence true, which also removes the possibility of the number
+    drifting from the runner that produces it.
+
+    Fixtures mode is deliberate: no network, no key, so this is reproducible
+    by anyone who clones the repo. Returns None on failure so the caller
+    records a NAMED absence instead of carrying a stale figure forward.
+    """
+    report_path = REPO_ROOT / "eval" / "report.json"
+    # MEASUREMENT, NOT GATING. The runner's default bar is the aspirational
+    # 90 percent from CLAUDE.md section 5, so a healthy run at today's real
+    # 53.6 percent exits 1. Reading that exit code as "the eval did not run"
+    # would omit the block on every honest run. Gating is the CI ratchet's
+    # job (.github/workflows/eval-gate.yml), so measure with the bar at zero
+    # and publish whatever the suite actually scores.
+    try:
+        proc = subprocess.run(
+            [sys.executable, "eval/runner.py", "--mode", "fixtures",
+             "--min-score", "0"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=600,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        print(f"WARNING: eval runner did not run ({exc}); eval block omitted",
+              file=sys.stderr)
+        return None
+
+    if proc.returncode != 0:
+        print("WARNING: eval runner exited non-zero even with the bar at "
+              "zero, so it did not complete; eval block omitted",
+              file=sys.stderr)
+        return None
+    if not report_path.exists():
+        print("WARNING: eval runner wrote no report; eval block omitted",
+              file=sys.stderr)
+        return None
+
+    try:
+        report = json.loads(report_path.read_text())
+    except json.JSONDecodeError:
+        print("WARNING: eval report is not JSON; eval block omitted",
+              file=sys.stderr)
+        return None
+
+    # Every bank row must have been scored. A partial run reported as a score
+    # is the same defect as a conditionally-skipped guard reported as a pass.
+    bank_rows = sum(
+        1 for line in (REPO_ROOT / "eval" / "bank.jsonl").read_text().splitlines()
+        if line.strip()
+    )
+    scored = len(report.get("results", []))
+    if scored != bank_rows:
+        print(f"WARNING: eval scored {scored} of {bank_rows} bank rows; "
+              "eval block omitted rather than published as a full run",
+              file=sys.stderr)
+        return None
+
+    # Key names read off a real report, not assumed: the count is
+    # `questions_correct`, while `passed` is a BOOLEAN meaning "cleared the
+    # aspirational bar". Reading `passed` as a count would have published
+    # False where a number belongs.
+    return {
+        "score_pct": report.get("score_pct"),
+        "questions_correct": report.get("questions_correct"),
+        "questions_total": report.get("questions"),
+        "traps_total": report.get("traps"),
+        "traps_abstained": report.get("traps_abstained"),
+        "rows_scored": scored,
+        "mode": report.get("mode"),
+        "measured_at": report.get("generatedAt"),
+    }
+
+
 def compute_facts() -> dict:
     table = load_decay_table()
 
@@ -249,6 +330,7 @@ def compute_facts() -> dict:
     }
 
     test_counts = run_test_counts()
+    eval_result = run_eval()
     generated_at = datetime.now(timezone.utc).isoformat()
 
     return {
@@ -337,6 +419,30 @@ def compute_facts() -> dict:
             "decay_table_entries": len(table),
             "decay_table_generated_at": table[0].get("generatedAt") if table else None,
         },
+
+        # Eval state, measured by running the bank offline against committed
+        # fixtures. app/judge/page.tsx step 3 sends a judge here for the score
+        # and the trap results, so this block is that promise being kept.
+        "eval": eval_result if eval_result else {
+            "score_pct": None,
+            "note": (
+                "NOT MEASURED: the eval runner could not complete on this "
+                "machine. Do not quote a score from this file until it is "
+                "regenerated where the runner runs."
+            ),
+        },
+        "eval_note": (
+            "Measured by running `python3 eval/runner.py --mode fixtures` at "
+            f"{generated_at}: offline, no network, no API key, against the "
+            "committed fixtures, so anyone who clones the repo reproduces it. "
+            "The score is the credential-free extractive path. The "
+            "aspirational bar in CLAUDE.md section 5 is 90 percent; CI "
+            "enforces a raise-only ratchet at today's measured floor instead, "
+            "and eval-gate.yml fails on any regression or on any trap "
+            "answering."
+            if eval_result else
+            "NOT MEASURED on this run."
+        ),
     }
 
 

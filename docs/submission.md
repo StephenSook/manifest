@@ -80,6 +80,8 @@ Everything load-bearing is real. The seeded missions are real public university 
 
 It is deployed and it is running. A live web deployment with no login and no key, an installable PWA, an iOS build through TestFlight and a signed Android APK published as a GitHub release. The mission plan lives in the browser's own IndexedDB, so a team's unfiled schedule is never transmitted anywhere, and deadline alerts fire as local notifications on device with no push server and no subscription.
 
+The regulatory corpus ships **inside the repository**, not behind a service: the frozen bundle (SQLite plus a Float32 vector file plus a schema recording which embedder produced it) is committed and packed into the deployed function, so a fresh clone can answer questions offline and a judge is never looking at a cache that might have expired. A CI job fails the build if any of the three files goes missing, and a test asserts the vector file's byte length equals count times dimension times four, so a silently truncated bundle cannot ship.
+
 Feasibility is one command from a fresh clone:
 
 ```
@@ -130,7 +132,9 @@ The eval bank, 28 regulatory questions with exact expected citations plus 6 abst
 - [ ] Replace every `[FACTS: ...]` from a fresh `scripts/facts.py` run. Never by hand.
 - [x] Beneficiary figures resolved to primary sources 2026-08-16 (Swartwout and Jayne SmallSat 2016; CubeSat 101 2017). The "full year for licensing" research-pack claim was cut: the primary says 4 to 6 months.
 - [x] Restructured against the four binding criteria 2026-08-25, and the two IBM Bob prize sections added.
-- [x] Claim audit against shipped code 2026-08-25: the Granite generation, Guardian audit and embedding claims now state the credential condition and point at the runtime self-report; the Context Forge claim is reduced to the stdio MCP server that is actually verified; the engine test count and headline number are `[FACTS: ...]` placeholders rather than stale literals; the "corpus ships frozen with the app" claim was cut, the corpus loads from Vercel Blob.
+- [x] Claim audit against shipped code 2026-08-25: the Granite generation, Guardian audit and embedding claims now state the credential condition and point at the runtime self-report; the Context Forge claim is reduced to the stdio MCP server that is actually verified; the engine test count and headline number are `[FACTS: ...]` placeholders rather than stale literals.
+- [x] Corpus claim re-checked the same afternoon after Tylin committed the frozen bundle (`564dc22`): the corpus now genuinely ships in the repository and is traced into the deployed function, so that claim is restored and strengthened.
+- [ ] **Verify `POST /api/ask` returns 200 with a citation on the LIVE url before submitting.** As of 2026-08-25 10:50 ET production still served the pre-fix build and returned 503. The repo is correct; the deploy had not caught up.
 - [ ] Re-run the claim audit after the corpus lands, and upgrade the watsonx sentences if credentials are in place by the freeze.
 - [ ] Replace `[DEPLOY-URL]`, `[YOUTUBE-URL]`, and the TestFlight link with live ones and click each from a logged-out browser.
 - [ ] Confirm the eval sentence states the real score verbatim.

@@ -62,6 +62,12 @@ const MODEL_INVENTORY = {
   local_fallback: 'granite4.1:8b',              // Ollama -- rehearsal only, not production path
 } as const;
 
+// Whether THIS deployment can actually reach watsonx. The model inventory above
+// says what is configured; this says what can run (task 0.13 credentials).
+const hasWatsonxCredentials = Boolean(
+  process.env.WATSONX_API_KEY && process.env.WATSONX_PROJECT_ID,
+);
+
 // ---------------------------------------------------------------------------
 // GET /api/status
 // ---------------------------------------------------------------------------
@@ -175,9 +181,26 @@ export async function GET(): Promise<NextResponse> {
       pathway: GT1_MISSION.pathway,
     },
 
-    // Model inventory: self-report what is actually wired
+    // Model inventory: the models this deployment is CONFIGURED to call.
     // CI asserts this matches the README (test_no_fabricated_numbers.py, task 2.18)
     models: MODEL_INVENTORY,
+
+    // Runtime self-report: which path actually answers right now, as opposed to
+    // which models are configured above. A judge can diff the two in one
+    // request, so a claim that is not running cannot hide behind an inventory.
+    runtime: {
+      generation_backend: hasWatsonxCredentials
+        ? 'watsonx'
+        : 'offline-extractive',
+      embedding_backend: hasWatsonxCredentials ? 'watsonx' : 'hashing-trick-768',
+      guardian_audit: hasWatsonxCredentials ? 'active' : 'inactive',
+      corpus_source: process.env.BLOB_READ_WRITE_TOKEN
+        ? 'vercel-blob'
+        : 'not-configured',
+      note: hasWatsonxCredentials
+        ? 'watsonx credentials present: generation, embedding and Guardian audit run on the models named above.'
+        : 'watsonx credentials absent: answers come from the offline extractive path over the same corpus, cite-or-abstain still enforced, Guardian audit does not run.',
+    },
 
     // Corpus snapshot AMDDATE -- populated when Tylin's 1.1 corpus lands
     corpus_amddate: 'PENDING_CORPUS_FREEZE',

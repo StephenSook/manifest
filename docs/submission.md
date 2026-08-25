@@ -120,7 +120,8 @@ The eval bank, 28 regulatory questions with exact expected citations plus 6 abst
 | Repo | `https://github.com/StephenSook/manifest` |
 | Video | `[YOUTUBE-URL]` |
 | iOS | `[TESTFLIGHT-URL, if the beta review is approved in time]` |
-| Android | `https://github.com/StephenSook/manifest/releases/tag/v1.0-beta.1` |
+| Android (direct APK, no sign-in) | `https://github.com/StephenSook/manifest/releases/tag/v1.0-beta.1` |
+| Android (Firebase App Distribution, Google sign-in required) | `https://appdistribution.firebase.dev/i/2adff092da3659d7` |
 
 ## Section images (one per section, per task 3.15)
 

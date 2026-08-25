@@ -478,9 +478,29 @@ def check_not_stale() -> None:
     existing_engine = existing.get("engine", {})
     fresh_engine = fresh["engine"]
     if fresh_engine.get("test_count") is None:
-        print("WARNING: test counts were NOT measured on this machine, so the "
-              "test-count half of this check did not run. The differentiator "
-              "numbers below were still checked.", file=sys.stderr)
+        # A skipped check is not a pass, and UNDER CI it must be a failure.
+        #
+        # The first run of the fabricated-numbers job proved why: without node
+        # on the runner, vitest could not run, this branch printed a warning,
+        # and the job then reported "OK: docs/FACTS.json is current" and went
+        # green while never comparing a single test count. A guard reporting on
+        # a comparison it did not make is worse than no guard, because it buys
+        # confidence it has not earned.
+        #
+        # Locally a warning is still right: a developer without node installed
+        # should not be blocked from checking the differentiator numbers.
+        if os.environ.get("CI"):
+            mismatches.append(
+                "  engine.test_count: counts could NOT be measured on this CI "
+                "runner, so the test-count half of this check did not run. "
+                "Under CI that is a failure, not a skip. Ensure node and the "
+                "npm dependencies are installed in this job."
+            )
+        else:
+            print("WARNING: test counts were NOT measured on this machine, so "
+                  "the test-count half of this check did not run. The "
+                  "differentiator numbers below were still checked. This is a "
+                  "warning locally and a FAILURE under CI.", file=sys.stderr)
     else:
         for key in ("test_count", "ask_route_test_count", "test_count_total"):
             if existing_engine.get(key) != fresh_engine.get(key):

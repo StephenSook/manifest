@@ -140,6 +140,21 @@ jobs:
         with:
           python-version: "3.12"
 
+      # Node is required, not optional. scripts/facts.py measures test counts by
+      # RUNNING vitest. Without node the measurement fails, facts.py prints a
+      # warning, skips that half of the check and still exits 0. The first run
+      # of this job did exactly that: "WARNING: vitest failed ... test counts
+      # omitted" immediately followed by "OK: docs/FACTS.json is current", which
+      # is a green check reporting on a comparison it never made. That is the
+      # conditionally-skipped guard, inside the guard added to prevent it.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies so the counts can actually be measured
+        run: npm ci
+
       - name: Assert the guard suite is present before trusting a pass
         run: test -f tests/test_no_fabricated_numbers.py
 

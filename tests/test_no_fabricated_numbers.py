@@ -33,6 +33,16 @@ JUDGE_MD = REPO_ROOT / "JUDGE.md"
 STATUS_ROUTE = REPO_ROOT / "app" / "api" / "status" / "route.ts"
 DECAY_TABLE = REPO_ROOT / "data" / "decay-table.json"
 
+COUNT_CLAIM_SURFACES = [
+    "README.md", "JUDGE.md",
+    # The video script was NOT scanned, and it carried "128 tests" against a
+    # measured 162. A published video is immutable, so a stale number reaching
+    # narration is the one drift that can never be corrected afterwards.
+    "docs/video/script.md",
+    "docs/submission.md",
+]
+
+
 # Spelled-out numerals that the guard must also catch (D15)
 # Maps integer value -> set of spelled-out forms we check
 SPELLED_OUT = {
@@ -93,22 +103,58 @@ _COUNT_RE = re.compile(
 def find_test_count_claims(text: str):
     """Return [(value, suite)] for every "<n> ... tests" claim in the text.
 
-    suite is 'engine', 'ask', 'total' or None when the context does not say.
-    Binding the value to a suite matters: 73 and 81 are both real measured
-    numbers, so accepting any measured value regardless of context would let
-    "73 engine and mobile tests" pass while being false.
+    suite is 'engine', 'ask', 'total', None when unstated, or 'AMBIGUOUS'.
+
+    Binding is LOCAL. An earlier version searched a 150 character window and
+    gave 'ask' precedence, so a table naming three suites on one line bound
+    every count to 'ask' and a false total passed. The window is now the
+    enclosing Markdown cell or sentence, and a fragment naming more than one
+    suite returns AMBIGUOUS, which callers must treat as a failure rather
+    than guess at.
     """
     out = []
     prose = _prose(text)
     for m in _COUNT_RE.finditer(prose):
         value = int(m.group(1))
-        window = prose[max(0, m.start() - 90): m.end() + 60].lower()
-        if 'ask' in window or 'ask-route' in window or 'ask route' in window:
-            suite = 'ask'
-        elif 'engine' in window or 'mobile' in window:
-            suite = 'engine'
-        elif 'total' in window or 'both suites' in window or 'in total' in window:
-            suite = 'total'
+        # Local fragment: the enclosing Markdown cell, else the sentence.
+        left = max(
+            prose.rfind('|', 0, m.start()),
+            prose.rfind('\n', 0, m.start()),
+            prose.rfind('. ', 0, m.start()),
+        )
+        right_candidates = [i for i in (
+            prose.find('|', m.end()), prose.find('\n', m.end()),
+            prose.find('. ', m.end()),
+        ) if i != -1]
+        right = min(right_candidates) if right_candidates else len(prose)
+        frag = prose[left + 1: right].lower()
+
+        def _names(fragment: str) -> set:
+            found = set()
+            if 'ask' in fragment:
+                found.add('ask')
+            if 'engine' in fragment or 'mobile' in fragment:
+                found.add('engine')
+            if 'total' in fragment or 'both suites' in fragment:
+                found.add('total')
+            return found
+
+        names = _names(frag)
+        if not names:
+            # The count often sits in its own table cell while the suite is
+            # named in the neighbouring one, so widen to the enclosing LINE.
+            ls = prose.rfind('\n', 0, m.start()) + 1
+            le = prose.find('\n', m.end())
+            line = prose[ls: le if le != -1 else len(prose)].lower()
+            names = _names(line)
+
+        if len(names) > 1:
+            # A fragment naming several suites cannot be bound by guessing.
+            # An earlier version guessed, with 'ask' winning, and a false
+            # total of 81 passed in a three-suite table.
+            suite = 'AMBIGUOUS'
+        elif names:
+            suite = names.pop()
         else:
             suite = None
         out.append((value, suite))
@@ -126,22 +172,43 @@ _BAR_SUFFIX = re.compile(
 )
 
 
+_NUMBER_WORDS = {
+    'ten': 10, 'twenty': 20, 'thirty': 30, 'forty': 40, 'fifty': 50,
+    'sixty': 60, 'seventy': 70, 'eighty': 80, 'ninety': 90,
+    'one hundred': 100, 'a hundred': 100,
+}
+
+
+def _normalise_number_words(text: str) -> str:
+    """Rewrite spelled-out percentages into digits before extraction.
+
+    D15 exists because a spelled-out wrong number once slipped past a
+    digits-only guard. "Current eval score is ninety percent" was invisible
+    to this guard for the same reason.
+    """
+    out = text
+    for word, value in sorted(_NUMBER_WORDS.items(), key=lambda kv: -len(kv[0])):
+        out = re.sub(
+            rf'\b{word}\b(?=\s*(?:percent|%))', str(value), out, flags=re.IGNORECASE
+        )
+    return out
+
+
 def eval_score_claims(text: str):
     """Return percentages asserted as the MEASURED eval score.
 
-    The 90 percent submission bar is legitimately quoted in these docs and is
-    not today's score. Allowlisting the VALUE alone was wrong: it let
-    "Current eval score is 90 percent" pass. 90 is exempt only when the words
-    immediately after it name it as a bar, target or threshold.
+    The 90 percent submission bar is legitimately quoted and is not today's
+    score. Allowlisting the VALUE was wrong: it let "Current eval score is 90
+    percent" pass. 90 is exempt only when the words immediately after it name
+    it as a bar, target or threshold.
     """
     offenders = []
-    prose = _prose(text)
+    prose = _normalise_number_words(_prose(text))
     for m in re.finditer(r'(\d{1,3}(?:\.\d+)?)\s*(?:percent|%)', prose):
         value = float(m.group(1))
         window = prose[max(0, m.start() - 90): m.end() + 90].lower()
         if not any(w in window for w in ('eval', 'score', 'trap', 'abstention')):
             continue
-        # Look only at what immediately follows the percentage.
         if _BAR_SUFFIX.match(prose[m.end(): m.end() + 40]):
             continue
         offenders.append(value)
@@ -391,7 +458,7 @@ class TestJudgeFacingCountsMatchFacts:
             "Run: python3 scripts/facts.py"
         )
 
-    @pytest.mark.parametrize("surface", ["README.md", "JUDGE.md"])
+    @pytest.mark.parametrize("surface", COUNT_CLAIM_SURFACES)
     def test_quoted_test_counts_match_the_measured_suite(self, surface):
         """Every "<n> ... tests" claim must equal the count for ITS suite.
 
@@ -406,14 +473,19 @@ class TestJudgeFacingCountsMatchFacts:
             "total": engine["test_count_total"],
         }
         allowed = set(by_suite.values())
-        text = readme_text() if surface == "README.md" else judge_md_text()
+        path = REPO_ROOT / surface
+        if not path.exists():
+            pytest.skip(f"{surface} is not present")
+        text = path.read_text(encoding="utf-8")
 
         claims = find_test_count_claims(text)
-        assert claims, (
-            f"{surface} states test counts but the extractor found none. A "
-            "pattern that matches nothing passes vacuously."
-        )
         for value, suite in claims:
+            assert suite != "AMBIGUOUS", (
+                f"{surface} states '{value} tests' in a fragment that names "
+                "more than one suite, so the claim cannot be bound to a "
+                "measured value without guessing. Rewrite it so one count "
+                "names one suite. Guessing is how a false total passed."
+            )
             if suite in by_suite:
                 assert value == by_suite[suite], (
                     f"{surface} claims {value} tests for the {suite} suite, "
@@ -624,10 +696,19 @@ SURYA_CLAIM_SURFACES = [
     ".bob/rules-plan/AGENTS.md", ".bob/custom_modes.yaml",
     "app/api/solar/lib.ts", "app/api/solar/route.ts",
     "pipeline/surya_infer.py",
+    # Round 3: the video script was missing from this list and carried a
+    # claim that Surya helps compute the verdict.
+    "docs/video/script.md",
 ]
 
 _APPLY_VERBS = ("narrow", "adjusts the envelope", "applied to the envelope",
-                "tightens the envelope", "modifies the envelope")
+                "tightens the envelope", "modifies the envelope",
+                # Round 3 probes: these survived the first version.
+                # Precise phrases only. A bare "feed" matched "F10.7 flux
+                # feed", which is the NAME of a NOAA data source, not a claim.
+                "feed an", "feed the", "feeds an", "feeds the", "feed into",
+                "feeds into", "compute the verdict", "computes the verdict",
+                "decides whether", "drives the verdict", "is a regulatory input")
 _NEGATION_CUES = ("not applied", "no code applies", "does not", "is not",
                   "never", "not adjust", "rather than", "reported for context",
                   "reported alongside", "reported beside")
@@ -642,9 +723,21 @@ class TestSuryaIsNotClaimedToBeApplied:
         if not path.exists():
             pytest.skip(f"{relpath} is not present in this tree")
         text = path.read_text(encoding="utf-8", errors="ignore")
-        for sentence in re.split(r'(?<=[.!?])\s+|\n', text):
+        # Normalise whitespace first: a claim split across a line break
+        # escaped the earlier sentence splitter.
+        flat = re.sub(r'\s+', ' ', text)
+        for sentence in re.split(r'(?<=[.!?])\s+', flat):
             low = sentence.lower()
-            if not any(v in low for v in _APPLY_VERBS):
+            # Only sentences that NAME the model can be making a claim about
+            # it. Without this the guard fired on "the solar cycle decides",
+            # which is true and is not a Surya claim at all.
+            if not any(k in low for k in ('surya', 'heliophysics')):
+                continue
+            # Word-boundary matching. Plain substring matching fired on
+            # "flux feed and NOAA's", because "feed an" is a substring of
+            # "feed and". A guard with a false positive gets weakened by
+            # whoever hits it next, so precision here protects the guard.
+            if not any(re.search(rf'\b{re.escape(v)}\b', low) for v in _APPLY_VERBS):
                 continue
             assert any(c in low for c in _NEGATION_CUES), (
                 f"{relpath} states that Surya is applied to the NOAA envelope:\n"

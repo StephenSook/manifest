@@ -60,54 +60,100 @@ interface CorpusCache {
 let corpusCache: CorpusCache | null = null;
 let corpusLoadPromise: Promise<CorpusCache> | null = null;
 
+interface SchemaJson {
+  dim: number;
+  count: number;
+  model?: string;
+  bucketIdf?: number[];
+}
+
+interface CorpusBytes {
+  sqliteBytes: Uint8Array;
+  vectorBytes: Uint8Array;
+  schemaJson: SchemaJson;
+}
+
+function toUint8(data: Buffer | ArrayBuffer): Uint8Array {
+  return data instanceof Buffer ? new Uint8Array(data) : new Uint8Array(data);
+}
+
+async function readLocalCorpus(): Promise<CorpusBytes | null> {
+  const { readFile } = await import('fs/promises');
+  const path = await import('path');
+  const root = process.cwd();
+  try {
+    const [sqliteBuf, vecBuf, schemaBuf] = await Promise.all([
+      readFile(path.join(root, 'corpus', 'manifest.sqlite')),
+      readFile(path.join(root, 'corpus', 'vectors.f32')),
+      readFile(path.join(root, 'corpus', 'schema.json')),
+    ]);
+    return {
+      sqliteBytes: toUint8(sqliteBuf),
+      vectorBytes: toUint8(vecBuf),
+      schemaJson: JSON.parse(schemaBuf.toString('utf-8')) as SchemaJson,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function readBlobCorpus(token: string): Promise<CorpusBytes | null> {
+  const { list } = await import('@vercel/blob');
+  const { blobs } = await list({ prefix: 'corpus/', token });
+  const urls: Record<string, string> = {};
+  for (const b of blobs) {
+    urls[b.pathname] = b.url;
+  }
+  if (!urls['corpus/manifest.sqlite'] || !urls['corpus/vectors.f32'] || !urls['corpus/schema.json']) {
+    return null;
+  }
+  const [sqliteRaw, vectorRaw, schemaJson] = await Promise.all([
+    fetch(urls['corpus/manifest.sqlite']).then((r) => r.arrayBuffer()),
+    fetch(urls['corpus/vectors.f32']).then((r) => r.arrayBuffer()),
+    fetch(urls['corpus/schema.json']).then((r) => r.json() as Promise<SchemaJson>),
+  ]);
+  return {
+    sqliteBytes: toUint8(sqliteRaw),
+    vectorBytes: toUint8(vectorRaw),
+    schemaJson,
+  };
+}
+
 async function loadCorpus(): Promise<CorpusCache> {
   if (corpusCache) return corpusCache;
   if (corpusLoadPromise) return corpusLoadPromise;
 
   corpusLoadPromise = (async () => {
-    let sqliteBytes: ArrayBuffer;
-    let vectorBytes: ArrayBuffer;
-    let schemaJson: { dim: number; count: number; model?: string; bucketIdf?: number[] };
-
-    const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
-
-    if (blobToken) {
-      const { list } = await import('@vercel/blob');
-      const { blobs } = await list({ prefix: 'corpus/', token: blobToken });
-      const urls: Record<string, string> = {};
-      for (const b of blobs) {
-        urls[b.pathname] = b.url;
-      }
-      if (!urls['corpus/manifest.sqlite'] || !urls['corpus/vectors.f32'] || !urls['corpus/schema.json']) {
-        throw new Error(
-          'Corpus artifacts not found in Vercel Blob. Run the corpus-build workflow first.',
-        );
-      }
-      [sqliteBytes, vectorBytes] = await Promise.all([
-        fetch(urls['corpus/manifest.sqlite']).then((r) => r.arrayBuffer()),
-        fetch(urls['corpus/vectors.f32']).then((r) => r.arrayBuffer()),
-      ]);
-      schemaJson = await fetch(urls['corpus/schema.json']).then((r) => r.json());
-    } else {
-      const { readFile } = await import('fs/promises');
-      const path = await import('path');
-      const root = process.cwd();
-      const [sqliteBuf, vecBuf, schemaBuf] = await Promise.all([
-        readFile(path.join(root, 'corpus', 'manifest.sqlite')),
-        readFile(path.join(root, 'corpus', 'vectors.f32')),
-        readFile(path.join(root, 'corpus', 'schema.json')),
-      ]);
-      sqliteBytes = sqliteBuf.buffer.slice(sqliteBuf.byteOffset, sqliteBuf.byteOffset + sqliteBuf.byteLength);
-      vectorBytes = vecBuf.buffer.slice(vecBuf.byteOffset, vecBuf.byteOffset + vecBuf.byteLength);
-      schemaJson = JSON.parse(schemaBuf.toString('utf-8'));
+    // Committed freeze first so /api/ask works on Vercel without Blob.
+    // Blob is optional overlay when corpus-build has uploaded artifacts.
+    let loaded = await readLocalCorpus();
+    if (!loaded) {
+      const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
+      if (blobToken) loaded = await readBlobCorpus(blobToken);
     }
+    if (!loaded) {
+      throw new Error(
+        'Corpus artifacts not found. Expected corpus/manifest.sqlite and corpus/vectors.f32 in the deploy, or Vercel Blob after corpus-build.',
+      );
+    }
+    const { sqliteBytes, vectorBytes, schemaJson } = loaded;
 
     const { dim, count } = schemaJson;
-    const vectors = new Float32Array(vectorBytes);
+    const vecCopy = new ArrayBuffer(vectorBytes.byteLength);
+    new Uint8Array(vecCopy).set(vectorBytes);
+    const vectors = new Float32Array(vecCopy);
+    if (vectors.length !== dim * count) {
+      throw new Error(
+        `vectors.f32 length ${vectors.length} does not match schema dim*count ${dim * count}`,
+      );
+    }
 
+    const path = await import('path');
     const initSqlJs = (await import('sql.js')).default;
-    const SQL = await initSqlJs();
-    const db = new SQL.Database(new Uint8Array(sqliteBytes));
+    const SQL = await initSqlJs({
+      locateFile: (file: string) => path.join(process.cwd(), 'node_modules', 'sql.js', 'dist', file),
+    });
+    const db = new SQL.Database(sqliteBytes);
     const result = db.exec('SELECT * FROM chunks ORDER BY chunk_index');
     const cols = result[0]?.columns ?? [];
     const rows: ChunkRow[] = (result[0]?.values ?? []).map((row) => {
@@ -126,7 +172,10 @@ async function loadCorpus(): Promise<CorpusCache> {
       bucketIdf: schemaJson.bucketIdf,
     };
     return corpusCache;
-  })();
+  })().catch((err) => {
+    corpusLoadPromise = null;
+    throw err;
+  });
 
   return corpusLoadPromise;
 }

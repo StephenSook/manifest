@@ -33,7 +33,7 @@ Re-run 2026-08-24 searched those paths for the claim list below.
 |---|---|---|
 | eCFR bulk XML parser | pipeline/ecfr_parse.py | WIRED |
 | Docling PDF ingest | pipeline/docling_ingest.py | WIRED. NASA-STD-8719.14C JSON is an empty array (login wall). |
-| Vercel Blob corpus fetch | app/api/ask/route.ts @vercel/blob list | WIRED. Requires BLOB_READ_WRITE_TOKEN (Khadim 1.18). Local path reads corpus/ files. |
+| Vercel Blob corpus fetch | app/api/ask/route.ts @vercel/blob list | WIRED as optional overlay. Production freeze is committed sqlite+vectors (Q6 amended 2026-08-25). Blob requires BLOB_READ_WRITE_TOKEN (Khadim 1.18). |
 | NOAA SWPC F10.7 | services/solar/fetch.ts | WIRED (Stephen) |
 | pyatmos NRLMSISE-00 | pipeline/decay.py | WIRED (Stephen) |
 | ORBITM | no import in shipped tree | CUT FROM CODE. D4 names ORBITM. pipeline/orbitm_vendor/ is gitignored and empty of commits. decay.py uses pyatmos only. Ping Stephen (Q11) to cut ORBITM from README/D4 copy or pin a MIT commit. |

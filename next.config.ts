@@ -20,6 +20,17 @@ const webConfig: NextConfig = {
   // server build ("Cannot set properties of undefined"). Load it from
   // node_modules at runtime instead. Required by app/api/ask (task 1.6).
   serverExternalPackages: ['sql.js'],
+  // NFT does not follow process.cwd() joins, so the frozen corpus must be
+  // named here or /api/ask 503s on Vercel (sqlite never packed). Cross-lane
+  // touch on next.config.ts; coordinating with Khadim.
+  outputFileTracingIncludes: {
+    '/api/ask': [
+      './corpus/manifest.sqlite',
+      './corpus/vectors.f32',
+      './corpus/schema.json',
+      './node_modules/sql.js/dist/sql-wasm.wasm',
+    ],
+  },
 };
 
 // The mobile static-export path is deliberately not wrapped: Capacitor ships

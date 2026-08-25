@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-08-25T01:00:21.107204+00:00",
+    "generated_at": "2026-08-25T15:16:03.351669+00:00",
     "generated_by": "scripts/facts.py",
     "source_files": [
       "data/decay-table.json",
@@ -61,9 +61,9 @@
       "delivery"
     ],
     "node_count": 10,
-    "compute_ms": 2,
+    "compute_ms": 1,
     "seed_note": "GT-1 mission profile re-based onto a live delivery date (2026-12-01); the planner's question is 'standing at today, licensing not started, which deadlines are already dead.' All dates ESTIMATED per D5, replaced by data/missions/gt-1.json when 2.16 lands.",
-    "measured_at": "2026-08-25T01:00:21.098186+00:00"
+    "measured_at": "2026-08-25T15:16:00.694488+00:00"
   },
   "beneficiary_sizing": {
     "missions_per_year_approx": "40",
@@ -76,8 +76,10 @@
     "licensing_runway_source": "NASA CubeSat 101 (CSLI, 2017), Section 2.8 'Regulatory Licensing (4-6 months)'; same document: FCC requires a minimum of 90 days from application receipt, and IARU coordination starts immediately at manifest. Age flagged per D5."
   },
   "engine": {
-    "test_count": 74,
-    "test_count_note": "As of 2026-08-17. Update after adding tests.",
+    "test_count": 81,
+    "ask_route_test_count": 47,
+    "test_count_total": 128,
+    "test_count_note": "Counted by running the suites (vitest --reporter=json) at 2026-08-25T15:16:03.351669+00:00. engine_and_mobile = npm run test:engine, ask_route = npm run test:ask.",
     "decay_table_entries": 21,
     "decay_table_generated_at": "2026-08-16T20:38:16.649836+00:00"
   }

@@ -88,7 +88,7 @@ Feasibility is one command from a fresh clone:
 npm ci && npm run test:engine
 ```
 
-[FACTS: tests.engine] engine and mobile tests, no network, no keys. The regulatory interlocks are unit-tested individually: the 97.207(g) dual clock, the NOAA-before-FCC ordering, IARU before Part 97, ITU publication lead time, and delivery as the hard wall.
+[FACTS: engine.test_count] engine and mobile tests plus [FACTS: engine.ask_route_test_count] ask-route tests, no network, no keys. The regulatory interlocks are unit-tested individually: the 97.207(g) dual clock, the NOAA-before-FCC ordering, IARU before Part 97, ITU publication lead time, and delivery as the hard wall.
 
 The correctness bar is a committed eval bank of 28 regulatory questions and 6 abstention traps, run in CI on every push against committed fixtures with no network and no key, with a ratchet that fails the build on any regression and a per-question baseline that fails if a previously passing question stops passing. [FACTS: eval sentence, filled after the scored run.] The eval runner is also exposed to IBM Bob as an MCP tool over stdio, so the agent that wrote the engine can score it.
 

@@ -6,7 +6,7 @@
 
 [![CI](https://github.com/StephenSook/manifest/actions/workflows/ci.yml/badge.svg)](https://github.com/StephenSook/manifest/actions/workflows/ci.yml)
 [![Eval](https://github.com/StephenSook/manifest/actions/workflows/eval-gate.yml/badge.svg)](https://github.com/StephenSook/manifest/actions/workflows/eval-gate.yml)
-[![Tests](https://img.shields.io/badge/engine%20tests-74%20passing-3fb950.svg)](engine/)
+[![Tests](https://img.shields.io/badge/tests-128%20passing-3fb950.svg)](engine/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![IBM AI Builders Challenge August 2026](https://img.shields.io/badge/IBM%20AI%20Builders-August%202026-054ada.svg)](https://aibuilderschallenge-bobhub.bemyapp.com/)
 

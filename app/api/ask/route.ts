@@ -51,6 +51,8 @@ interface CorpusCache {
   dim: number;
   count: number;
   model: string;
+  /** Per-bucket IDF weights for hashing-trick retrieval (schema.bucketIdf) */
+  bucketIdf?: number[];
 }
 
 let corpusCache: CorpusCache | null = null;
@@ -63,7 +65,7 @@ async function loadCorpus(): Promise<CorpusCache> {
   corpusLoadPromise = (async () => {
     let sqliteBytes: ArrayBuffer;
     let vectorBytes: ArrayBuffer;
-    let schemaJson: { dim: number; count: number; model?: string };
+    let schemaJson: { dim: number; count: number; model?: string; bucketIdf?: number[] };
 
     const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
 
@@ -119,6 +121,7 @@ async function loadCorpus(): Promise<CorpusCache> {
       dim,
       count,
       model: schemaJson.model ?? 'unknown',
+      bucketIdf: schemaJson.bucketIdf,
     };
     return corpusCache;
   })();
@@ -288,10 +291,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<AskResponse>>
     );
   }
 
-  const useHash = corpus.model === 'hashing-trick-768' || corpus.model === 'mock';
+  const useHash = corpus.model.startsWith('hashing-trick') || corpus.model === 'mock';
   let queryVec: Float32Array;
   try {
-    queryVec = useHash ? hashEmbed(question, corpus.dim) : await embedQueryWatsonx(question);
+    queryVec = useHash
+      ? hashEmbed(question, corpus.dim, corpus.bucketIdf)
+      : await embedQueryWatsonx(question);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     return NextResponse.json(
@@ -299,7 +304,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<AskResponse>>
     );
   }
 
-  const topChunks = retrieveTop(corpus, queryVec, 5, question);
+  const topChunks = retrieveTop(corpus, queryVec, 8, question);
   const contextText = topChunks.map((c) => c.text).join('\n\n');
   const hasWatsonx = !!(process.env.WATSONX_API_KEY && process.env.WATSONX_PROJECT_ID);
 

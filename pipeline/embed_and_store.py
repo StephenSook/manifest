@@ -78,7 +78,7 @@ def embed_batch_mock(texts: list[str]) -> list[list[float]]:
 
 def embed_batch_hash(texts: list[str]) -> list[list[float]]:
     """
-    Content-addressed hashing-trick embeddings, dim 768.
+    Content-addressed hashing-trick embeddings.
 
     Used when watsonx Lite cannot afford a 3524-chunk embed (see PLAN Q2).
     Query embedding in app/api/ask/lib.ts MUST use the same token regex and
@@ -98,6 +98,44 @@ def embed_batch_hash(texts: list[str]) -> list[list[float]]:
         norm = float(np.linalg.norm(vec)) or 1.0
         out.append((vec / norm).tolist())
     return out
+
+
+def embed_hash_idf(texts: list[str]) -> tuple[list[list[float]], list[float]]:
+    """
+    Hashing-trick embeddings with per-bucket IDF weighting.
+
+    Two passes: raw token counts per bucket, then idf[b] = ln((N+1)/(df[b]+1))+1
+    where df[b] is the number of chunks with a nonzero bucket b. Each chunk
+    vector is count * idf, L2-normalized. Rare regulatory vocabulary (for
+    example "pre-space") then dominates retrieval instead of common tokens.
+
+    The QUERY side must apply the SAME weights: schema.json ships bucketIdf
+    and app/api/ask/lib.ts hashEmbed(question, dim, bucketIdf) applies them.
+    Token regex and md5 little-endian bucketing stay byte-identical.
+    """
+    import hashlib
+    import re
+
+    token_re = re.compile(r"[a-z0-9]+")
+    n = len(texts)
+    counts = np.zeros((n, EMBEDDING_DIM), dtype=np.float32)
+    for row, text in enumerate(texts):
+        toks = token_re.findall(text.lower())
+        # Unigrams plus adjacent bigrams: multiword regulatory terms
+        # ("pre-space notification", "remote sensing") retrieve as units.
+        # lib.ts hashEmbed builds the identical token stream.
+        grams = toks + [f"{toks[i]}_{toks[i + 1]}" for i in range(len(toks) - 1)]
+        for tok in grams:
+            digest = hashlib.md5(tok.encode("utf-8")).digest()
+            idx = int.from_bytes(digest[:4], "little") % EMBEDDING_DIM
+            counts[row, idx] += 1.0
+    df = (counts > 0).sum(axis=0).astype(np.float64)
+    idf = np.log((n + 1.0) / (df + 1.0)) + 1.0
+    weighted = counts * idf.astype(np.float32)
+    norms = np.linalg.norm(weighted, axis=1, keepdims=True)
+    norms[norms == 0] = 1.0
+    weighted = weighted / norms
+    return weighted.tolist(), [round(float(x), 6) for x in idf]
 
 
 def write_sqlite(chunks: list[dict], output_path: Path) -> None:
@@ -149,7 +187,8 @@ def write_vectors_f32(embeddings: list[list[float]], output_path: Path) -> None:
     output_path.write_bytes(arr.tobytes())
 
 
-def write_schema(chunks: list[dict], n: int, model_name: str, output_path: Path) -> None:
+def write_schema(chunks: list[dict], n: int, model_name: str, output_path: Path,
+                 bucket_idf: list[float] | None = None) -> None:
     amdates = sorted(set(c.get("amddate", "") for c in chunks if c.get("amddate")))
     schema = {
         "dim": EMBEDDING_DIM,
@@ -163,6 +202,9 @@ def write_schema(chunks: list[dict], n: int, model_name: str, output_path: Path)
         "deployment": "vercel-blob",
         "q6_decision": "build in CI, store in Vercel Blob, route handler fetches on cold start",
     }
+    if bucket_idf is not None:
+        # Query-side hashEmbed must apply these same per-bucket weights.
+        schema["bucketIdf"] = bucket_idf
     output_path.write_text(json.dumps(schema, indent=2))
 
 
@@ -174,6 +216,7 @@ def main() -> None:
                         help="Use hashing-trick embeddings (no watsonx call, keyword-aligned)")
     args = parser.parse_args()
 
+    bucket_idf = None
     print("Loading chunks...")
     chunks = load_all_chunks()
     # Filter out empty-text chunks
@@ -198,13 +241,8 @@ def main() -> None:
                 print(f"  {i}/{len(texts)}")
         model_name = "mock"
     elif args.hash_embeddings or not os.environ.get("WATSONX_API_KEY"):
-        print(f"Generating hashing-trick embeddings (dim={EMBEDDING_DIM})...")
-        all_embeddings = []
-        for i in range(0, len(texts), BATCH_SIZE):
-            batch = texts[i:i + BATCH_SIZE]
-            all_embeddings.extend(embed_batch_hash(batch))
-            if i % 256 == 0:
-                print(f"  {i}/{len(texts)}")
+        print(f"Generating IDF-weighted hashing-trick embeddings (dim={EMBEDDING_DIM})...")
+        all_embeddings, bucket_idf = embed_hash_idf(texts)
         model_name = "hashing-trick-768"
         if not args.hash_embeddings:
             print("  NOTE: WATSONX_API_KEY unset; hashing-trick used (Q2 Lite cap).")
@@ -252,7 +290,7 @@ def main() -> None:
 
     # --- Write schema.json ---
     schema_path = OUTPUT_DIR / "schema.json"
-    write_schema(chunks, len(all_embeddings), model_name, schema_path)
+    write_schema(chunks, len(all_embeddings), model_name, schema_path, bucket_idf=bucket_idf)
     print(f"  schema.json written")
 
     print("\nCorpus bundle complete.")

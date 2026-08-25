@@ -16,6 +16,10 @@ const withSerwist = withSerwistInit({
 
 const webConfig: NextConfig = {
   reactStrictMode: true,
+  // sql.js ships a UMD wrapper that breaks when webpack bundles it into the
+  // server build ("Cannot set properties of undefined"). Load it from
+  // node_modules at runtime instead. Required by app/api/ask (task 1.6).
+  serverExternalPackages: ['sql.js'],
 };
 
 // The mobile static-export path is deliberately not wrapped: Capacitor ships

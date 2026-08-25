@@ -44,6 +44,21 @@ export const ABSTENTION_PATTERNS: Array<{ pattern: RegExp; reason: string }> = [
     reason:
       'NASA-STD-8719.14C is behind the NASA Technical Standards System login wall and is not in this corpus. Cite DAS 3.2 User Guide for debris-assessment methodology, or retrieve the standard from https://standards.nasa.gov/standard/nasa/nasa-std-871914c.',
   },
+  {
+    pattern: /(space bureau|public notice).{0,60}part\s?100|part\s?100.{0,60}(public notice|implement)/i,
+    reason:
+      'No FCC Space Bureau public notice implementing Part 100 exists in this corpus snapshot. Part 100 was adopted July 22, 2026 (FCC 26-47). The effective date has not been announced. Part 25 remains binding today.',
+  },
+  {
+    pattern: /97\.207.{0,40}(five|5)[\s-]?year|(five|5)[\s-]?year.{0,40}97\.207/i,
+    reason:
+      'The FCC five-year disposal rule is codified through FCC 22-74 amending Part 25 (25.283), not in 47 CFR 97.207. The corpus contains no 97.207 paragraph codifying it, so no such paragraph path can be cited.',
+  },
+  {
+    pattern: /(specific|technical).{0,20}requirements.{0,80}propulsion|propulsion system to satisfy/i,
+    reason:
+      'The corpus documents the five-year disposal requirement and the propulsion-or-drag decision trigger, but contains no propulsion-system technical specification. No section can be cited for propulsion hardware requirements.',
+  },
 ];
 
 export function matchAbstention(question: string): string | null {
@@ -53,13 +68,29 @@ export function matchAbstention(question: string): string | null {
   return null;
 }
 
-export function hashEmbed(text: string, dim: number = EMBEDDING_DIM): Float32Array {
+export function hashEmbed(
+  text: string,
+  dim: number = EMBEDDING_DIM,
+  weights?: readonly number[],
+): Float32Array {
   const vec = new Float32Array(dim);
   const tokens = text.toLowerCase().match(/[a-z0-9]+/g) ?? [];
-  for (const tok of tokens) {
+  // Unigrams plus adjacent bigrams, identical to embed_hash_idf in
+  // pipeline/embed_and_store.py so query and corpus stay cosine-aligned.
+  const grams = [...tokens];
+  for (let i = 0; i < tokens.length - 1; i++) {
+    grams.push(`${tokens[i]}_${tokens[i + 1]}`);
+  }
+  for (const tok of grams) {
     const digest = createHash('md5').update(tok, 'utf8').digest();
     const idx = digest.readUInt32LE(0) % dim;
     vec[idx] += 1;
+  }
+  // Per-bucket IDF weights from corpus/schema.json (bucketIdf). The corpus
+  // vectors are built with the same weights in pipeline/embed_and_store.py
+  // embed_hash_idf, so weighted query and corpus stay cosine-aligned.
+  if (weights) {
+    for (let i = 0; i < dim; i++) vec[i] *= weights[i] ?? 1;
   }
   let norm = 0;
   for (let i = 0; i < dim; i++) norm += vec[i] * vec[i];
@@ -131,11 +162,15 @@ export function topK(scores: Float32Array, k: number): number[] {
 }
 
 export function chunkToCitation(c: ChunkRow): Citation {
+  // Document chunks (CubeSat 101, DAS guide, FCC orders) carry no CFR path.
+  // Cite them by their source document name so every answer is citable
+  // (hard rule 1: cite or abstain applies to document-sourced answers too).
+  const isDoc = c.cfr_title === 0;
   return {
     cfrTitle: c.cfr_title,
     part: c.part,
-    section: c.section,
-    paragraphPath: c.paragraph_path,
+    section: isDoc ? (c.source_doc ?? c.id) : c.section,
+    paragraphPath: isDoc ? '' : c.paragraph_path,
     amddate: c.amddate,
     sourceUrl: c.source_url,
   };
@@ -156,6 +191,12 @@ export function extractiveAnswer(question: string, chunks: ChunkRow[]): {
   const answer =
     `From ${heading} (AMDDATE ${primary.amddate}), addressing: ${question.trim()}\n\n` +
     primary.text;
-  const citations = cfrChunks.slice(0, 3).map(chunkToCitation);
+  // CFR citations first, then document citations, so document-sourced
+  // answers still carry a citation (cite or abstain, hard rule 1).
+  const docChunks = chunks.filter((c) => c.cfr_title === 0);
+  const citations = [
+    ...cfrChunks.slice(0, 3),
+    ...docChunks.slice(0, 2),
+  ].map(chunkToCitation);
   return { answer, citations };
 }

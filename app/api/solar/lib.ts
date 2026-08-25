@@ -111,30 +111,55 @@ export function parseNoaaPredicted(
     })
     .slice(0, FORWARD_MONTHS);
 
-  // A row is kept only if all three quantiles read as finite numbers.
+  // A row survives only if all three quantiles are REAL readings and the
+  // bounds are internally consistent.
   //
-  // Number(undefined) is NaN and JSON.stringify turns NaN into null, so a NOAA
-  // row missing one quantile used to publish `null` INSIDE the envelope: the
-  // parallel-array contract broke silently and a consumer indexing low[i] got
-  // null beside a real predicted[i]. Dropping the row keeps the four arrays
-  // parallel and keeps every published value a number somebody actually
-  // measured, which is the same rule the flux reading follows.
+  // An isFinite check alone is not enough, and the gap is nastier than NaN.
+  // Number(null), Number('') and Number(false) are all 0, and 0 is finite, so
+  // a blank or null quantile would publish ZERO as though someone measured it.
+  // Zero is a plausible-looking flux value, which makes it worse than NaN:
+  // NaN serializes to null and is visibly wrong, while 0 reads as data.
   //
-  // If this empties the envelope the route treats it as an error rather than
-  // serving an empty envelope beside a healthy 200.
-  const usable = future.filter(
-    (e) =>
-      Number.isFinite(Number(e['predicted_f10.7'])) &&
-      Number.isFinite(Number(e['low_f10.7'])) &&
-      Number.isFinite(Number(e['high_f10.7'])),
-  );
+  // Dropping the row keeps the four arrays parallel and keeps every published
+  // value a number somebody actually measured. If this empties the envelope
+  // the route treats it as an error rather than serving an empty envelope
+  // beside a healthy 200.
+  const usable = future.filter((e) => {
+    const p = strictNumber(e['predicted_f10.7']);
+    const lo = strictNumber(e['low_f10.7']);
+    const hi = strictNumber(e['high_f10.7']);
+    if (p === null || lo === null || hi === null) return false;
+    // NOAA publishes low and high as quantiles around the prediction. A row
+    // that violates that ordering is not a reading we understand, so it is
+    // not one we republish.
+    return lo <= hi;
+  });
 
   return {
     months: usable.map(monthTag),
-    predicted: usable.map((e) => Number(e['predicted_f10.7'])),
-    low: usable.map((e) => Number(e['low_f10.7'])),
-    high: usable.map((e) => Number(e['high_f10.7'])),
+    predicted: usable.map((e) => strictNumber(e['predicted_f10.7'])!),
+    low: usable.map((e) => strictNumber(e['low_f10.7'])!),
+    high: usable.map((e) => strictNumber(e['high_f10.7'])!),
   };
+}
+
+/**
+ * Coerce a value to a number ONLY when it genuinely is one.
+ *
+ * Accepts a finite number, or a non-empty numeric string, because NOAA has
+ * published quantiles as strings on some products. Rejects null, undefined,
+ * booleans, empty and whitespace-only strings, and anything non-finite, all
+ * of which `Number()` would silently turn into 0 or NaN.
+ */
+export function strictNumber(value: unknown): number | null {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (trimmed === '') return null;
+    const parsed = Number(trimmed);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
 }
 
 /**
@@ -151,14 +176,17 @@ export function readObservedFlux(raw: unknown): NoaaObserved | null {
   const row = Array.isArray(raw) ? raw[0] : raw;
   if (row === null || typeof row !== 'object') return null;
 
-  const flux = (row as Record<string, unknown>).flux;
-  if (typeof flux !== 'number' || Number.isNaN(flux)) return null;
+  const flux = strictNumber((row as Record<string, unknown>).flux);
+  if (flux === null) return null;
 
+  // A reading with no timestamp is not a reading a judge can cross-check
+  // against NOAA, and substituting an empty string would let an undated
+  // measurement ship looking complete. Refuse it and take the named-absence
+  // path instead.
   const timeTag = (row as Record<string, unknown>).time_tag;
-  return {
-    flux,
-    time_tag: typeof timeTag === 'string' ? timeTag : '',
-  };
+  if (typeof timeTag !== 'string' || timeTag.trim() === '') return null;
+
+  return { flux, time_tag: timeTag };
 }
 
 const EMPTY_ENVELOPE: PredictedEnvelope = {
@@ -204,7 +232,7 @@ export function buildSolarPayload(input: BuildSolarPayloadInput): SolarPayload {
     source: { observed: OBSERVED_URL, predicted: PREDICTED_URL },
     fetched_at: input.fetchedAt ?? new Date().toISOString(),
     disclosure: reachable
-      ? 'F10.7 is read live from NOAA SWPC on every request and is not cached. The predicted envelope is NOAA SWPC\'s own published low and high quantiles, not our estimate. The Surya activity index is ESTIMATED and narrows only the near-term end of that envelope.'
+      ? 'F10.7 is read live from NOAA SWPC on every request and is not cached. The predicted envelope is NOAA SWPC\'s own published low and high quantiles, exactly as NOAA published them: this endpoint does not adjust, smooth or narrow them. The Surya activity index is an ESTIMATED scalar proxy reported alongside for context, and no code applies it to the envelope.'
       : 'NOAA SWPC could not be reached on this request, so no flux reading is reported. No nominal value has been substituted. The deorbit verdict on /api/status computes from the frozen NRLMSISE-00 decay table and does not depend on this endpoint.',
   };
 }

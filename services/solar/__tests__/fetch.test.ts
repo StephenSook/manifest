@@ -5,7 +5,12 @@
 // Marked with .skipIf(process.env.CI) so they never block a PR.
 
 import { describe, it, expect } from 'vitest';
-import { fetchSolarConditions, parsePredictedForTest } from '../fetch';
+import {
+  fetchSolarConditions,
+  parsePredictedForTest,
+  readObservedSummary,
+  loadCachedConditions,
+} from '../fetch';
 
 // Re-export the internal parser for unit testing without network
 // (we'll add a unit test below that uses a fixture)
@@ -119,5 +124,35 @@ describe('solar/fetch, against the shape NOAA actually returns', () => {
   it('does not silently return an empty envelope for a healthy live payload', () => {
     const result = parsePredictedForTest(LIVE_SHAPE, '2026-01');
     expect(result.predicted.length).toBe(2);
+  });
+});
+
+describe('solar/fetch, the module contract is honest about what works', () => {
+  // This module has no callers: GET /api/solar is the supported live path and
+  // carries the tested parsers. What was left here was worse than unused, it
+  // was a trap. fetchObserved cast NOAA's single-element ARRAY straight to an
+  // object, so `observed.flux` was undefined and fetchSolarConditions would
+  // have returned a SolarConditions with an undefined flux and `live: true`.
+  // loadCachedConditions fetched a RELATIVE url, which Node rejects outright,
+  // pointing at a data/solar-conditions.json that does not exist and has no
+  // generator. So getSolarConditions promised in its own docstring that it
+  // "never throws" while both of its branches were broken.
+  //
+  // Rather than quietly leave that for whoever wires this next, the module now
+  // fails loudly and says where the working path is.
+
+  it('readObservedSummary pulls the flux out of the array NOAA sends', () => {
+    expect(readObservedSummary([{ flux: 143, time_tag: '2026-08-24T20:00:00' }]))
+      .toEqual({ flux: 143, time_tag: '2026-08-24T20:00:00' });
+  });
+
+  it('readObservedSummary refuses a reading it cannot fully trust', () => {
+    expect(readObservedSummary([])).toBeNull();
+    expect(readObservedSummary([{ flux: null, time_tag: 'x' }])).toBeNull();
+    expect(readObservedSummary([{ flux: 143 }])).toBeNull();
+  });
+
+  it('loadCachedConditions rejects with a pointer to the working path', async () => {
+    await expect(loadCachedConditions()).rejects.toThrow(/api\/solar/);
   });
 });

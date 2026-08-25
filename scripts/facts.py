@@ -489,6 +489,40 @@ def check_not_stale() -> None:
                     f"vs measured={fresh_engine.get(key)!r}"
                 )
 
+    # The eval block is judge-facing: app/judge/page.tsx step 3 sends a judge to
+    # this file for the score and the trap results. It was possible for that
+    # block to be stale, or to be a named absence, while this check passed
+    # quietly, because the comparison above never looked at it. A check that
+    # ignores a field cannot defend it.
+    existing_eval = existing.get("eval", {})
+    fresh_eval = fresh.get("eval", {})
+
+    if existing_eval.get("score_pct") is None:
+        mismatches.append(
+            "  eval.score_pct: FACTS.json carries a NAMED ABSENCE, so no eval "
+            "score is published. Re-run scripts/facts.py where the runner works."
+        )
+    elif fresh_eval.get("score_pct") is None:
+        # Fail rather than skip. A guard that cannot run must go red, never
+        # green-by-absence: that is the exact defect this file exists to catch.
+        mismatches.append(
+            "  eval: the runner could not complete on this machine, so the "
+            "published score could not be re-verified. This check fails closed."
+        )
+    else:
+        for key in ("score_pct", "questions_correct", "questions_total",
+                    "traps_total", "traps_abstained", "rows_scored"):
+            if existing_eval.get(key) != fresh_eval.get(key):
+                mismatches.append(
+                    f"  eval.{key}: FACTS.json={existing_eval.get(key)!r} "
+                    f"vs measured={fresh_eval.get(key)!r}"
+                )
+        if existing_eval.get("traps_abstained") != existing_eval.get("traps_total"):
+            mismatches.append(
+                "  eval: a published abstention trap did not abstain. "
+                "Cite-or-abstain is a hard product rule, not a target."
+            )
+
     if mismatches:
         print("FAIL: docs/FACTS.json is stale. Re-run: python scripts/facts.py", file=sys.stderr)
         for m in mismatches:

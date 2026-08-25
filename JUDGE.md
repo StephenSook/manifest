@@ -67,7 +67,7 @@ If the network is down: `npm install && npm run test:engine` is the one-command 
 
 ## What this project is NOT claiming
 
-- Surya runs as a real forward pass whose output is a frozen artifact (`data/surya-outlook.json`) that the demo reads (decision D7). If the artifact is absent, the deorbit verdict computes from NOAA alone and the panel says so. We do not claim live Surya inference in the request path.
+- Surya runs as a real forward pass whose output is a frozen artifact (`data/surya-outlook.json`), served by `GET /api/solar` (decision D7). If the artifact is absent the endpoint returns `surya_absent: true`. The activity index is reported for context and is NOT applied to the envelope or to the verdict: no code adjusts a NOAA number using it. We do not claim live Surya inference in the request path.
 - The eval score today is 53.6 percent with all 6 abstention traps abstaining, measured on the credential-free extractive path and enforced in CI as a raise-only floor. The 90 percent bar applies to the full watsonx pipeline and will be published to `docs/FACTS.json`, dated, when that run happens. We do not claim 90 today.
-- `/api/ask` on the deployment degrades to abstention until the corpus bundle is uploaded to Vercel Blob. Abstention with a stated reason is the designed failure mode; the endpoint never fabricates.
+- `/api/ask` reads the corpus committed in this repository, which is traced into the deployed function; Vercel Blob is an optional overlay and is not required. Without watsonx credentials the route answers from the offline extractive path over that same corpus rather than abstaining, and `/api/status` reports which backend answered. It abstains when the corpus genuinely cannot load or the question is not supported by the corpus, always with a stated reason, and it never fabricates.
 - Every number in `docs/FACTS.json` comes from a real engine run, and the no-fabricated-numbers test enforces that README figures match it.

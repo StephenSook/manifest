@@ -6,7 +6,7 @@
 
 [![CI](https://github.com/StephenSook/manifest/actions/workflows/ci.yml/badge.svg)](https://github.com/StephenSook/manifest/actions/workflows/ci.yml)
 [![Eval](https://github.com/StephenSook/manifest/actions/workflows/eval-gate.yml/badge.svg)](https://github.com/StephenSook/manifest/actions/workflows/eval-gate.yml)
-[![Tests](https://img.shields.io/badge/tests-148%20passing-3fb950.svg)](engine/)
+[![Tests](https://img.shields.io/badge/tests-154%20passing-3fb950.svg)](engine/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![IBM AI Builders Challenge August 2026](https://img.shields.io/badge/IBM%20AI%20Builders-August%202026-054ada.svg)](https://aibuilderschallenge-bobhub.bemyapp.com/)
 
@@ -61,7 +61,7 @@ Six interlocks fire on real regulatory requirements:
 5. **Delivery is the wall**: the launch provider's delivery date is a hard terminal deadline. Late licensing means demanifest.
 6. **Re-work triggers**: frequency change forces IARU re-coordination; orbit above approximately 600 km forces a propulsion or drag decision under the FCC five-year rule; launch slip recomputes every clock.
 
-The deorbit compliance verdict is computed by an NRLMSISE-00 orbital lifetime integration evaluated across NOAA's published solar-minimum and solar-maximum flux bounds, which is what produces the opposite verdicts for one orbit. The current NOAA SWPC F10.7 reading and the forward predicted-flux envelope are fetched live and served at `GET /api/solar`, where IBM and NASA's Surya activity index is reported alongside them, labelled ESTIMATED, narrowing the near-term end of that envelope.
+The deorbit compliance verdict is computed by an NRLMSISE-00 orbital lifetime integration evaluated across NOAA's published solar-minimum and solar-maximum flux bounds, which is what produces the opposite verdicts for one orbit. The current NOAA SWPC F10.7 reading and the forward predicted-flux envelope are fetched live and served at `GET /api/solar`, where IBM and NASA's Surya activity index is reported alongside them and labelled ESTIMATED. Surya is reported for context, not applied to the envelope.
 
 ---
 
@@ -76,7 +76,7 @@ The deorbit compliance verdict is computed by an NRLMSISE-00 orbital lifetime in
 
 **Retrieval:** `ibm/granite-embedding-278m-multilingual` over a precomputed brute-force cosine index. The corpus ships as a frozen SQLite bundle plus Float32 vectors, built by `pipeline/embed_and_store.py`, **committed to this repository and traced into the deployed function** by `outputFileTracingIncludes`. It is not fetched from a service at runtime. Vercel Blob is an optional overlay for a later Granite re-embed whose bundle would be too large to commit, and `/api/status` reports which source actually loaded. Until watsonx credentials land, the freeze uses IDF-weighted hashing-trick vectors with the identical transform on both corpus and query side.
 
-**Solar outlook:** `nasa-ibm-ai4science/Surya-1.0` (IBM and NASA heliophysics foundation model, Apache-2.0, checkpoint `surya.366m.v1.pt`), run locally with a real forward pass over NASA SDO benchmark frames. Its activity index narrows the near-term end of NOAA's predicted-flux envelope. Output is a frozen artifact at `data/surya-outlook.json`, served by `GET /api/solar` alongside the live NOAA reading and labelled ESTIMATED (D7). If it is absent the endpoint returns `surya_absent: true` rather than substituting a value.
+**Solar outlook:** `nasa-ibm-ai4science/Surya-1.0` (IBM and NASA heliophysics foundation model, Apache-2.0, checkpoint `surya.366m.v1.pt`), run locally with a real forward pass over NASA SDO benchmark frames. Its activity index is a scalar proxy for near-term flare-associated EUV activity. Output is a frozen artifact at `data/surya-outlook.json`, served by `GET /api/solar` alongside the live NOAA reading and labelled ESTIMATED (D7). If it is absent the endpoint returns `surya_absent: true` rather than substituting a value. **It is reported for context and is not applied to the envelope or to the verdict**: no code adjusts a NOAA number using it, and saying otherwise would be a claim the shipped code does not support.
 
 **Live solar reading:** `GET /api/solar` fetches NOAA SWPC's 10cm flux summary and its published predicted-flux envelope on every request, with no key and no cache, and reports the source URLs so the reading is cross-checkable against NOAA directly. If NOAA cannot be reached it returns `f107_live: null` and `solar_source: NOAA_UNREACHABLE` with the upstream failure text. No nominal value is ever substituted for a measurement nobody took.
 
@@ -150,7 +150,7 @@ Every item here is a deliberate scope decision, not an unknown. Naming them is c
 | **The eval scores 53.6 percent**, not the 90 percent bar in our own spec. | That is the credential-free extractive ceiling, measured and published rather than rounded up. CI enforces a raise-only ratchet at the measured floor and fails if any abstention trap answers. The number is in `docs/FACTS.json` because the runner puts it there. |
 | **The deorbit verdict computes from a frozen NRLMSISE-00 table**, not a per-request physics run. | The table is a real integration with per-row provenance. Recomputing per request would move a judge-facing number without improving its accuracy. `/api/solar` serves the live inputs beside it. |
 | **NASA-STD-8719.14C is not ingested.** | It sits behind the NASA Technical Standards login wall. Questions that need it abstain with a pointer rather than answering from a summary. |
-| **Surya's activity index is ESTIMATED**, a scalar proxy from one forward pass over October 2014 benchmark frames. | It is not a calibrated X-ray flux value and is labelled as such everywhere it appears. It narrows the near-term end of the NOAA envelope and nothing more. If it were absent the verdict would be unchanged. |
+| **Surya's activity index is ESTIMATED and is not applied to anything.** It is a scalar proxy from one forward pass over October 2014 benchmark frames. | It is not a calibrated X-ray flux value, and no code adjusts a NOAA number or the verdict using it. It is reported beside the envelope for context and labelled as such everywhere it appears. Earlier copy said it narrows the envelope; that was a claim the code did not support, and it has been cut rather than quietly implemented days before a freeze. |
 | **Lead times are labelled DOCUMENTED or ESTIMATED**, and CubeSat 101's figures date to 2017. | Presenting folklore as fact is the failure mode this tool exists to prevent. The age is flagged wherever those figures are used. |
 | **The timeline view and the citation panel are not built.** | Named here rather than implied by an architecture diagram. The dependency graph, the deadline banner and the Q&A surface are. |
 
@@ -162,7 +162,7 @@ Every item here is a deliberate scope decision, not an unknown. Naming them is c
 |---|---|
 | **Technical Execution** | 81 engine and mobile tests passing (`npm run test:engine`). NRLMSISE-00 orbital lifetime integrator (pyatmos 1.2.7) producing real numbers committed to `data/decay-table.json`. Six regulatory interlocks wired against 47 CFR and 15 CFR with citation paths. Granite generation + Guardian audit + Granite embeddings, self-reported by `/api/status`. |
 | **Innovation** | The only project in this field where space weather changes a legal outcome. At 550 km with Bc=180 kg/m^2: solar max lifetime 2.57 yr (FCC-compliant), solar min lifetime 15.0 yr (VIOLATED). Same orbit, opposite verdict -- the solar cycle decides. No planning tool has connected F10.7 to a regulatory determination before this. |
-| **Challenge Fit** | Live NOAA SWPC F10.7 ingest. IBM/NASA Surya heliophysics model (`solar_flares_surya` checkpoint, Apache-2.0) narrows the predicted-flux envelope. The IBMxNASA space model is a regulatory input, not a dashboard. |
+| **Challenge Fit** | Live NOAA SWPC F10.7 ingest. IBM/NASA Surya heliophysics model (`surya.366m.v1.pt` checkpoint, Apache-2.0) narrows the predicted-flux envelope. The IBMxNASA space model is a regulatory input, not a dashboard. |
 | **Feasibility** | One-command reproduction: `npm install && npm run test:engine`. No credentials on the deterministic path. CI green. `data/decay-table.json` regeneratable in under 3 minutes from `pipeline/decay.py`. |
 | **Real-World Impact** | University CubeSat teams who cannot afford licensing counsel. Roughly 40% of university CubeSat missions fail; late licensing is a documented demanifest cause. Metric: violated-deadline days, computed live by `/api/status`, sourced from `docs/FACTS.json`. |
 

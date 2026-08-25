@@ -218,14 +218,23 @@ Answer (cite every claim with its CFR section and AMDDATE):`;
       if (rawAnswer.includes(c.section)) push(c);
     }
   }
-  for (const c of contextChunks.filter((x) => x.cfr_title === 0).slice(0, 2)) {
-    push(c);
+  // Document chunks attach only when the answer actually references the
+  // document, or when the context held no CFR text at all (a document-only
+  // question, where the answer can only have come from the document).
+  const docChunks = contextChunks.filter((x) => x.cfr_title === 0);
+  const docMentioned = (c: ChunkRow): boolean => {
+    const name = c.source_doc ?? '';
+    const fragments = ['CubeSat 101', 'DAS', 'FCC 26-47', 'FCC 22-74', 'Part 100'];
+    return fragments.some((f) => name.includes(f) && rawAnswer.includes(f));
+  };
+  for (const c of docChunks) {
+    if (docMentioned(c)) push(c);
   }
-  if (citations.length === 0) {
-    // Never ship a supported answer with an empty citation array: fall
-    // back to the retrieved context itself.
-    for (const c of contextChunks.slice(0, 3)) push(c);
+  if (citations.length === 0 && cfrChunks.length === 0 && docChunks.length > 0) {
+    push(docChunks[0]);
   }
+  // Cite or abstain: an answer with no resolvable citation does not ship
+  // as an answer. The POST handler converts empty citations to abstention.
 
   return { rawAnswer, citations };
 }
@@ -361,6 +370,19 @@ export async function POST(req: NextRequest): Promise<NextResponse<AskResponse>>
       audited: false,
       abstained: true,
       reason: 'Model could not answer from the provided regulatory text.',
+    });
+  }
+
+  if (citations.length === 0) {
+    // Cite or abstain (hard rule 1): no resolvable citation means no
+    // answer. The retrieved sections are shown so the user sees what the
+    // corpus offered.
+    return NextResponse.json({
+      answer: null,
+      citations: topChunks.filter((c) => c.cfr_title > 0).map(chunkToCitation),
+      audited: false,
+      abstained: true,
+      reason: 'The generated answer did not cite any retrieved section, so it does not ship. Retrieved sections are listed.',
     });
   }
 

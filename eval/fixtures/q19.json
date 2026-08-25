@@ -1,11 +1,11 @@
 {
-  "answer": "From 47 CFR 25.114(4)(c)(6)(iv) (AMDDATE 2026-08-13), addressing: What is the NASA Orbital Debris Assessment Software and why does Manifest not use it directly?\n\nThe apogee,",
+  "answer": "From 47 CFR 25.114(c)(6)(iv) (AMDDATE 2026-08-13), addressing: What is the NASA Orbital Debris Assessment Software and why does Manifest not use it directly?\n\nThe apogee,",
   "citations": [
     {
       "cfrTitle": 47,
       "part": 25,
       "section": "25.114",
-      "paragraphPath": "(4)(c)(6)(iv)",
+      "paragraphPath": "(c)(6)(iv)",
       "amddate": "2026-08-13",
       "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
     },

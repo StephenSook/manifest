@@ -1,11 +1,11 @@
 {
-  "answer": "From 47 CFR 25.114(1) (AMDDATE 2026-08-13), addressing: What ITU filing must be made via the FCC before an amateur space station license can be granted?\n\nA license application filed pursuant to \u00a7 25.110(b)(2) for a GSO space station or NGSO space station or space-station constellation must comprise a comprehensive proposal and must be submitted on FCC Form 312, Main Form and Schedule S, with attached exhibits required by paragraph (d) of this section.",
+  "answer": "From 47 CFR 25.114(a)(1) (AMDDATE 2026-08-13), addressing: What ITU filing must be made via the FCC before an amateur space station license can be granted?\n\nA license application filed pursuant to \u00a7 25.110(b)(2) for a GSO space station or NGSO space station or space-station constellation must comprise a comprehensive proposal and must be submitted on FCC Form 312, Main Form and Schedule S, with attached exhibits required by paragraph (d) of this section.",
   "citations": [
     {
       "cfrTitle": 47,
       "part": 25,
       "section": "25.114",
-      "paragraphPath": "(1)",
+      "paragraphPath": "(a)(1)",
       "amddate": "2026-08-13",
       "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
     },

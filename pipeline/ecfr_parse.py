@@ -129,16 +129,16 @@ def reconstruct_nested_paths(chunks: list[dict]) -> list[dict]:
                 repaired.append(c)
                 continue
             segs = re.findall(r"\([^)]+\)", lab)
-            if len(segs) > 1:
-                stack = []
-                for seg in segs:
-                    typ, tok = _classify_label(seg, stack)
-                    stack.append((typ, tok))
-                path = "".join(f"({t})" for _, t in stack)
-            else:
-                typ, tok = _classify_label(lab, stack)
+            # Multi-segment labels from the XML can be ABSOLUTE ("(a)(1)")
+            # or PARTIAL ("(4)(i)" relative to an open (c) list). Applying
+            # each segment through the same sibling/child logic handles
+            # both: an absolute path's first segment continues or opens at
+            # the right level, and a partial path merges into the open
+            # hierarchy instead of resetting it.
+            for seg in segs:
+                typ, tok = _classify_label(seg, stack)
                 _apply_label(stack, typ, tok)
-                path = "".join(f"({t})" for _, t in stack)
+            path = "".join(f"({t})" for _, t in stack)
             updated = dict(c)
             updated["paragraphPath"] = path
             cid = f"{updated['cfrTitle']}-{updated['part']}-{updated['section']}"

@@ -40,9 +40,28 @@ export function MobileShell() {
 
     // Device-local instant: this adapter layer runs only at runtime on the
     // device, never during SSR or tests (schedule.ts takes now as input).
+    // Serialized latest-wins: initial mount, resume, and mission-change can
+    // all request a sync concurrently, but only one cancel-and-schedule
+    // transaction runs at a time. A request that arrives mid-run marks the
+    // state dirty and the loop reruns once with fresh data, so an older
+    // snapshot can never overwrite a newer save.
+    let syncRunning = false;
+    let syncDirty = false;
     const sync = async () => {
-      const mission = await loadMission();
-      await syncDeadlineNotifications(mission, new Date());
+      if (syncRunning) {
+        syncDirty = true;
+        return;
+      }
+      syncRunning = true;
+      try {
+        do {
+          syncDirty = false;
+          const mission = await loadMission();
+          await syncDeadlineNotifications(mission, new Date());
+        } while (syncDirty);
+      } finally {
+        syncRunning = false;
+      }
     };
     void sync();
 

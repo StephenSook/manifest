@@ -103,6 +103,60 @@ def run_status() -> dict | None:
         return None
 
 
+def run_test_counts() -> dict | None:
+    """Count tests by RUNNING them, never by hand (task 2.18).
+
+    A hand-maintained count is a figure that drifts silently and then reaches a
+    README, a submission, or a video narration that cannot be edited afterward.
+    This runs the two vitest projects with the JSON reporter and reads the real
+    totals. Returns None if the suites cannot be run, so the caller records a
+    NAMED absence rather than carrying a stale literal forward.
+    """
+    suites = {
+        "engine_and_mobile": ["engine", "mobile"],
+        "ask_route": ["app/api"],
+    }
+    counts: dict[str, int] = {}
+    for label, paths in suites.items():
+        out_path = REPO_ROOT / f".facts-vitest-{label}.json"
+        try:
+            proc = subprocess.run(
+                ["npx", "vitest", "run", *paths,
+                 "--reporter=json", f"--outputFile={out_path}"],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                timeout=600,
+            )
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            print(f"WARNING: vitest did not run for {label} ({exc}); "
+                  "test counts omitted", file=sys.stderr)
+            return None
+        finally:
+            pass
+        if proc.returncode != 0 or not out_path.exists():
+            print(f"WARNING: vitest failed for {label}; test counts omitted",
+                  file=sys.stderr)
+            out_path.unlink(missing_ok=True)
+            return None
+        try:
+            report = json.loads(out_path.read_text())
+        except json.JSONDecodeError:
+            print(f"WARNING: vitest emitted non-JSON for {label}; "
+                  "test counts omitted", file=sys.stderr)
+            return None
+        finally:
+            out_path.unlink(missing_ok=True)
+        # A red suite must not be counted as a fact.
+        if not report.get("success") or report.get("numFailedTests"):
+            print(f"WARNING: {label} suite is not green; test counts omitted",
+                  file=sys.stderr)
+            return None
+        counts[label] = int(report["numTotalTests"])
+    counts["total"] = sum(v for k, v in counts.items() if k != "total")
+    return counts
+
+
 def compute_facts() -> dict:
     table = load_decay_table()
 
@@ -194,9 +248,12 @@ def compute_facts() -> dict:
         ),
     }
 
+    test_counts = run_test_counts()
+    generated_at = datetime.now(timezone.utc).isoformat()
+
     return {
         "_meta": {
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": generated_at,
             "generated_by": "scripts/facts.py",
             "source_files": [
                 str(DECAY_TABLE.relative_to(REPO_ROOT)),
@@ -262,10 +319,21 @@ def compute_facts() -> dict:
         # Beneficiary sizing -- UNVERIFIED until primary sources confirmed
         "beneficiary_sizing": beneficiary_sizing,
 
-        # Engine state
+        # Engine state. Test counts come from a real vitest run, never a hand
+        # -maintained literal: see run_test_counts().
         "engine": {
-            "test_count": 74,
-            "test_count_note": "As of 2026-08-17. Update after adding tests.",
+            "test_count": test_counts["engine_and_mobile"] if test_counts else None,
+            "ask_route_test_count": test_counts["ask_route"] if test_counts else None,
+            "test_count_total": test_counts["total"] if test_counts else None,
+            "test_count_note": (
+                "Counted by running the suites (vitest --reporter=json) at "
+                f"{generated_at}. engine_and_mobile = npm run test:engine, "
+                "ask_route = npm run test:ask."
+                if test_counts else
+                "NOT MEASURED: the vitest suites could not be run on this "
+                "machine. Do not quote a test count from this file until it is "
+                "regenerated where the suites run."
+            ),
             "decay_table_entries": len(table),
             "decay_table_generated_at": table[0].get("generatedAt") if table else None,
         },
@@ -296,6 +364,24 @@ def check_not_stale() -> None:
             mismatches.append(
                 f"  {key}: FACTS.json={existing_diff.get(key)!r} vs computed={fresh_diff.get(key)!r}"
             )
+
+    # Test counts drift the moment anyone adds a test, and a stale count is
+    # exactly the kind of figure that reaches a video narration that cannot be
+    # edited afterward. Compare them, and if they could not be MEASURED, say so
+    # out loud rather than passing quietly (a skipped check is not a pass).
+    existing_engine = existing.get("engine", {})
+    fresh_engine = fresh["engine"]
+    if fresh_engine.get("test_count") is None:
+        print("WARNING: test counts were NOT measured on this machine, so the "
+              "test-count half of this check did not run. The differentiator "
+              "numbers below were still checked.", file=sys.stderr)
+    else:
+        for key in ("test_count", "ask_route_test_count", "test_count_total"):
+            if existing_engine.get(key) != fresh_engine.get(key):
+                mismatches.append(
+                    f"  engine.{key}: FACTS.json={existing_engine.get(key)!r} "
+                    f"vs measured={fresh_engine.get(key)!r}"
+                )
 
     if mismatches:
         print("FAIL: docs/FACTS.json is stale. Re-run: python scripts/facts.py", file=sys.stderr)

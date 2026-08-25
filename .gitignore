@@ -93,6 +93,11 @@ eval/report.json
 public/sw.js
 public/swe-worker*.js
 
+# Transient vitest JSON reports written by scripts/facts.py when it measures
+# the test counts. Deleted on every normal exit; ignored so a killed run cannot
+# leave one staged.
+.facts-vitest-*.json
+
 # Context Forge gateway local database (task 3.2, never committed)
 mcp.db*
 .venv-forge/

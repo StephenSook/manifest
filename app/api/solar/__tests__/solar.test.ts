@@ -160,3 +160,41 @@ describe('buildSolarPayload when NOAA is unreachable', () => {
     expect(payload.surya_absent).toBe(false);
   });
 });
+
+describe('parseNoaaPredicted rejects rows it cannot fully read', () => {
+  // Number(undefined) is NaN, and JSON.stringify turns NaN into null. A NOAA
+  // row missing one quantile therefore published `null` INSIDE the envelope
+  // arrays: the parallel-array contract silently broke, and a consumer
+  // indexing low[i] got null beside a real predicted[i]. That is a fabricated
+  // measurement wearing a different hat, which this endpoint exists to refuse.
+  const partial: NoaaPredictedEntry[] = [
+    { 'time-tag': '2026-09', 'predicted_f10.7': 133.7, 'high_f10.7': 141.1 }, // low missing
+    { 'time-tag': '2026-10', 'predicted_f10.7': 130.0, 'low_f10.7': 121.0, 'high_f10.7': 138.0 },
+    { 'time-tag': '2026-11', 'predicted_f10.7': 'n/a', 'low_f10.7': 119.0, 'high_f10.7': 136.0 },
+  ];
+
+  it('drops a row missing a quantile rather than emitting NaN', () => {
+    const parsed = parseNoaaPredicted(partial, '2026-08');
+    expect(parsed.months).toEqual(['2026-10']);
+    expect(parsed.low).toEqual([121.0]);
+  });
+
+  it('drops a row whose value is present but not numeric', () => {
+    const parsed = parseNoaaPredicted(partial, '2026-08');
+    expect(parsed.predicted.every((v) => Number.isFinite(v))).toBe(true);
+  });
+
+  it('never emits a null once serialized', () => {
+    const parsed = parseNoaaPredicted(partial, '2026-08');
+    const serialized = JSON.stringify(parsed);
+    expect(serialized).not.toContain('null');
+  });
+
+  it('keeps all four arrays the same length', () => {
+    const parsed = parseNoaaPredicted(partial, '2026-08');
+    const n = parsed.months.length;
+    expect(parsed.predicted).toHaveLength(n);
+    expect(parsed.low).toHaveLength(n);
+    expect(parsed.high).toHaveLength(n);
+  });
+});

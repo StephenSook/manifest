@@ -20,6 +20,26 @@ const PREDICTED_URL =
 // How many months of forward projection to return
 const FORWARD_MONTHS = 60;
 
+/**
+ * Read the month tag from a predicted-solar-cycle row.
+ *
+ * NOAA spells this key `time-tag` with a HYPHEN on the predicted-cycle
+ * product, while the observed-flux product uses `time_tag` and every other
+ * key on the same predicted row uses underscores. Verified against the live
+ * payload on 2026-08-25.
+ *
+ * This parser previously read the underscore form, which is `undefined` for
+ * every live row, so the month filter rejected all of them and the function
+ * returned empty arrays for a perfectly healthy NOAA response. Its unit test
+ * did not catch that because the test fixture was written from the same
+ * assumption as the code. Both spellings are accepted here so a future NOAA
+ * normalisation cannot reintroduce the failure from the other direction.
+ */
+function monthTag(entry: NoaaPredictedCycleEntry): string {
+  const raw = entry['time-tag'] ?? entry['time_tag'];
+  return typeof raw === 'string' ? raw : '';
+}
+
 // ---------------------------------------------------------------------------
 // Internal fetchers
 // ---------------------------------------------------------------------------
@@ -68,7 +88,10 @@ export function parsePredictedForTest(
   currentYearMonth: string,
 ): { predicted: number[]; low: number[]; high: number[] } {
   const future = entries
-    .filter((e) => e.time_tag >= currentYearMonth)
+    .filter((e) => {
+      const tag = monthTag(e);
+      return tag !== '' && tag >= currentYearMonth;
+    })
     .slice(0, FORWARD_MONTHS);
 
   return {

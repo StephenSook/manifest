@@ -45,9 +45,18 @@ export interface NoaaFluxSummary {
 /**
  * One entry from services.swpc.noaa.gov/json/solar-cycle/predicted-solar-cycle.json
  * The JSON keys use dots (e.g. "predicted_f10.7") so we parse them via index access.
+ *
+ * THE MONTH KEY IS `time-tag` WITH A HYPHEN on this product, verified against
+ * the live payload 2026-08-25. The observed-flux product uses `time_tag` with
+ * an underscore, and so does every other key on this same row, which is what
+ * makes the wrong spelling look right. This interface previously REQUIRED
+ * `time_tag`, which encoded the mistake into the type system and let a wrong
+ * fixture typecheck. Neither spelling is required now; read the tag through
+ * `monthTag()` in fetch.ts, which accepts both.
  */
 export interface NoaaPredictedCycleEntry {
-  time_tag: string; // "YYYY-MM"
-  [key: string]: number | string;
+  'time-tag'?: string; // "YYYY-MM", the live spelling
+  time_tag?: string; // tolerated in case NOAA normalises later
+  [key: string]: number | string | undefined;
   // Accessed as entry["predicted_f10.7"], entry["high_f10.7"], entry["low_f10.7"]
 }

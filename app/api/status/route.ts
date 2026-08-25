@@ -27,34 +27,24 @@ import type { MissionInput } from '../../../engine/types';
 // Dates: ESTIMATED from the published schedule narrative where not recoverable
 // from public records. Marked ESTIMATED per D5.
 //
-// This inline seed is the fallback until data/missions/gt-1.json lands
-// in task 2.16 (Tylin). When 2.16 ships, this file reads from that JSON.
+// Task 2.16: the seed now reads from data/missions/gt-1.json (Tylin's
+// seeded mission record, every field labelled ESTIMATED with basis per D5).
+// One source of truth: the JSON carries the provenance and fieldBasis notes.
 // ---------------------------------------------------------------------------
 
-// GT-1 mission PROFILE (3U, 550 km circular, amateur 437.5 MHz) re-based onto
-// a live delivery date, because the planner's question is "standing at today,
-// licensing not yet started, which deadlines are already dead." GT-1's own
-// paper documents the shape of this scenario: a nine month plan that became
-// two-plus years with the FCC license nearly missing the launch window.
-// Every date below is ESTIMATED (D5) with that documented profile as basis.
-// Replaced by data/missions/gt-1.json when task 2.16 lands.
+import gt1Seed from '../../../data/missions/gt-1.json';
+
 const GT1_MISSION: MissionInput = {
-  // ESTIMATED: launch 45 days after delivery per typical rideshare cadence
-  launchDate: '2027-01-15',
-  // ESTIMATED: live-frame delivery wall, ~3.5 months from mid-August 2026
-  deliveryDate: '2026-12-01',
-  // ESTIMATED: LV determination entered two weeks ago, the demo's entry event
-  lvDeterminationDate: '2026-08-01',
-  // ESTIMATED: integration start 6 weeks before delivery
-  integrationDate: '2026-10-15',
-  pathway: 'part-97-amateur',
-  frequencyMHz: 437.5,
-  imagingEarth: false,
-  // 3U CubeSat at 550 km circular -- the headline differentiator orbit
-  apogeeKm: 550,
-  perigeeKm: 550,
-  // ESTIMATED: 3U CubeSat Bc approx 180 kg/m^2 (mass ~4 kg, area ~0.03 m^2, Cd ~2.2)
-  ballisticCoefficient: 180,
+  launchDate: gt1Seed.launchDate,
+  deliveryDate: gt1Seed.deliveryDate,
+  lvDeterminationDate: gt1Seed.lvDeterminationDate,
+  integrationDate: gt1Seed.integrationDate,
+  pathway: gt1Seed.pathway as MissionInput['pathway'],
+  frequencyMHz: gt1Seed.frequencyMHz,
+  imagingEarth: gt1Seed.imagingEarth,
+  apogeeKm: gt1Seed.apogeeKm,
+  perigeeKm: gt1Seed.perigeeKm,
+  ballisticCoefficient: gt1Seed.ballisticCoefficient,
 };
 
 // ---------------------------------------------------------------------------
@@ -178,9 +168,9 @@ export async function GET(): Promise<NextResponse> {
 
     // Seed mission used for this computation
     seed_mission: {
-      id: 'gt-1',
-      name: 'GT-1 (Georgia Tech SSDL)',
-      source: 'SmallSat 2021 SSC21-P2-48, DOI 10.26077/s4a1-qn29',
+      id: gt1Seed.id,
+      name: `${gt1Seed.name} (${gt1Seed.program})`,
+      source: gt1Seed.source,
       perigeeKm: GT1_MISSION.perigeeKm,
       pathway: GT1_MISSION.pathway,
     },

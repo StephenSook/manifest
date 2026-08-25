@@ -222,14 +222,19 @@ describe('round-7 probes: W-words, Part cues, parenthesized units', () => {
     expect(unresolved).toHaveLength(0);
   });
 
-  it('parenthesized short units are quantities, not paths', () => {
+  it('parenthesized unit-lookalike paths are fail-closed: unresolvable means abstain', () => {
+    // Rounds 7-9 settled this: "(m)" and "(w)" are real CFR paragraph
+    // labels, and no heuristic separates them from quantities without
+    // opening a fail-open hole. Prose like "5.8 (m)" therefore abstains,
+    // the safe direction under cite-or-abstain.
     for (const unit of ['m', 'W', 'kg', 'km']) {
       const { chunks, unresolved } = resolveCfrCitations(
         `The tether extends 5.8 (${unit}) beyond the bus, per 97.207(g).`,
         [chunk()],
       );
       expect(chunks).toHaveLength(1);
-      expect(unresolved).toHaveLength(0);
+      expect(unresolved).toHaveLength(1);
+      expect(unresolved[0].section).toBe('5.8');
     }
   });
 
@@ -279,5 +284,54 @@ describe('round-8 probes: unit-shaped paths stay fail-closed', () => {
     );
     expect(chunks).toHaveLength(1);
     expect(unresolved).toHaveLength(0);
+  });
+});
+
+describe('round-9 probes: whitespace never exempts a pathed reference', () => {
+  it('a spaced UNSUPPORTED real-label citation abstains beside a valid one', () => {
+    for (const probe of [
+      'See 97.207(g) and 97.303 (m).',
+      'See 97.207(g) and 25.208 (w).',
+    ]) {
+      const { chunks, unresolved } = resolveCfrCitations(probe, [chunk()]);
+      expect(chunks).toHaveLength(1);
+      expect(unresolved).toHaveLength(1);
+    }
+  });
+
+  it('a fabricated spaced unit-shaped path abstains', () => {
+    const { unresolved } = resolveCfrCitations(
+      'See 97.207(g) and 25.999 (m).',
+      [chunk()],
+    );
+    expect(unresolved).toHaveLength(1);
+    expect(unresolved[0].section).toBe('25.999');
+  });
+
+  it('tab and non-breaking-space variants behave identically', () => {
+    for (const ws of ['\t', '\u00A0']) {
+      const { unresolved } = resolveCfrCitations(
+        `See 97.207(g) and 25.999${ws}(m).`,
+        [chunk()],
+      );
+      expect(unresolved).toHaveLength(1);
+    }
+  });
+
+  it('an unresolvable same-section pathed ref abstains rather than enabling suppression', () => {
+    const ctx = [
+      chunk(),
+      chunk({
+        id: '47-25-25.114-c',
+        part: 25,
+        section: '25.114',
+        paragraph_path: '(c)',
+      }),
+    ];
+    const { unresolved } = resolveCfrCitations(
+      'Section 97.207 applies, spans 97.207 (m), and cites 25.114(c).',
+      ctx,
+    );
+    expect(unresolved.length).toBeGreaterThan(0);
   });
 });

@@ -195,6 +195,15 @@ export interface CfrReference {
    * when it happens to resolve, and is never fatal when it does not.
    */
   cued: boolean;
+  /**
+   * True for an unanchored number whose only path segment is a SPACED
+   * parenthesized unit letter ("5.8 (m)"): probably a quantity, but CFR
+   * really uses these labels (97.303(m), 25.208(w)), so the ref is KEPT
+   * and resolution decides (Codex round 8): it attaches when it
+   * resolves, and counts as a measurement only when it resolves to
+   * nothing.
+   */
+  unitSuspect?: boolean;
 }
 
 // A paragraph label must have a valid CFR shape: digits "(1)", letters
@@ -259,12 +268,13 @@ export function parseCfrReferences(answer: string): CfrReference[] {
   // fabricated citation from fail-closed resolution entirely).
   const unitAfter =
     /^\s*\(?\s*(?:[GMk]?Hz|dB[A-Za-z]?|[kMG]?W|km|cm|mm|m|kg|percent|%|months?|days?|years?|weeks?|hours?|minutes?|seconds?|degrees?|meters?|watts?)(?![A-Za-z])/i;
-  // A single parenthesized short unit is a quantity too: "5.8 (m)",
-  // "2.5 (W)". Only checked when NO title or cue governs the number, so
-  // "47 CFR 97.207(m)" stays a citation. Deliberately excludes "g" and
-  // "s", which are common real CFR paragraph letters; a lost bare
-  // "97.207(g)"-style citation would only push toward abstention anyway,
-  // never toward a fabricated citation.
+  // A SPACED single parenthesized short unit ("5.8 (m)") is measurement-
+  // SUSPECT, never dropped outright: CFR really uses (m) and (w) as
+  // paragraph labels (97.303(m), 25.208(w)), so dropping them at parse
+  // time silently exempted fabricated unit-shaped paths from the
+  // fail-closed gate (Codex round 8). Suspect refs are kept and
+  // resolution decides. Only checked when NO title or cue governs the
+  // number: "47 CFR 97.207(m)" is never suspect.
   const parenUnit = /^(?:[gmk]?hz|db[a-z]?|[kmg]?w|km|cm|mm|m|kg)$/;
   let m: RegExpExecArray | null;
   while ((m = re.exec(answer))) {
@@ -280,16 +290,14 @@ export function parseCfrReferences(answer: string): CfrReference[] {
       if (governs(a.end, idx)) title = a.title;
     }
     const anchoredCue = cueEnds.some((e) => governs(e, idx));
-    if (
+    const unitSuspect =
       title === null &&
       !anchoredCue &&
       segs.length === 1 &&
-      parenUnit.test(segs[0].slice(1, -1))
-    ) {
-      continue;
-    }
+      /^\s/.test(m[2]) &&
+      parenUnit.test(segs[0].slice(1, -1));
     const cued = title !== null || anchoredCue || segs.length > 0;
-    refs.push({ title, section: m[1], path: segs.join(''), cued });
+    refs.push({ title, section: m[1], path: segs.join(''), cued, unitSuspect });
   }
   return refs;
 }
@@ -363,7 +371,10 @@ export function resolveCfrCitations(
       );
       if (exact.length > 0) {
         exact.forEach(push);
-      } else {
+      } else if (!ref.unitSuspect) {
+        // A measurement-suspect ref ("5.8 (m)") that resolves to nothing
+        // is a quantity, not a failed citation. Everything else pathed
+        // that fails exact resolution forces abstention.
         unresolved.push(ref);
       }
     } else if (suppressedByPathed(ref)) {

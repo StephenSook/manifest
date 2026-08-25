@@ -239,3 +239,45 @@ describe('round-7 probes: W-words, Part cues, parenthesized units', () => {
     expect(refs[0]).toMatchObject({ title: 47, path: '(m)', cued: true });
   });
 });
+
+describe('round-8 probes: unit-shaped paths stay fail-closed', () => {
+  it('a real (m) paragraph citation resolves', () => {
+    const ctx = [chunk({ section: '97.303', paragraph_path: '(m)' })];
+    const { chunks, unresolved } = resolveCfrCitations(
+      'Stations must comply with 97.303(m) at all times.',
+      ctx,
+    );
+    expect(chunks).toHaveLength(1);
+    expect(unresolved).toHaveLength(0);
+  });
+
+  it('a real (w) paragraph citation resolves', () => {
+    const ctx = [chunk({ section: '25.208', paragraph_path: '(w)' })];
+    const { chunks, unresolved } = resolveCfrCitations(
+      'Power limits appear in 25.208(w).',
+      ctx,
+    );
+    expect(chunks).toHaveLength(1);
+    expect(unresolved).toHaveLength(0);
+  });
+
+  it('a fabricated tight unit-shaped path beside a valid citation abstains', () => {
+    const { chunks, unresolved } = resolveCfrCitations(
+      'See 97.207(g) and 25.999(m).',
+      [chunk()],
+    );
+    expect(chunks).toHaveLength(1);
+    expect(unresolved).toHaveLength(1);
+    expect(unresolved[0].section).toBe('25.999');
+  });
+
+  it('a spaced unit-shaped path that resolves is still a citation', () => {
+    const ctx = [chunk({ section: '97.303', paragraph_path: '(m)' })];
+    const { chunks, unresolved } = resolveCfrCitations(
+      'Stations must comply with 97.303 (m) at all times.',
+      ctx,
+    );
+    expect(chunks).toHaveLength(1);
+    expect(unresolved).toHaveLength(0);
+  });
+});

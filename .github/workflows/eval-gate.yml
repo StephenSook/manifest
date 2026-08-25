@@ -117,3 +117,34 @@ jobs:
               sys.exit(1)
           print(f"ok: all {len(baseline['passing'])} baseline ids still pass")
           PY
+
+  # ---------------------------------------------------------------------------
+  # anti-fabrication guard (task 2.18)
+  #
+  # This suite existed for weeks and had NEVER RUN IN CI: no workflow ran
+  # pytest at all. In that gap README.md and JUDGE.md both drifted to "79
+  # engine and mobile tests" while the suite really ran 81 and FACTS.json
+  # correctly said 81. A guard nobody executes is decoration.
+  #
+  # Every step below runs BARE, with no pipe on its exit path, and the
+  # dependency install is a hard failure rather than a skip: a guard that
+  # cannot run must go red, never green-by-absence.
+  # ---------------------------------------------------------------------------
+  fabricated-numbers:
+    name: Every judge-facing number traces to FACTS.json
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+
+      - name: Assert the guard suite is present before trusting a pass
+        run: test -f tests/test_no_fabricated_numbers.py
+
+      - name: README and JUDGE.md counts equal the measured counts
+        run: uv run --python 3.12 --with pytest python -m pytest tests/ -v
+
+      - name: FACTS.json is not stale against the code that generates it
+        run: uv run --python 3.12 python scripts/facts.py --check

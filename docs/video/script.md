@@ -255,7 +255,7 @@ Per PLAN.md D12, do not re-stage everything on Aug 28. Capture each beat the day
 **Description (draft):**
 University CubeSat teams face a multi-agency licensing campaign against an immovable launch date. But no planning tool tells them that the same orbit can be FCC-compliant or non-compliant depending on the solar cycle.
 
-Manifest surfaces that constraint as a node in the dependency graph. IBM and NASA's own Surya heliophysics model, NOAA's predicted F10.7 envelope, and an NRLMSISE-00 orbital lifetime estimate compute a deorbit compliance verdict that is a hard prerequisite of FCC grant.
+Manifest surfaces that constraint as a node in the dependency graph. NOAA's published solar-minimum and solar-maximum flux bounds, run through an NRLMSISE-00 orbital lifetime integration, produce a deorbit compliance verdict that is a hard prerequisite of FCC grant.
 
 At 550 km, Bc=180 kg/m^2: solar minimum lifetime 15.0 yr (VIOLATED). Solar maximum lifetime 2.57 yr (OK). Same orbit. Opposite verdict. The solar cycle decides.
 

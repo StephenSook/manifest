@@ -147,6 +147,21 @@ def find_test_count_claims(text: str):
             le = prose.find('\n', m.end())
             line = prose[ls: le if le != -1 else len(prose)].lower()
             names = _names(line)
+        if not names:
+            # Still unbound: the suite is often named by an enclosing HEADING
+            # or a parent bullet, with the count on a later line. JUDGE.md has
+            # exactly that shape, and leaving it unbound let a false engine
+            # count pass because the value was a valid total.
+            head = prose[:m.start()].split('\n')
+            for prior in reversed(head[-12:]):
+                stripped = prior.strip()
+                if not stripped:
+                    continue
+                if stripped.startswith('#') or re.match(r'^[-*+]\s|^\*\*', stripped):
+                    found = _names(stripped.lower())
+                    if found:
+                        names = found
+                        break
 
         if len(names) > 1:
             # A fragment naming several suites cannot be bound by guessing.
@@ -172,26 +187,50 @@ _BAR_SUFFIX = re.compile(
 )
 
 
-_NUMBER_WORDS = {
-    'ten': 10, 'twenty': 20, 'thirty': 30, 'forty': 40, 'fifty': 50,
-    'sixty': 60, 'seventy': 70, 'eighty': 80, 'ninety': 90,
-    'one hundred': 100, 'a hundred': 100,
-}
+_ONES = {'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
+         'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
+         'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14,
+         'fifteen': 15, 'sixteen': 16, 'seventeen': 17, 'eighteen': 18,
+         'nineteen': 19}
+_TENS = {'twenty': 20, 'thirty': 30, 'forty': 40, 'fifty': 50, 'sixty': 60,
+         'seventy': 70, 'eighty': 80, 'ninety': 90}
+
+_WORD_NUM = re.compile(
+    r'\b(?:(?P<hundred>one\s+hundred|a\s+hundred)'
+    r'|(?P<tens>' + '|'.join(_TENS) + r')(?:[\s-]+(?P<tens_ones>' + '|'.join(_ONES) + r'))?'
+    r'|(?P<ones>' + '|'.join(sorted(_ONES, key=len, reverse=True)) + r'))'
+    r'(?:\s+point\s+(?P<dec>(?:' + '|'.join(sorted(_ONES, key=len, reverse=True)) + r')(?:\s+\w+)*?))?'
+    r'(?=\s*(?:percent|%))',
+    re.IGNORECASE,
+)
 
 
 def _normalise_number_words(text: str) -> str:
     """Rewrite spelled-out percentages into digits before extraction.
 
-    D15 exists because a spelled-out wrong number once slipped past a
-    digits-only guard. "Current eval score is ninety percent" was invisible
-    to this guard for the same reason.
+    D15 exists because a spelled-out wrong number slipped past a digits-only
+    guard once. The first version of this normaliser handled only standalone
+    tens and 100, so "ninety-five percent", "five percent" and
+    "fifty-three point six percent" were all still invisible: the same class
+    of hole, one layer in.
     """
-    out = text
-    for word, value in sorted(_NUMBER_WORDS.items(), key=lambda kv: -len(kv[0])):
-        out = re.sub(
-            rf'\b{word}\b(?=\s*(?:percent|%))', str(value), out, flags=re.IGNORECASE
-        )
-    return out
+    def repl(m: 're.Match') -> str:
+        if m.group('hundred'):
+            whole = 100
+        elif m.group('tens'):
+            whole = _TENS[m.group('tens').lower()]
+            if m.group('tens_ones'):
+                whole += _ONES[m.group('tens_ones').lower()]
+        else:
+            whole = _ONES[m.group('ones').lower()]
+        dec = m.group('dec')
+        if dec:
+            first = dec.strip().split()[0].lower()
+            if first in _ONES:
+                return f'{whole}.{_ONES[first]}'
+        return str(whole)
+
+    return _WORD_NUM.sub(repl, text)
 
 
 def eval_score_claims(text: str):
@@ -493,9 +532,13 @@ class TestJudgeFacingCountsMatchFacts:
                     f"python3 scripts/facts.py, then update {surface}."
                 )
             else:
-                assert value in allowed, (
-                    f"{surface} claims {value} tests with no suite named, and "
-                    f"{value} is not any measured count {sorted(allowed)}."
+                # An unbound claim can only legitimately be the overall total.
+                # Accepting ANY measured value here was the hole: 162 is a
+                # valid total, so an unbound "162 engine tests" passed.
+                assert value == by_suite["total"], (
+                    f"{surface} claims {value} tests without naming a suite. "
+                    f"An unbound count must be the overall total "
+                    f"({by_suite['total']}). Name the suite, or use the total."
                 )
 
     def test_readme_badge_total_matches_facts(self):
@@ -546,11 +589,19 @@ class TestEvalScoreIsPublishedAndConsistent:
             "rule, not a target."
         )
 
-    @pytest.mark.parametrize("surface", ["README.md", "JUDGE.md"])
+    @pytest.mark.parametrize("surface", COUNT_CLAIM_SURFACES)
     def test_quoted_eval_score_matches_facts(self, surface):
-        """Any percentage asserted as the measured eval score must match."""
+        """Any percentage asserted as the measured eval score must match.
+
+        Scanned across every judge-facing surface, not just the two markdown
+        files in the root: the submission copy and the video script quote
+        numbers too, and the video's are the ones that become permanent.
+        """
         measured = load_facts()["eval"]["score_pct"]
-        text = readme_text() if surface == "README.md" else judge_md_text()
+        path = REPO_ROOT / surface
+        if not path.exists():
+            pytest.skip(f"{surface} is not present")
+        text = path.read_text(encoding="utf-8")
         for value in eval_score_claims(text):
             assert abs(value - measured) < 0.05, (
                 f"{surface} states {value} percent as the measured eval score "
@@ -708,6 +759,8 @@ _APPLY_VERBS = ("narrow", "adjusts the envelope", "applied to the envelope",
                 # feed", which is the NAME of a NOAA data source, not a claim.
                 "feed an", "feed the", "feeds an", "feeds the", "feed into",
                 "feeds into", "compute the verdict", "computes the verdict",
+                "compute a deorbit compliance verdict",
+                "compute a verdict", "computes a verdict",
                 "decides whether", "drives the verdict", "is a regulatory input")
 _NEGATION_CUES = ("not applied", "no code applies", "does not", "is not",
                   "never", "not adjust", "rather than", "reported for context",
@@ -745,3 +798,74 @@ class TestSuryaIsNotClaimedToBeApplied:
                 "No shipped code does this. Either wire it and prove it with a "
                 "test, or state plainly that it is reported for context."
             )
+
+
+# ---------------------------------------------------------------------------
+# Test 9: regression fixtures for every bypass a review reproduced.
+#
+# Each case below was a working evasion at some point today. They live here so
+# that narrowing a pattern in future fails loudly instead of silently, which
+# is how the count guard once ended up matching nothing at all.
+# ---------------------------------------------------------------------------
+
+class TestReproducedBypassesStayClosed:
+
+    def test_multi_suite_table_is_ambiguous_not_guessed(self):
+        row = "| Ask-route suite | 81 tests | Engine and mobile suite | 81 tests | Total | 81 tests |"
+        for _, suite in find_test_count_claims(row):
+            assert suite == "AMBIGUOUS", (
+                "a fragment naming three suites was bound by guessing; that is "
+                "how a false total of 81 passed against a measured 162"
+            )
+
+    def test_count_under_a_heading_binds_to_that_heading(self):
+        doc = "## Engine and mobile suite\n\nExpected: 999 tests passing.\n"
+        claims = find_test_count_claims(doc)
+        assert claims == [(999, "engine")], claims
+
+    def test_count_under_a_parent_bullet_binds_to_it(self):
+        doc = "- **Engine and mobile suite**\n  - runs 999 tests offline\n"
+        claims = find_test_count_claims(doc)
+        assert ("engine" in [s for _, s in claims]), claims
+
+    @pytest.mark.parametrize("phrase,expected", [
+        ("score of ninety-five percent", 95.0),
+        ("ninety five percent eval score", 95.0),
+        ("eval score of five percent", 5.0),
+        ("eval score is fifty-three point six percent", 53.6),
+        ("Current eval score is ninety percent.", 90.0),
+    ])
+    def test_spelled_out_scores_are_visible(self, phrase, expected):
+        assert expected in eval_score_claims(phrase), (
+            f"{phrase!r} evaded the eval-score guard. D15 exists because a "
+            "spelled-out wrong number slipped past a digits-only guard once."
+        )
+
+    def test_the_legitimate_bar_is_still_exempt(self):
+        assert eval_score_claims(
+            "The 90 percent submission bar applies to the full watsonx pipeline."
+        ) == []
+
+    @pytest.mark.parametrize("sentence", [
+        "Surya, NOAA and NRLMSISE-00 compute a deorbit compliance verdict.",
+        "Surya is applied to the\nenvelope.",
+        "Surya feeds the NRLMSISE-00 estimate.",
+        "The Surya heliophysics model decides whether the orbit is legal.",
+    ])
+    def test_surya_application_claims_are_caught(self, sentence):
+        flat = re.sub(r'\s+', ' ', sentence)
+        low = flat.lower()
+        named = any(k in low for k in ('surya', 'heliophysics'))
+        verbed = any(re.search(rf'\b{re.escape(v)}\b', low) for v in _APPLY_VERBS)
+        negated = any(c in low for c in _NEGATION_CUES)
+        assert named and verbed and not negated, (
+            f"this application claim would not be caught: {sentence!r}"
+        )
+
+    def test_an_honest_negation_is_not_flagged(self):
+        sentence = "The Surya activity index is reported for context and is not applied to the envelope."
+        low = sentence.lower()
+        assert any(c in low for c in _NEGATION_CUES), (
+            "the honest phrasing must remain sayable, or the guard will be "
+            "weakened by whoever hits it next"
+        )

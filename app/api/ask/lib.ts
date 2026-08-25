@@ -195,15 +195,6 @@ export interface CfrReference {
    * when it happens to resolve, and is never fatal when it does not.
    */
   cued: boolean;
-  /**
-   * True for an unanchored number whose only path segment is a SPACED
-   * parenthesized unit letter ("5.8 (m)"): probably a quantity, but CFR
-   * really uses these labels (97.303(m), 25.208(w)), so the ref is KEPT
-   * and resolution decides (Codex round 8): it attaches when it
-   * resolves, and counts as a measurement only when it resolves to
-   * nothing.
-   */
-  unitSuspect?: boolean;
 }
 
 // A paragraph label must have a valid CFR shape: digits "(1)", letters
@@ -268,14 +259,14 @@ export function parseCfrReferences(answer: string): CfrReference[] {
   // fabricated citation from fail-closed resolution entirely).
   const unitAfter =
     /^\s*\(?\s*(?:[GMk]?Hz|dB[A-Za-z]?|[kMG]?W|km|cm|mm|m|kg|percent|%|months?|days?|years?|weeks?|hours?|minutes?|seconds?|degrees?|meters?|watts?)(?![A-Za-z])/i;
-  // A SPACED single parenthesized short unit ("5.8 (m)") is measurement-
-  // SUSPECT, never dropped outright: CFR really uses (m) and (w) as
-  // paragraph labels (97.303(m), 25.208(w)), so dropping them at parse
-  // time silently exempted fabricated unit-shaped paths from the
-  // fail-closed gate (Codex round 8). Suspect refs are kept and
-  // resolution decides. Only checked when NO title or cue governs the
-  // number: "47 CFR 97.207(m)" is never suspect.
-  const parenUnit = /^(?:[gmk]?hz|db[a-z]?|[kmg]?w|km|cm|mm|m|kg)$/;
+  // NOTE (Codex rounds 7-9): parenthesized single letters like "(m)" and
+  // "(w)" are REAL CFR paragraph labels (97.303(m), 25.208(w)), and no
+  // whitespace or resolution-failure heuristic can safely tell them from
+  // quantities: every carve-out tried opened a fail-open hole where a
+  // fabricated unit-shaped path rode beside a valid citation. So a
+  // CFR-shaped parenthesized path ALWAYS makes a cued, fail-closed
+  // reference. The accepted cost: prose like "5.8 (m)" abstains, and
+  // abstention is the safe direction (hard rule 1).
   let m: RegExpExecArray | null;
   while ((m = re.exec(answer))) {
     const segs = (m[2].match(/\([a-zA-Z0-9]+\)/g) ?? []).map((s) =>
@@ -290,14 +281,8 @@ export function parseCfrReferences(answer: string): CfrReference[] {
       if (governs(a.end, idx)) title = a.title;
     }
     const anchoredCue = cueEnds.some((e) => governs(e, idx));
-    const unitSuspect =
-      title === null &&
-      !anchoredCue &&
-      segs.length === 1 &&
-      /^\s/.test(m[2]) &&
-      parenUnit.test(segs[0].slice(1, -1));
     const cued = title !== null || anchoredCue || segs.length > 0;
-    refs.push({ title, section: m[1], path: segs.join(''), cued, unitSuspect });
+    refs.push({ title, section: m[1], path: segs.join(''), cued });
   }
   return refs;
 }
@@ -371,10 +356,7 @@ export function resolveCfrCitations(
       );
       if (exact.length > 0) {
         exact.forEach(push);
-      } else if (!ref.unitSuspect) {
-        // A measurement-suspect ref ("5.8 (m)") that resolves to nothing
-        // is a quantity, not a failed citation. Everything else pathed
-        // that fails exact resolution forces abstention.
+      } else {
         unresolved.push(ref);
       }
     } else if (suppressedByPathed(ref)) {

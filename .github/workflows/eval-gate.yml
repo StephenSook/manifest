@@ -81,6 +81,9 @@ jobs:
           print(f"ok: baseline is a superset of {base} ({len(parent)} -> {len(current)} ids)")
           PY
 
+      - name: Matcher metadata regression tests (stdlib, round 4)
+        run: python3 pipeline/tests/test_runner_matcher.py
+
       - name: Run eval bank (fixtures, offline)
         run: python3 eval/runner.py --mode fixtures --min-score "$RATCHET_MIN_SCORE"
 

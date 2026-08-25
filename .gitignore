@@ -19,6 +19,9 @@ BUILD_PLAN copy.md
 service-account*.json
 .npmrc
 .pypirc
+*.jks
+*.keystore
+keystore.properties
 
 # Dependencies
 node_modules/

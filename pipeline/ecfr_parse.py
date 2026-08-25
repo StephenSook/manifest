@@ -104,30 +104,29 @@ def _apply_label(stack: list[tuple[str, str]], typ: str, tok: str) -> None:
     stack.append((typ, tok))
 
 
-def reconstruct_nested_paths(chunks: list[dict]) -> list[dict]:
+def reconstruct_nested_paths(
+    chunks: list[dict], *, provenance: str
+) -> list[dict]:
     """
     eCFR <P> text usually carries only the innermost label: '(1)' not '(g)(1)'.
     Walk each section in document order and rebuild the full paragraphPath
     by sibling-continuation of the CFR hierarchy (letter / number / roman / cap).
-    Idempotent if paths are already nested.
+
+    provenance MUST be the literal "raw-xml", declared by the caller. This
+    transform is only defined over labels as parsed from the raw eCFR bulk
+    XML. It is NOT idempotent, and no ratio heuristic can reliably tell raw
+    from reconstructed input (Codex round 4: reconstructed 960.8 measures
+    30.8 percent multi-segment, under any usable cutoff, and a second pass
+    corrupted 8 of 14 of its paths). Anything except an explicit raw-xml
+    declaration fails closed instead of guessing.
     """
-    # Idempotency guard: this transform consumes RAW labels, where the
-    # overwhelming majority are single innermost segments. Reconstructed
-    # output is 57 to 70 percent multi-segment. Re-running the transform on
-    # its own output corrupts valid hierarchy, so refuse input that is
-    # already reconstructed and return it unchanged.
-    labeled = [c for c in chunks if c.get("paragraphPath")]
-    if labeled:
-        multi = sum(
-            1 for c in labeled
-            if len(re.findall(r"\(", c["paragraphPath"])) > 1
+    if provenance != "raw-xml":
+        raise ValueError(
+            "reconstruct_nested_paths only accepts provenance='raw-xml', "
+            f"got {provenance!r}. Re-running reconstruction on its own "
+            "output corrupts paths; regenerate from pipeline/raw instead "
+            "(see repair_committed_chunks)."
         )
-        if multi / len(labeled) > 0.4:
-            print(
-                "  reconstruct_nested_paths: input already reconstructed "
-                f"({multi}/{len(labeled)} multi-segment), returning unchanged"
-            )
-            return chunks
 
     by_section: dict[tuple, list[dict]] = {}
     order: list[tuple] = []
@@ -249,7 +248,11 @@ def main():
             # Match DIV5:PART with N=part_target
             if tag == 'DIV5' and typ == 'PART' and n == part_target:
                 print(f"  Found Part {part_target}")
-                chunks.extend(reconstruct_nested_paths(list(parse_part(el, 47))))
+                chunks.extend(
+                    reconstruct_nested_paths(
+                        list(parse_part(el, 47)), provenance="raw-xml"
+                    )
+                )
                 break
 
         output_file = output_dir / f"title47-part{part_target}.json"
@@ -269,7 +272,9 @@ def main():
         typ = el.get('TYPE', '')
         if tag == 'DIV5' and typ == 'PART' and n == "960":
             print(f"  Found Part 960")
-            chunks = reconstruct_nested_paths(list(parse_part(el, 15)))
+            chunks = reconstruct_nested_paths(
+                list(parse_part(el, 15)), provenance="raw-xml"
+            )
             output_file = output_dir / "title15-part960.json"
             with open(output_file, 'w', encoding='utf-8') as f:
                 json.dump(chunks, f, indent=2, ensure_ascii=False)

@@ -179,3 +179,12 @@ class TestParagraphReconstruction:
         ]
         assert space, "97.3 Space station definition chunk missing"
         assert space[0]["paragraphPath"] == "(a)(41)", space[0]["paragraphPath"]
+
+    def test_25_114_authoritative_structures(self):
+        """Codex round-2 verification targets from the authoritative eCFR."""
+        chunks = json.loads(
+            (CHUNKS_DIR / "title47-part25.json").read_text(encoding="utf-8")
+        )
+        paths = {c["paragraphPath"] for c in chunks if c["section"] == "25.114"}
+        for expected in ("(a)(1)", "(b)", "(c)(4)(vi)(C)", "(d)(14)(vii)(D)(1)"):
+            assert expected in paths, f"25.114 missing {expected}"

@@ -1,11 +1,11 @@
 {
-  "answer": "From 47 CFR 25.161(3)(b) (AMDDATE 2026-08-13), addressing: What is the statutory clock for the NOAA CRSRA license review after an application is deemed complete?\n\nThe expiration of the license term, unless, in the case of an earth station license, an application for renewal of the license has been filed with the Commission pursuant to \u00a7 25.121(e) or, in the case of a space station license, an application for extension of the license term has been filed with the Commission; or",
+  "answer": "From 47 CFR 25.161(b) (AMDDATE 2026-08-13), addressing: What is the statutory clock for the NOAA CRSRA license review after an application is deemed complete?\n\nThe expiration of the license term, unless, in the case of an earth station license, an application for renewal of the license has been filed with the Commission pursuant to \u00a7 25.121(e) or, in the case of a space station license, an application for extension of the license term has been filed with the Commission; or",
   "citations": [
     {
       "cfrTitle": 47,
       "part": 25,
       "section": "25.161",
-      "paragraphPath": "(3)(b)",
+      "paragraphPath": "(b)",
       "amddate": "2026-08-13",
       "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
     },

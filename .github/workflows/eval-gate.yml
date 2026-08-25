@@ -34,6 +34,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Assert the baseline itself was not lowered
+        run: |
+          python3 - << 'PY'
+          import json, subprocess, sys
+          current = set(json.load(open("eval/baseline_passing.json"))["passing"])
+          proc = subprocess.run(
+              ["git", "show", "HEAD^:eval/baseline_passing.json"],
+              capture_output=True, text=True,
+          )
+          if proc.returncode != 0:
+              # File did not exist at the parent commit: nothing to compare.
+              print("no parent baseline: first commit of the file")
+              sys.exit(0)
+          parent = set(json.loads(proc.stdout)["passing"])
+          removed = sorted(parent - current)
+          if removed:
+              print(f"::error::baseline ids were REMOVED, violating raise-only: {removed}")
+              sys.exit(1)
+          print(f"ok: baseline is a superset of the parent ({len(parent)} -> {len(current)} ids)")
+          PY
 
       - name: Run eval bank (fixtures, offline)
         run: python3 eval/runner.py --mode fixtures --min-score "$RATCHET_MIN_SCORE"

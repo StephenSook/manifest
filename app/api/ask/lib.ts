@@ -137,8 +137,10 @@ export function hybridSelect(
   const afterSection = question.slice(
     question.indexOf(sectionMatch[1]) + sectionMatch[1].length,
   );
+  // Ordinary citation typography puts whitespace around segments
+  // ("97.3 (a)(41)", "97.3 (a) (41)"), so consume it between every token.
   const requestedSegs: string[] = [];
-  const segRe = /^\(([a-zA-Z0-9]+)\)/;
+  const segRe = /^\s*\(([a-zA-Z0-9]+)\)/;
   let rest = afterSection;
   let m = rest.match(segRe);
   while (m) {

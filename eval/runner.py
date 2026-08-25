@@ -88,6 +88,27 @@ def ask_url(base_url: str, question: str, timeout: int) -> dict:
             }
 
 
+_SNAPSHOT_RANGE: tuple[str, str] | None = None
+_SNAPSHOT_LOADED = False
+
+
+def _snapshot_range() -> tuple[str, str] | None:
+    """The corpus snapshot's [min, max] amddate from corpus/schema.json.
+
+    Returns None when the schema is absent (the corpus is a build artifact),
+    in which case only real-calendar-date validation applies.
+    """
+    global _SNAPSHOT_RANGE, _SNAPSHOT_LOADED
+    if not _SNAPSHOT_LOADED:
+        _SNAPSHOT_LOADED = True
+        schema_path = Path("corpus/schema.json")
+        if schema_path.exists():
+            rng = json.loads(schema_path.read_text()).get("amddate_range") or {}
+            if rng.get("min") and rng.get("max"):
+                _SNAPSHOT_RANGE = (rng["min"], rng["max"])
+    return _SNAPSHOT_RANGE
+
+
 def citation_matches(expected: dict, got: dict) -> bool:
     # Section: exact string, or membership in section_any_of when the bank
     # row accepts several source documents. An EMPTY expected section means
@@ -108,11 +129,17 @@ def citation_matches(expected: dict, got: dict) -> bool:
     exp_part = int(expected.get("part") or 0)
     if exp_part and int(got.get("part") or 0) != exp_part:
         return False
-    # Paragraph paths compare by complete segments: expected (g) accepts the
-    # deeper (g)(1) but never the sibling-shaped (g4) or a fabricated branch
-    # that merely shares a string prefix.
-    exp_segs = re.findall(r"\(([^)]+)\)", str(expected.get("paragraphPath") or ""))
-    got_segs = re.findall(r"\(([^)]+)\)", str(got.get("paragraphPath") or ""))
+    # Paragraph paths must be CANONICAL (nothing but parenthetical segments)
+    # and compare by complete segments: expected (g) accepts the deeper
+    # (g)(1) but never junk(g)tail, (g4), or a fabricated branch that
+    # merely shares a string prefix.
+    exp_path = str(expected.get("paragraphPath") or "")
+    got_path = str(got.get("paragraphPath") or "")
+    canon = re.compile(r"(\([a-zA-Z0-9]+\))*$")
+    if exp_path and not canon.fullmatch(got_path):
+        return False
+    exp_segs = re.findall(r"\(([^)]+)\)", exp_path)
+    got_segs = re.findall(r"\(([^)]+)\)", got_path)
     if exp_segs and got_segs[: len(exp_segs)] != exp_segs:
         return False
     if exp_segs and not got_segs:
@@ -120,9 +147,14 @@ def citation_matches(expected: dict, got: dict) -> bool:
     exp_amd = str(expected.get("amddate") or "")
     got_amd = str(got.get("amddate") or "")
     if exp_amd == "VERIFY_FROM_SNAPSHOT":
-        # The snapshot pin: a real date in ISO shape, as ingested (eCFR
-        # snapshots and dated source documents both carry one).
-        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", got_amd):
+        # The snapshot pin: a REAL calendar date (not just date-shaped),
+        # bounded by the corpus snapshot's amddate range from schema.json.
+        try:
+            parsed = datetime.strptime(got_amd, "%Y-%m-%d").date()
+        except ValueError:
+            return False
+        rng = _snapshot_range()
+        if rng and not (rng[0] <= parsed.isoformat() <= rng[1]):
             return False
     elif exp_amd and got_amd != exp_amd:
         return False

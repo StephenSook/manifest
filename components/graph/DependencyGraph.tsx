@@ -213,9 +213,11 @@ function MilestoneNodeComponent({ data }: { data: MilestoneData }) {
             lineHeight: '1.4',
           }}
         >
-          {/* Citation text comes from the engine via node.citation */}
-          {n.citation.cfrTitle} CFR {n.citation.part}.{n.citation.section}
-                  {n.citation.paragraphPath}
+          {/* Citation text comes from the engine via node.citation.
+              `section` already carries the part ("25.114"), so it is rendered
+              alone: prefixing `part` produced "47 CFR 25.25.114(d)". */}
+          {n.citation.cfrTitle} CFR {n.citation.section}
+          {n.citation.paragraphPath}
         </div>
       )}
 

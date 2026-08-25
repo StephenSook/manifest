@@ -86,18 +86,19 @@ const FCC_RULE_THRESHOLD_KM = 2000;
 const FCC_LIMIT_YEARS = 5;
 
 /**
- * Paragraph paths UNVERIFIED pending task 1.1 eCFR parse.
- * Source: eCFR structure API confirms sections 25.283, 25.114, 97.207, 5.64
- * exist. Sub-paragraph paths (e)(1) etc. need snapshot verification.
+ * Paragraph paths VERIFIED against the committed corpus freeze (task 1.1).
+ * 25.283(e) is present in corpus/chunks/title47-part25.json, whose chunks all
+ * carry AMDDATE 2026-08-13. Re-verify this constant whenever the corpus is
+ * re-ingested: it is the date every citation on this panel is pinned to.
  */
-const SNAPSHOT = 'VERIFY_FROM_SNAPSHOT';
+const SNAPSHOT = '2026-08-13';
 const ECFR_BASE = 'https://www.ecfr.gov/current/title-';
 
 const PART_25_DEORBIT_CITATION: Citation = {
   cfrTitle: 47,
   part: 25,
   section: '25.283',
-  paragraphPath: '(e)',   // VERIFY_FROM_SNAPSHOT
+  paragraphPath: '(e)',   // verified present in the 2026-08-13 snapshot
   amddate: SNAPSHOT,
   sourceUrl: `${ECFR_BASE}47/part-25/section-25.283`,
 };

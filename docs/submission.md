@@ -36,7 +36,7 @@ Enter your mission once (dates, frequencies, orbit, whether you image Earth). Ma
 
 *Effective use of IBM Bob and additional technologies, with a functional and well-structured solution.*
 
-One sentence first: **live NOAA solar flux and an IBM and NASA Surya activity outlook feed an NRLMSISE-00 decay estimate that becomes a legal verdict node inside the licensing dependency graph.** Not a widget beside the graph. A node the FCC grant depends on.
+One sentence first: **live NOAA solar flux bounds feed an NRLMSISE-00 decay estimate that becomes a legal verdict**, and IBM and NASA's Surya heliophysics model contributes a real forward pass reported alongside it and labelled ESTIMATED.
 
 IBM Bob is the core of how this was built, and the evidence is committed rather than described. Five write-scoped custom modes in `.bob/custom_modes.yaml`, each with a `fileRegex` that refuses writes outside one lane, so a three-person team working in parallel on one repository could not collide. Four regime skills under `.bob/skills/`, one per regulatory pathway plus the eval bank. The `.bob/` directory is in the repository, not gitignored, so every mode, rule and skill is inspectable.
 

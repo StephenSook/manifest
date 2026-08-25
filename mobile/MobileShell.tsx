@@ -56,8 +56,14 @@ export function MobileShell() {
       try {
         do {
           syncDirty = false;
-          const mission = await loadMission();
-          await syncDeadlineNotifications(mission, new Date());
+          try {
+            const mission = await loadMission();
+            await syncDeadlineNotifications(mission, new Date());
+          } catch (err) {
+            // A failed pass must not swallow a queued latest-state request:
+            // the loop condition still drains syncDirty. Log and continue.
+            console.error('notification sync failed', err);
+          }
         } while (syncDirty);
       } finally {
         syncRunning = false;

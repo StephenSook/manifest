@@ -27,6 +27,7 @@ import {
   matchAbstention,
   topK,
   chunkToCitation,
+  resolveCfrCitations,
 } from './lib';
 
 export const runtime = 'nodejs';
@@ -194,11 +195,13 @@ Answer (cite every claim with its CFR section and AMDDATE):`;
   });
   const rawAnswer = resp.result.results[0].generated_text.trim();
 
-  // Citation mapping (hard rule 1: a non-abstained answer always carries
-  // citations). CFR chunks attach when the answer names their exact
-  // section+paragraph, or their section when no paragraph of that section
-  // is named. Document chunks (CubeSat 101, FCC orders, DAS guide) attach
-  // as the supporting context they are, mirroring the extractive path.
+  // Citation resolution (hard rule 1: cite or abstain). CFR references in
+  // the answer are parsed canonically and resolved to retrieved chunks by
+  // EXACT section-plus-path match (section-only references resolve at
+  // section level only when no pathed reference to that section exists:
+  // see resolveCfrCitations). Document chunks attach only when the answer
+  // names the document, or when the context was document-only. An answer
+  // resolving to zero citations is converted to abstention by the caller.
   const citations: Citation[] = [];
   const seen = new Set<string>();
   const push = (c: ChunkRow) => {
@@ -208,19 +211,10 @@ Answer (cite every claim with its CFR section and AMDDATE):`;
       citations.push(chunkToCitation(c));
     }
   };
+  for (const c of resolveCfrCitations(rawAnswer, contextChunks)) {
+    push(c);
+  }
   const cfrChunks = contextChunks.filter((c) => c.cfr_title > 0);
-  for (const c of cfrChunks) {
-    const sectionRef = `${c.section}${c.paragraph_path}`;
-    if (rawAnswer.includes(sectionRef)) push(c);
-  }
-  if (citations.length === 0) {
-    for (const c of cfrChunks) {
-      if (rawAnswer.includes(c.section)) push(c);
-    }
-  }
-  // Document chunks attach only when the answer actually references the
-  // document, or when the context held no CFR text at all (a document-only
-  // question, where the answer can only have come from the document).
   const docChunks = contextChunks.filter((x) => x.cfr_title === 0);
   const docMentioned = (c: ChunkRow): boolean => {
     const name = c.source_doc ?? '';
@@ -233,8 +227,6 @@ Answer (cite every claim with its CFR section and AMDDATE):`;
   if (citations.length === 0 && cfrChunks.length === 0 && docChunks.length > 0) {
     push(docChunks[0]);
   }
-  // Cite or abstain: an answer with no resolvable citation does not ship
-  // as an answer. The POST handler converts empty citations to abstention.
 
   return { rawAnswer, citations };
 }

@@ -129,14 +129,23 @@ def citation_matches(expected: dict, got: dict) -> bool:
     exp_part = int(expected.get("part") or 0)
     if exp_part and int(got.get("part") or 0) != exp_part:
         return False
-    # Paragraph paths must be CANONICAL (nothing but parenthetical segments)
-    # and compare by complete segments: expected (g) accepts the deeper
-    # (g)(1) but never junk(g)tail, (g4), or a fabricated branch that
-    # merely shares a string prefix.
+    # Paragraph paths must be CANONICAL (nothing but parenthetical
+    # segments) on EVERY returned citation, including section-level
+    # expectations: junk(g)tail is metadata corruption regardless of what
+    # was expected. Segment comparison then means (g) accepts the deeper
+    # (g)(1) but never (g4) or a fabricated branch sharing a string prefix.
+    # Document citations (cfrTitle 0 expectations) must return an empty
+    # paragraph path: documents have no CFR paragraphs.
     exp_path = str(expected.get("paragraphPath") or "")
     got_path = str(got.get("paragraphPath") or "")
     canon = re.compile(r"(\([a-zA-Z0-9]+\))*$")
-    if exp_path and not canon.fullmatch(got_path):
+    if not canon.fullmatch(got_path):
+        return False
+    explicit_doc_target = bool(any_of) or (
+        int(expected.get("cfrTitle") or 0) == 0
+        and bool(str(expected.get("section") or ""))
+    )
+    if explicit_doc_target and got_path:
         return False
     exp_segs = re.findall(r"\(([^)]+)\)", exp_path)
     got_segs = re.findall(r"\(([^)]+)\)", got_path)

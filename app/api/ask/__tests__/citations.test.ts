@@ -37,8 +37,13 @@ describe('parseCfrReferences title and cue capture', () => {
     });
   });
 
-  it('treats a bare number without any cue as uncued noise', () => {
+  it('drops a number followed by a measurement unit entirely', () => {
     const refs = parseCfrReferences('The downlink operates at 5.8 GHz.');
+    expect(refs).toHaveLength(0);
+  });
+
+  it('treats a bare number without cue or unit as uncued noise', () => {
+    const refs = parseCfrReferences('The overrun figure is 5.8 in the plan.');
     expect(refs).toHaveLength(1);
     expect(refs[0]).toMatchObject({ title: null, section: '5.8', cued: false });
   });
@@ -138,5 +143,44 @@ describe('round-5 probes: citation spans, prose parens, mixed titles', () => {
     expect(chunks).toHaveLength(1);
     expect(unresolved).toHaveLength(1);
     expect(formatCfrReference(unresolved[0])).toBe('15 CFR 97.207');
+  });
+});
+
+describe('round-6 probes: case-insensitive titles, measurements stay noise', () => {
+  it('lowercase cfr still isolates the title: 15 cfr 97.207(g) abstains', () => {
+    const { chunks, unresolved } = resolveCfrCitations(
+      'Under 15 cfr 97.207(g), notification is due.',
+      [chunk()],
+    );
+    expect(chunks).toHaveLength(0);
+    expect(unresolved).toHaveLength(1);
+    expect(unresolved[0].title).toBe(15);
+  });
+
+  it('mixed-case C.f.R. resolves with the right title', () => {
+    const { chunks, unresolved } = resolveCfrCitations(
+      'Per 47 C.f.R. 97.207(g), notification is due.',
+      [chunk()],
+    );
+    expect(chunks).toHaveLength(1);
+    expect(unresolved).toHaveLength(0);
+  });
+
+  it('prose "in part" does not promote a measurement into a citation', () => {
+    const { chunks, unresolved } = resolveCfrCitations(
+      'The filing addresses, in part, 5.8 GHz operation under 97.207(g).',
+      [chunk()],
+    );
+    expect(chunks).toHaveLength(1);
+    expect(unresolved).toHaveLength(0);
+  });
+
+  it('a measurement after a citation span does not inherit its title', () => {
+    const { chunks, unresolved } = resolveCfrCitations(
+      'Per 47 CFR 97.207, 5.8 GHz is used for the downlink.',
+      [chunk()],
+    );
+    expect(chunks).toHaveLength(1);
+    expect(unresolved).toHaveLength(0);
   });
 });

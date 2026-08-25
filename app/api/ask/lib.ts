@@ -223,14 +223,20 @@ export function parseCfrReferences(answer: string): CfrReference[] {
     String.raw`(?<!\d)(\d{1,3}\.\d+)((?:\s*${CFR_SEG})*)`,
     'g',
   );
+  // Case-insensitive: "15 cfr 97.207(g)" isolates titles exactly like
+  // "15 CFR 97.207(g)" (Codex round 6: the flag was lost in round 5 and a
+  // lowercase abbreviation resolved against the wrong title).
   const titleAnchors: Array<{ end: number; title: number }> = [];
-  const tRe = /(\d{1,2})\s*C\.?\s*F\.?\s*R\.?/g;
+  const tRe = /(\d{1,2})\s*C\.?\s*F\.?\s*R\.?/gi;
   let am: RegExpExecArray | null;
   while ((am = tRe.exec(answer))) {
     titleAnchors.push({ end: tRe.lastIndex, title: parseInt(am[1], 10) });
   }
+  // "part" is NOT a standalone cue: prose uses it constantly ("addresses,
+  // in part, ..."). It cues only inside a span already anchored by a
+  // title or section symbol, via the connective below.
   const cueEnds: number[] = [];
-  const cRe = /§+|\bsections?\b|\bparts?\b/gi;
+  const cRe = /§+|\bsections?\b/gi;
   while ((am = cRe.exec(answer))) {
     cueEnds.push(cRe.lastIndex);
   }
@@ -242,11 +248,19 @@ export function parseCfrReferences(answer: string): CfrReference[] {
   );
   const governs = (end: number, idx: number): boolean =>
     end <= idx && idx - end <= 160 && connective.test(answer.slice(end, idx));
+  // A number followed by a measurement or duration unit is a quantity,
+  // never a citation: "5.8 GHz" and "2.5 (months)" must not inherit a
+  // span's title or cue and become fatal references (Codex round 6).
+  const unitAfter =
+    /^\s*\(?\s*(?:[GMk]?Hz|dB[A-Za-z]?|[kMG]?W|km|cm|mm|m\b|kg|percent|%|months?|days?|years?|weeks?|hours?|minutes?|seconds?|degrees?|meters?|watts?)\)?/i;
   let m: RegExpExecArray | null;
   while ((m = re.exec(answer))) {
     const segs = (m[2].match(/\([a-zA-Z0-9]+\)/g) ?? []).map((s) =>
       s.toLowerCase().replace(/\s/g, ''),
     );
+    if (segs.length === 0 && unitAfter.test(answer.slice(re.lastIndex))) {
+      continue;
+    }
     const idx = m.index;
     let title: number | null = null;
     for (const a of titleAnchors) {

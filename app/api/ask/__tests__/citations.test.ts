@@ -184,3 +184,58 @@ describe('round-6 probes: case-insensitive titles, measurements stay noise', () 
     expect(unresolved).toHaveLength(0);
   });
 });
+
+describe('round-7 probes: W-words, Part cues, parenthesized units', () => {
+  it('"was" after a citation is not a watt: the fabricated section abstains', () => {
+    const { chunks, unresolved } = resolveCfrCitations(
+      '47 CFR 97.207 applies; section 25.999 was amended.',
+      [chunk()],
+    );
+    expect(chunks).toHaveLength(1);
+    expect(unresolved).toHaveLength(1);
+    expect(unresolved[0].section).toBe('25.999');
+  });
+
+  it('ordinary w-words never swallow a cued reference', () => {
+    for (const word of ['was', 'which', 'when', 'with']) {
+      const refs = parseCfrReferences(`Under section 25.114 ${word} amended.`);
+      expect(refs).toHaveLength(1);
+      expect(refs[0]).toMatchObject({ section: '25.114', cued: true });
+    }
+  });
+
+  it('a standalone fabricated Part reference forces abstention', () => {
+    const { unresolved } = resolveCfrCitations(
+      'See 97.207(g) and Part 25.999 for details.',
+      [chunk()],
+    );
+    expect(unresolved).toHaveLength(1);
+    expect(unresolved[0].section).toBe('25.999');
+  });
+
+  it('a standalone valid Part reference resolves', () => {
+    const { chunks, unresolved } = resolveCfrCitations(
+      'See Part 97.207 for details.',
+      [chunk()],
+    );
+    expect(chunks).toHaveLength(1);
+    expect(unresolved).toHaveLength(0);
+  });
+
+  it('parenthesized short units are quantities, not paths', () => {
+    for (const unit of ['m', 'W', 'kg', 'km']) {
+      const { chunks, unresolved } = resolveCfrCitations(
+        `The tether extends 5.8 (${unit}) beyond the bus, per 97.207(g).`,
+        [chunk()],
+      );
+      expect(chunks).toHaveLength(1);
+      expect(unresolved).toHaveLength(0);
+    }
+  });
+
+  it('a titled reference with a unit-shaped path stays a citation', () => {
+    const refs = parseCfrReferences('Per 47 CFR 97.207(m), stations comply.');
+    expect(refs).toHaveLength(1);
+    expect(refs[0]).toMatchObject({ title: 47, path: '(m)', cued: true });
+  });
+});

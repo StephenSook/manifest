@@ -232,11 +232,13 @@ export function parseCfrReferences(answer: string): CfrReference[] {
   while ((am = tRe.exec(answer))) {
     titleAnchors.push({ end: tRe.lastIndex, title: parseInt(am[1], 10) });
   }
-  // "part" is NOT a standalone cue: prose uses it constantly ("addresses,
-  // in part, ..."). It cues only inside a span already anchored by a
-  // title or section symbol, via the connective below.
+  // "part" cues only when a section-shaped number follows immediately
+  // ("Part 97.999"): prose uses the word constantly ("addresses, in
+  // part, ...") and must not cue, but a standalone Part reference has to
+  // participate in fail-closed resolution (Codex round 7: a fabricated
+  // "Part 25.999" was riding beside a valid citation as ignorable noise).
   const cueEnds: number[] = [];
-  const cRe = /§+|\bsections?\b/gi;
+  const cRe = /§+|\bsections?\b|\bparts?\b(?=\s+\d{1,3}\.\d)/gi;
   while ((am = cRe.exec(answer))) {
     cueEnds.push(cRe.lastIndex);
   }
@@ -251,8 +253,19 @@ export function parseCfrReferences(answer: string): CfrReference[] {
   // A number followed by a measurement or duration unit is a quantity,
   // never a citation: "5.8 GHz" and "2.5 (months)" must not inherit a
   // span's title or cue and become fatal references (Codex round 6).
+  // Every alphabetic alternative is terminated by (?![A-Za-z]) so the
+  // case-insensitive W/m alternatives cannot swallow the first letter of
+  // ordinary words like "was" or "which" (Codex round 7: that dropped a
+  // fabricated citation from fail-closed resolution entirely).
   const unitAfter =
-    /^\s*\(?\s*(?:[GMk]?Hz|dB[A-Za-z]?|[kMG]?W|km|cm|mm|m\b|kg|percent|%|months?|days?|years?|weeks?|hours?|minutes?|seconds?|degrees?|meters?|watts?)\)?/i;
+    /^\s*\(?\s*(?:[GMk]?Hz|dB[A-Za-z]?|[kMG]?W|km|cm|mm|m|kg|percent|%|months?|days?|years?|weeks?|hours?|minutes?|seconds?|degrees?|meters?|watts?)(?![A-Za-z])/i;
+  // A single parenthesized short unit is a quantity too: "5.8 (m)",
+  // "2.5 (W)". Only checked when NO title or cue governs the number, so
+  // "47 CFR 97.207(m)" stays a citation. Deliberately excludes "g" and
+  // "s", which are common real CFR paragraph letters; a lost bare
+  // "97.207(g)"-style citation would only push toward abstention anyway,
+  // never toward a fabricated citation.
+  const parenUnit = /^(?:[gmk]?hz|db[a-z]?|[kmg]?w|km|cm|mm|m|kg)$/;
   let m: RegExpExecArray | null;
   while ((m = re.exec(answer))) {
     const segs = (m[2].match(/\([a-zA-Z0-9]+\)/g) ?? []).map((s) =>
@@ -266,10 +279,16 @@ export function parseCfrReferences(answer: string): CfrReference[] {
     for (const a of titleAnchors) {
       if (governs(a.end, idx)) title = a.title;
     }
-    const cued =
-      title !== null ||
-      cueEnds.some((e) => governs(e, idx)) ||
-      segs.length > 0;
+    const anchoredCue = cueEnds.some((e) => governs(e, idx));
+    if (
+      title === null &&
+      !anchoredCue &&
+      segs.length === 1 &&
+      parenUnit.test(segs[0].slice(1, -1))
+    ) {
+      continue;
+    }
+    const cued = title !== null || anchoredCue || segs.length > 0;
     refs.push({ title, section: m[1], path: segs.join(''), cued });
   }
   return refs;

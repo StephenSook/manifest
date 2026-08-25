@@ -1,11 +1,32 @@
 apply plugin: 'com.android.application'
 
 // Task 2.21: release signing. Reads android/keystore.properties, which is
-// gitignored and machine-local. Absent the file, release builds stay unsigned.
+// gitignored and machine-local. Release tasks FAIL without it (an unsigned
+// release is a broken artifact, not a fallback); debug builds never need
+// the keystore.
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+def requireReleaseSigning = {
+    if (!keystorePropertiesFile.exists()) {
+        throw new GradleException(
+            "android/keystore.properties is missing. Release builds must be " +
+            "signed (task 2.21): create the machine-local properties file, " +
+            "or build the debug variant.")
+    }
+    ['storeFile', 'storePassword', 'keyAlias', 'keyPassword'].each { k ->
+        if (!keystoreProperties[k]) {
+            throw new GradleException(
+                "android/keystore.properties is missing required key: ${k}")
+        }
+    }
+    if (!file(keystoreProperties['storeFile']).exists()) {
+        throw new GradleException(
+            "Keystore not found at ${keystoreProperties['storeFile']}")
+    }
 }
 
 android {
@@ -61,6 +82,14 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
+}
+
+// Release artifacts fail closed when signing credentials are absent or
+// incomplete, instead of silently packaging an unsigned release.
+tasks.configureEach { t ->
+    if (t.name in ['assembleRelease', 'bundleRelease', 'packageRelease', 'packageReleaseBundle']) {
+        t.doFirst { requireReleaseSigning() }
+    }
 }
 
 apply from: 'capacitor.build.gradle'

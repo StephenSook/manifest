@@ -182,67 +182,120 @@ export function topK(scores: Float32Array, k: number): number[] {
 }
 
 export interface CfrReference {
+  /** CFR title when the answer names one ("15 CFR 97.207"), else null. */
+  title: number | null;
   section: string;
   /** Normalized parenthetical path, lowercase, no whitespace: "(a)(41)" */
   path: string;
+  /**
+   * True when the text marks this as a deliberate CFR reference: a named
+   * title, a "§" or "section" cue, or a parenthetical path. Cued
+   * references must resolve exactly or the whole answer abstains. An
+   * uncued bare number ("5.8 GHz", "2.4 GHz") is noise: it attaches only
+   * when it happens to resolve, and is never fatal when it does not.
+   */
+  cued: boolean;
 }
 
 /**
  * Parse every CFR reference in generated text with canonical,
  * whitespace-tolerant boundaries: "97.3(a)(41)", "97.3 (a)(41)", and
  * "97.3 (a) (41)" all yield section 97.3 path (a)(41). Digit boundaries
- * prevent substring collisions (297.31 never yields 97.3).
+ * prevent substring collisions (297.31 never yields 97.3). A preceding
+ * title ("47 CFR", "47 C.F.R. §") is captured so resolution can reject a
+ * wrong-title reference instead of matching on section number alone.
  */
 export function parseCfrReferences(answer: string): CfrReference[] {
   const refs: CfrReference[] = [];
   const re = /(?<!\d)(\d{1,3}\.\d+)((?:\s*\([a-zA-Z0-9]+\))*)/g;
+  const titleCue = /(\d{1,2})\s*C\.?\s*F\.?\s*R\.?\s*(?:(?:§+|section|part)\s*)?$/i;
+  const bareCue = /(?:§+|section)\s*$/i;
   let m: RegExpExecArray | null;
   while ((m = re.exec(answer))) {
     const segs = (m[2].match(/\(([a-zA-Z0-9]+)\)/g) ?? []).map((s) =>
       s.toLowerCase().replace(/\s/g, ''),
     );
-    refs.push({ section: m[1], path: segs.join('') });
+    const before = answer.slice(Math.max(0, m.index - 24), m.index);
+    const t = titleCue.exec(before);
+    const title = t ? parseInt(t[1], 10) : null;
+    const cued = title !== null || bareCue.test(before) || segs.length > 0;
+    refs.push({ title, section: m[1], path: segs.join(''), cued });
   }
   return refs;
 }
 
+export interface ResolvedCitations {
+  chunks: ChunkRow[];
+  /**
+   * Cued references that failed exact resolution: wrong title, fabricated
+   * paragraph path, or a section the retrieval never returned. Any entry
+   * here means the answer cited something the context cannot support, and
+   * the caller must abstain. Cite or abstain admits no partial credit: an
+   * answer is never shipped with only its valid subset of citations.
+   */
+  unresolved: CfrReference[];
+}
+
 /**
  * Resolve generated-answer CFR references to retrieved chunks.
- * A pathed reference attaches only the chunk with that EXACT section and
- * paragraph path. A section-only reference attaches that section's
- * retrieved chunks, but only when the answer contains no pathed reference
- * to the same section (a pathed answer must earn its exact citation, never
- * fall back to section-mates). Cite or abstain: an unresolvable answer
- * returns an empty array and the caller abstains.
+ * A pathed reference attaches only the chunk with that EXACT section,
+ * paragraph path, and (when the answer names one) CFR title. A
+ * section-only reference attaches that section's retrieved chunks, but
+ * only when the answer contains no pathed reference to the same section
+ * (a pathed answer must earn its exact citation, never fall back to
+ * section-mates). Every cued reference must resolve or it is reported in
+ * `unresolved` and the caller abstains.
  */
 export function resolveCfrCitations(
   answer: string,
   contextChunks: ChunkRow[],
-): ChunkRow[] {
+): ResolvedCitations {
   const refs = parseCfrReferences(answer);
   const pathedSections = new Set(
     refs.filter((r) => r.path).map((r) => r.section),
   );
-  const out: ChunkRow[] = [];
+  const chunks: ChunkRow[] = [];
+  const unresolved: CfrReference[] = [];
   const seen = new Set<string>();
   const push = (c: ChunkRow) => {
     const key = `${c.section}|${c.paragraph_path}`;
     if (!seen.has(key)) {
       seen.add(key);
-      out.push(c);
+      chunks.push(c);
     }
   };
   for (const ref of refs) {
-    for (const c of contextChunks) {
-      if (c.cfr_title === 0 || c.section !== ref.section) continue;
-      if (ref.path) {
-        if (c.paragraph_path.toLowerCase() === ref.path) push(c);
-      } else if (!pathedSections.has(ref.section)) {
-        push(c);
+    const candidates = contextChunks.filter(
+      (c) =>
+        c.cfr_title !== 0 &&
+        c.section === ref.section &&
+        (ref.title === null || c.cfr_title === ref.title),
+    );
+    if (ref.path) {
+      const exact = candidates.filter(
+        (c) => c.paragraph_path.toLowerCase() === ref.path,
+      );
+      if (exact.length > 0) {
+        exact.forEach(push);
+      } else {
+        unresolved.push(ref);
       }
+    } else if (pathedSections.has(ref.section)) {
+      // A pathed reference to this section governs; the bare mention is
+      // satisfied by (or already failed with) that pathed reference.
+      continue;
+    } else if (candidates.length > 0) {
+      candidates.forEach(push);
+    } else if (ref.cued) {
+      unresolved.push(ref);
     }
   }
-  return out;
+  return { chunks, unresolved };
+}
+
+/** Render a reference for an abstention reason: "15 CFR 97.207(g)". */
+export function formatCfrReference(r: CfrReference): string {
+  return `${r.title !== null ? `${r.title} CFR ` : ''}${r.section}${r.path}`;
 }
 
 export function chunkToCitation(c: ChunkRow): Citation {

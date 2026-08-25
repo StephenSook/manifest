@@ -28,6 +28,7 @@ import {
   topK,
   chunkToCitation,
   resolveCfrCitations,
+  formatCfrReference,
 } from './lib';
 
 export const runtime = 'nodejs';
@@ -160,7 +161,11 @@ async function embedQueryWatsonx(question: string): Promise<Float32Array> {
 async function generateAnswer(
   question: string,
   contextChunks: ChunkRow[],
-): Promise<{ rawAnswer: string; citations: Citation[] }> {
+): Promise<{
+  rawAnswer: string;
+  citations: Citation[];
+  unresolvedRefs?: string[];
+}> {
   const { WatsonXAI } = await import('@ibm-cloud/watsonx-ai');
   const cfg = getWatsonxConfig();
   const client = WatsonXAI.newInstance({
@@ -211,7 +216,20 @@ Answer (cite every claim with its CFR section and AMDDATE):`;
       citations.push(chunkToCitation(c));
     }
   };
-  for (const c of resolveCfrCitations(rawAnswer, contextChunks)) {
+  const resolved = resolveCfrCitations(rawAnswer, contextChunks);
+  if (resolved.unresolved.length > 0) {
+    // Cite or abstain (hard rule 1): the answer cited at least one
+    // reference that does not resolve exactly against the retrieved
+    // context (wrong title, fabricated paragraph path, or a section the
+    // retrieval never returned). A partially resolvable answer never
+    // ships with only its valid subset of citations.
+    return {
+      rawAnswer,
+      citations: [],
+      unresolvedRefs: resolved.unresolved.map(formatCfrReference),
+    };
+  }
+  for (const c of resolved.chunks) {
     push(c);
   }
   const cfrChunks = contextChunks.filter((c) => c.cfr_title > 0);
@@ -346,8 +364,9 @@ export async function POST(req: NextRequest): Promise<NextResponse<AskResponse>>
 
   let rawAnswer: string;
   let citations: Citation[];
+  let unresolvedRefs: string[] | undefined;
   try {
-    ({ rawAnswer, citations } = await generateAnswer(question, topChunks));
+    ({ rawAnswer, citations, unresolvedRefs } = await generateAnswer(question, topChunks));
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     return NextResponse.json(
@@ -362,6 +381,19 @@ export async function POST(req: NextRequest): Promise<NextResponse<AskResponse>>
       audited: false,
       abstained: true,
       reason: 'Model could not answer from the provided regulatory text.',
+    });
+  }
+
+  if (unresolvedRefs && unresolvedRefs.length > 0) {
+    // Cite or abstain (hard rule 1): the answer cited unresolvable
+    // references (wrong title, fabricated paragraph, or an unretrieved
+    // section), so it does not ship even if other citations resolved.
+    return NextResponse.json({
+      answer: null,
+      citations: topChunks.filter((c) => c.cfr_title > 0).map(chunkToCitation),
+      audited: false,
+      abstained: true,
+      reason: `The generated answer cited references that do not resolve against the retrieved context (${unresolvedRefs.join(', ')}), so it does not ship. Retrieved sections are listed.`,
     });
   }
 

@@ -145,8 +145,16 @@ def citation_matches(expected: dict, got: dict) -> bool:
         int(expected.get("cfrTitle") or 0) == 0
         and bool(str(expected.get("section") or ""))
     )
-    if explicit_doc_target and got_path:
-        return False
+    if explicit_doc_target:
+        # Structurally impossible metadata fails (Codex round 4): a real
+        # document citation carries cfrTitle 0 and part 0 (chunkToCitation
+        # passes the document chunk's zeros through). A CFR-titled
+        # citation whose section string happens to match a document name
+        # must never satisfy a document expectation.
+        if int(got.get("cfrTitle") or 0) != 0 or int(got.get("part") or 0) != 0:
+            return False
+        if got_path:
+            return False
     exp_segs = re.findall(r"\(([^)]+)\)", exp_path)
     got_segs = re.findall(r"\(([^)]+)\)", got_path)
     if exp_segs and got_segs[: len(exp_segs)] != exp_segs:

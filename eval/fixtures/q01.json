@@ -1,0 +1,32 @@
+{
+  "answer": "From 47 CFR 97.207(g)(1) (AMDDATE 2026-08-13), addressing: What is the pre-space notification requirement under 47 CFR 97.207(g) for a CubeSat on an amateur license?\n\nA pre-space notification within 30 days after the date of launch vehicle determination, but no later than 90 days before integration of the space station into the launch vehicle. The notification must be in accordance with the provisions of Articles 9 and 11 of the International Telecommunication Union (ITU) Radio Regulations and must specify the information required by Appendix 4 and Resolution No. 642 of the ITU Radio Regulations. The notification must also include a description of the design and operational strategies that the space station will use to mitigate orbital debris, including the following information:",
+  "citations": [
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.207",
+      "paragraphPath": "(g)(1)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.207",
+      "paragraphPath": "(g)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.207",
+      "paragraphPath": "(g)(1)(i)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

@@ -1,0 +1,219 @@
+"""
+eval/runner.py
+
+Task 1.5: the regression suite for the /api/ask pipeline.
+
+Runs the 28-question eval bank plus 6 abstention traps (eval/bank.jsonl)
+against a backend and scores citations exactly. Passing bar (CLAUDE.md
+section 5): score >= 90 percent on questions AND all 6 traps abstaining.
+
+Two modes:
+
+  url       POST each bank row to a running deployment's /api/ask.
+            This evaluates the real product path, whatever backend the
+            server is configured with (watsonx generation, or the
+            extractive no-credential fallback). --record saves each
+            response body to eval/fixtures/<id>.json for offline CI.
+
+  fixtures  Score committed response bodies from eval/fixtures/ with no
+            network and no key. A missing fixture is a FAILURE, never a
+            skip: a conditionally-skipped guard is a false green.
+
+Scoring rules:
+  Trap rows (abstain: true)      PASS iff response.abstained is true.
+  Question rows (abstain: false) PASS iff response.abstained is false
+                                 AND every expected citation is matched.
+  A citation matches when the section is equal and the returned
+  paragraphPath starts with the expected paragraphPath (a deeper
+  paragraph such as (g)(1) satisfies an expected (g)).
+  Expected amddate "VERIFY_FROM_SNAPSHOT" asserts the returned citation
+  carries a non-empty amddate (the snapshot pin), not a specific value.
+
+Exit code: 0 iff the bar is met, 1 otherwise. No pipes on the exit path.
+
+Usage:
+  python3 eval/runner.py --mode url --url http://localhost:3000 --record
+  python3 eval/runner.py --mode fixtures
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+import urllib.error
+import urllib.request
+from datetime import datetime, timezone
+from pathlib import Path
+
+DEFAULT_BANK = Path("eval/bank.jsonl")
+DEFAULT_FIXTURES = Path("eval/fixtures")
+DEFAULT_REPORT = Path("eval/report.json")
+MIN_SCORE_PCT = 90.0
+
+
+def load_bank(bank_path: Path) -> list[dict]:
+    rows = []
+    with bank_path.open() as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                rows.append(json.loads(line))
+    return rows
+
+
+def ask_url(base_url: str, question: str, timeout: int) -> dict:
+    req = urllib.request.Request(
+        base_url.rstrip("/") + "/api/ask",
+        data=json.dumps({"question": question}).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        # 4xx/5xx bodies are still AskResponse JSON (the route degrades to
+        # abstention with a reason). Read them rather than crashing.
+        try:
+            return json.loads(e.read().decode("utf-8"))
+        except Exception:
+            return {
+                "answer": None,
+                "citations": [],
+                "audited": False,
+                "abstained": True,
+                "reason": f"HTTP {e.code} with unreadable body",
+            }
+
+
+def citation_matches(expected: dict, got: dict) -> bool:
+    # Section: exact string, or membership in section_any_of when the bank
+    # row accepts several source documents. An EMPTY expected section means
+    # "any citation satisfying the cfrTitle and part constraints below",
+    # which for a fully empty expectation means "any citation at all".
+    got_section = str(got.get("section") or "")
+    any_of = expected.get("section_any_of")
+    if any_of:
+        if got_section not in any_of:
+            return False
+    else:
+        exp_section = str(expected.get("section") or "")
+        if exp_section and got_section != exp_section:
+            return False
+    exp_title = int(expected.get("cfrTitle") or 0)
+    if exp_title and int(got.get("cfrTitle") or 0) != exp_title:
+        return False
+    exp_part = int(expected.get("part") or 0)
+    if exp_part and int(got.get("part") or 0) != exp_part:
+        return False
+    exp_path = str(expected.get("paragraphPath") or "")
+    got_path = str(got.get("paragraphPath") or "")
+    if exp_path and not got_path.startswith(exp_path):
+        return False
+    exp_amd = str(expected.get("amddate") or "")
+    got_amd = str(got.get("amddate") or "")
+    if exp_amd == "VERIFY_FROM_SNAPSHOT":
+        if not got_amd:
+            return False
+    elif exp_amd and got_amd != exp_amd:
+        return False
+    return True
+
+
+def score_row(row: dict, resp: dict) -> tuple[bool, str]:
+    abstained = bool(resp.get("abstained"))
+    if row.get("abstain"):
+        if abstained:
+            return True, "trap abstained"
+        return False, "TRAP ANSWERED: expected abstention, got an answer"
+    if abstained:
+        return False, f"abstained on a real question: {resp.get('reason')}"
+    citations = resp.get("citations") or []
+    for expected in row.get("expected_citations", []):
+        if not any(citation_matches(expected, c) for c in citations):
+            want = f"{expected.get('section')}{expected.get('paragraphPath') or ''}"
+            have = [f"{c.get('section')}{c.get('paragraphPath') or ''}" for c in citations]
+            return False, f"missing citation {want}; got {have}"
+    return True, "answered with expected citations"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--mode", choices=["url", "fixtures"], required=True)
+    parser.add_argument("--url", default="http://localhost:3000")
+    parser.add_argument("--bank", type=Path, default=DEFAULT_BANK)
+    parser.add_argument("--fixtures", type=Path, default=DEFAULT_FIXTURES)
+    parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
+    parser.add_argument("--record", action="store_true",
+                        help="url mode: save each response body to the fixtures dir")
+    parser.add_argument("--timeout", type=int, default=120)
+    parser.add_argument("--min-score", type=float, default=MIN_SCORE_PCT)
+    args = parser.parse_args()
+
+    rows = load_bank(args.bank)
+    questions = [r for r in rows if not r.get("abstain")]
+    traps = [r for r in rows if r.get("abstain")]
+    print(f"bank: {len(questions)} questions, {len(traps)} abstention traps")
+
+    if args.record:
+        args.fixtures.mkdir(parents=True, exist_ok=True)
+
+    results = []
+    for row in rows:
+        rid = row["id"]
+        if args.mode == "url":
+            resp = ask_url(args.url, row["question"], args.timeout)
+            if args.record:
+                (args.fixtures / f"{rid}.json").write_text(
+                    json.dumps(resp, indent=2) + "\n"
+                )
+        else:
+            fixture = args.fixtures / f"{rid}.json"
+            if not fixture.exists():
+                results.append({
+                    "id": rid, "pass": False, "trap": bool(row.get("abstain")),
+                    "detail": f"FIXTURE MISSING: {fixture}. A missing fixture fails, never skips.",
+                })
+                print(f"FAIL {rid}: fixture missing")
+                continue
+            resp = json.loads(fixture.read_text())
+
+        ok, detail = score_row(row, resp)
+        results.append({
+            "id": rid, "pass": ok, "trap": bool(row.get("abstain")),
+            "abstained": bool(resp.get("abstained")), "detail": detail,
+        })
+        print(f"{'PASS' if ok else 'FAIL'} {rid}: {detail}")
+
+    q_results = [r for r in results if not r["trap"]]
+    t_results = [r for r in results if r["trap"]]
+    q_correct = sum(1 for r in q_results if r["pass"])
+    t_correct = sum(1 for r in t_results if r["pass"])
+    score_pct = (100.0 * q_correct / len(q_results)) if q_results else 0.0
+    traps_ok = t_correct == len(t_results) and len(t_results) > 0
+
+    summary = {
+        "mode": args.mode,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "questions": len(q_results),
+        "questions_correct": q_correct,
+        "score_pct": round(score_pct, 1),
+        "traps": len(t_results),
+        "traps_abstained": t_correct,
+        "bar": {"min_score_pct": args.min_score, "all_traps_must_abstain": True},
+        "passed": score_pct >= args.min_score and traps_ok,
+        "results": results,
+    }
+    args.report.parent.mkdir(parents=True, exist_ok=True)
+    args.report.write_text(json.dumps(summary, indent=2) + "\n")
+
+    print(f"\nscore: {q_correct}/{len(q_results)} questions ({score_pct:.1f}%), "
+          f"traps abstaining: {t_correct}/{len(t_results)}")
+    print(f"bar: >= {args.min_score}% and all traps abstain -> "
+          f"{'PASSED' if summary['passed'] else 'FAILED'}")
+    return 0 if summary["passed"] else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

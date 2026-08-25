@@ -1,0 +1,24 @@
+{
+  "answer": "From FCC 26-47 (Part 100 Report and Order) (AMDDATE 2026-07-22), addressing: What is the Part 97 definition of a space station, and does a CubeSat in low Earth orbit qualify?\n\nMulti-orbit satellite system (MOSS) . We adopt the following definition: 'A system of two or more types of satellite system(s) operating together under one space station call sign.' 28 In the NPRM , although we did not propose to add MOSS to the definitions section, we described the term in the text. 29 We add this definition to section 100.3 consistent with the process outlined below for authorizing multi-orbit satellite systems. 30 NGSO satellite system . We adopt the following definition: 'A system of one or more non-geostationary orbit satellites operating together under one space station call sign and that is not a Variable Trajectory Spacecraft System.' 31 We believe adding this definition will provide clarity to Commission staff and applicants when referring to applications and discrete satellite systems. 32 Nationwide, Non-Site license. We adopt the following definition: 'A single license for one or more Immovable Earth Stations which may operate anywhere within the United States and its territories, subject to completion of any site-based registration and coordination procedures.' 33 Although we did not propose a definition of Nationwide, Non-Site License in section 100.3 in the NPRM , we add this definition because we use the term numerous times throughout part 100. We describe the Nationwide, Non-Site Licensing process in detail below. 34 Replacement space station. We adopt the following definition: 'A space station that is authorized to operate in the same frequency bands, and with the same coverage area and operating parameters as the space station to be replaced, at an orbital location within 0.15\u00b0 of the assigned location of a GSO space station to be replaced or in the authorized orbit of an existing NGSO space station to be replaced, and that is scheduled to be launched so that it will be brought into use at approximately the same time as, but no later than, the existing space station is retired.' 35 We believe that modifying the existing definition in this way will provide greater clarity to applicants. 36 Variable Trajectory Space Station (VTSS) system. We adopt the following definition: 'A system of one or more space stations either operating beyond the geosynchronous orbit or operating without fixed or predictable orbital patterns over the course of its lifetime and operating under one space station call sign. Variable Trajectory Space Station systems may include, but are not limited to, space stations on orbital transfer vehicles, rendezvous and proximity operations platforms, in-space servicing systems, and missions involving transit to, orbiting of, or operations on the moon or other celestial bodies.' 37 This definition differs slightly from the definition proposed in the NPRM . 38 We adopt a 28 Appendix A at \u00a7 100.3. See NPRM , 40 FCC Rcd at 8211, n.87. 29 See NPRM , 40 FCC Rcd at 8211, at n.87. 30 See infra section III.B.1.f. 31 NPRM 40 FCC Rcd at 8212, para 59; Appendix A at \u00a7 100.3. 32 See NPRM , 40 FCC Rcd at 8212, para. 59. 33 Appendix A at \u00a7 100.3. 34 See infra section III.B.1.o. 35 Appendix A at \u00a7 100.3. 36 47 CFR \u00a7 25.165(e). 37 Appendix A at \u00a7 100.3. 38 See NPRM , 40 FCC Rcd at 8214, para. 65, Appendix A at \u00a7 100.3.",
+  "citations": [
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "FCC 26-47 (Part 100 Report and Order)",
+      "paragraphPath": "",
+      "amddate": "2026-07-22",
+      "sourceUrl": "https://docs.fcc.gov/public/attachments/FCC-26-47A1.pdf"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "FCC 26-47 (Part 100 Report and Order)",
+      "paragraphPath": "",
+      "amddate": "2026-07-22",
+      "sourceUrl": "https://docs.fcc.gov/public/attachments/FCC-26-47A1.pdf"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

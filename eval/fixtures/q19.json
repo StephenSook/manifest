@@ -1,0 +1,32 @@
+{
+  "answer": "From 47 CFR 25.114(vii)(C)(6)(iv) (AMDDATE 2026-08-13), addressing: What is the NASA Orbital Debris Assessment Software and why does Manifest not use it directly?\n\nThe apogee,",
+  "citations": [
+    {
+      "cfrTitle": 47,
+      "part": 25,
+      "section": "25.114",
+      "paragraphPath": "(vii)(C)(6)(iv)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA DAS 3.2 User Guide (cited as authority per D4 - not a DAS run)",
+      "paragraphPath": "",
+      "amddate": "2024-01-01",
+      "sourceUrl": "https://www.orbitaldebris.jsc.nasa.gov/library/das/DAS3.2_UsersGuide.pdf"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA DAS 3.2 User Guide (cited as authority per D4 - not a DAS run)",
+      "paragraphPath": "",
+      "amddate": "2024-01-01",
+      "sourceUrl": "https://www.orbitaldebris.jsc.nasa.gov/library/das/DAS3.2_UsersGuide.pdf"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

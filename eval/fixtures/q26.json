@@ -1,0 +1,24 @@
+{
+  "answer": "From NASA CubeSat 101 (2017) (AMDDATE 2017-08-01), addressing: What are the documented typical lead times for the complete CubeSat licensing process according to NASA CubeSat 101?\n\n[Source: NASA CubeSat 101, August 2017. Note: figures and durations date to 2017.] National Aeronautics and Space Administration CubeSat 101 Basic Concepts and Processes for First-Time CubeSat Developers NASA CubeSat Launch Initiative",
+  "citations": [
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA CubeSat 101 (2017)",
+      "paragraphPath": "",
+      "amddate": "2017-08-01",
+      "sourceUrl": "https://www.nasa.gov/wp-content/uploads/2017/08/nasa_csli_cubesat_101_508.pdf"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA CubeSat 101 (2017)",
+      "paragraphPath": "",
+      "amddate": "2017-08-01",
+      "sourceUrl": "https://www.nasa.gov/wp-content/uploads/2017/08/nasa_csli_cubesat_101_508.pdf"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

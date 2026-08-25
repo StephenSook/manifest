@@ -1,0 +1,24 @@
+{
+  "answer": "From FCC 26-47 (Part 100 Report and Order) (AMDDATE 2026-07-22), addressing: Does the Part 97 amateur pathway require IARU coordination before the FCC will grant a license for a space station?\n\n(3) A comprehensive statement describing the proposed system, including orbits, any service(s) to be provided (including the service areas), and planned operations; and (4) A brief description of how the proposed operations will serve the public interest. (c) An operator may apply for multiple GSO satellites under a single call sign so long as each satellite will operate at the same orbital location and all necessary information is provided for each space station listed in the application. To the extent that satellites in a GSO satellite system will be technically identical, the applicant may submit an application for a blanket license for those satellites that are technically identical. If the satellites and space stations in the GSO satellite system will not be technically identical, the applicant must provide the information required for each individual satellite. (d) To the extent that satellites in an NGSO satellite system will be technically identical, the applicant may submit an application for a blanket license for those satellites that are technically identical. If the satellites and space stations in the NGSO satellite system will not be technically identical, the applicant must provide the information required for each distinct type of satellite. (e) An operator may file an application for a hosted space station license separately from an underlying NGSO, GSO, or VTSS license as long as it is associated with an underlying FCC space station license or application. Applicants for a hosted space station license must submit the following information: (1) An FCC Form 312 - Main Form, and the associated information required in \u00a7 100.101; (2) The license grant or file number of the host spacecraft that contains the Schedule O and orbital debris information for the host spacecraft; and (3) The space station frequency information required in \u00a7 100.112. \u00a7 100.111 Space station orbital information requirements . (a) General requirements . Space station applicants must identify the type of system authorization requested. If an application is for a MOSS, the applicant must submit the required information for each system type. Applicants must submit the required orbital information and certifications in Schedule O to the FCC Form 312 in ICFS. (b) Orbital Debris Mitigation Plan . All space station applicants must provide an orbital debris mitigation and end-of-life disposal plan that demonstrates how the operator will or will not comply with \u00a7\u00a7 100.260 and 100.261, that supports the certifications made according to the relevant paragraphs in this section, and that includes any required additional information pursuant to this section. (1) Except as otherwise specified, no space station operator may launch and commence operations until having submitted all materials required under this section. (2) Space station applicants requesting authorization conditioned on a deferred submission of the required orbital debris mitigation plan must clearly state this request in the application and comply with the conditional application procedures under \u00a7 100.139. (c) GSO satellite systems . An applicant for a GSO satellite system must provide the following information: (1) Orbital location . The requested orbital location(s) of the satellite(s), the east-west, north-south station-keeping range and the accuracy to which the antenna axis (yaw, pitch and roll) attitude will be maintained. Applications must state whether there are any known satellites located at, or reasonably expected to be located at, the requested orbital location, or assigned in the vicinity of that location, such that the station keeping volumes of the respective satellites might overlap or touch. If so, applicants must identify those satellites and the measure that will be taken to prevent collisions. (2) Certifications. Certification whether the following criteria will or will not be met for all space station(s) to be operated under the license:",
+  "citations": [
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "FCC 26-47 (Part 100 Report and Order)",
+      "paragraphPath": "",
+      "amddate": "2026-07-22",
+      "sourceUrl": "https://docs.fcc.gov/public/attachments/FCC-26-47A1.pdf"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA CubeSat 101 (2017)",
+      "paragraphPath": "",
+      "amddate": "2017-08-01",
+      "sourceUrl": "https://www.nasa.gov/wp-content/uploads/2017/08/nasa_csli_cubesat_101_508.pdf"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

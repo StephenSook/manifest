@@ -1,0 +1,24 @@
+{
+  "answer": "From NASA CubeSat 101 (2017) (AMDDATE 2017-08-01), addressing: What is the documented consequence of a CubeSat failing to obtain its FCC license before the launch provider's delivery date?\n\n[Source: NASA CubeSat 101, August 2017. Note: figures and durations date to 2017.] The integration to the LV typically occurs 2 weeks to 4 months prior to launch. It all depends on which LV your CubeSat is using. Each mission model is different and explained in more detail in the Mission Models section ( Chapter 3 ) of this document. 2.15 Launch (1 day) The launch location will depend on the primary mission, and will be known well before the CubeSats are manifested. The launch date may change from the original timeline, but only the primary mission or launch vehicle can move the launch date. The CubeSats do not have any influence on the launch or launch window. If your project gets delayed for any reason, the launch will not be delayed. If your CubeSat is not delivered in time, the LV will definitely leave without your CubeSat onboard. While the CubeSat developers won't have an active role in launch operations, you will usually be invited to come to the launch site and watch the LV take off. Travel will be at your own expense, but most teams think it's well worth it. While you're there, LSP may ask that you participate in some public affairs and outreach events (e.g., NASA EDGE interviews, photos, etc.). Be aware that the launch date is subject to change at any time and day-of-launch scrubs are common due to weather and other factors. So, if you plan to travel to the launch, it may be wise to include some extra days in the event of a last-minute launch delay. Launch of ELaNa-II from Vandenberg Air Force Base, CA on December 6, 2013. Four CubeSat Missions were deployed. [Corkery/ULA]",
+  "citations": [
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA CubeSat 101 (2017)",
+      "paragraphPath": "",
+      "amddate": "2017-08-01",
+      "sourceUrl": "https://www.nasa.gov/wp-content/uploads/2017/08/nasa_csli_cubesat_101_508.pdf"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA CubeSat 101 (2017)",
+      "paragraphPath": "",
+      "amddate": "2017-08-01",
+      "sourceUrl": "https://www.nasa.gov/wp-content/uploads/2017/08/nasa_csli_cubesat_101_508.pdf"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

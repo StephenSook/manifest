@@ -1,0 +1,48 @@
+{
+  "answer": "From 47 CFR 25.137(d)(1) (AMDDATE 2026-08-13), addressing: What atmospheric density model does Manifest use for orbital lifetime estimation?\n\nMilestones;",
+  "citations": [
+    {
+      "cfrTitle": 47,
+      "part": 25,
+      "section": "25.137",
+      "paragraphPath": "(d)(1)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 25,
+      "section": "25.113",
+      "paragraphPath": "(c)(g)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 25,
+      "section": "25.103",
+      "paragraphPath": "",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA DAS 3.2 User Guide (cited as authority per D4 - not a DAS run)",
+      "paragraphPath": "",
+      "amddate": "2024-01-01",
+      "sourceUrl": "https://www.orbitaldebris.jsc.nasa.gov/library/das/DAS3.2_UsersGuide.pdf"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA DAS 3.2 User Guide (cited as authority per D4 - not a DAS run)",
+      "paragraphPath": "",
+      "amddate": "2024-01-01",
+      "sourceUrl": "https://www.orbitaldebris.jsc.nasa.gov/library/das/DAS3.2_UsersGuide.pdf"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

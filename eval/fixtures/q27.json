@@ -1,0 +1,32 @@
+{
+  "answer": "From 47 CFR 97.107(b)(1) (AMDDATE 2026-08-13), addressing: Under the Part 97 amateur pathway, what is the relationship between the IARU coordination request and the ITU API number?\n\nThe terms of the agreement between the alien's government and the United States;",
+  "citations": [
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.107",
+      "paragraphPath": "(b)(1)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA DAS 3.2 User Guide (cited as authority per D4 - not a DAS run)",
+      "paragraphPath": "",
+      "amddate": "2024-01-01",
+      "sourceUrl": "https://www.orbitaldebris.jsc.nasa.gov/library/das/DAS3.2_UsersGuide.pdf"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA CubeSat 101 (2017)",
+      "paragraphPath": "",
+      "amddate": "2017-08-01",
+      "sourceUrl": "https://www.nasa.gov/wp-content/uploads/2017/08/nasa_csli_cubesat_101_508.pdf"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

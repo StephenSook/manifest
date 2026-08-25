@@ -1,0 +1,32 @@
+{
+  "answer": "From 47 CFR 25.283(e) (AMDDATE 2026-08-13), addressing: Which FCC order adopted the five-year post-mission disposal rule for satellites in low Earth orbit?\n\nLow-Earth orbit space stations. For space stations ending their mission in or passing through the low-Earth orbit region below 2000 km altitude and planning disposal through uncontrolled atmospheric re-entry, disposal must be completed as soon as practicable following end of mission, and no later than five years after the end of the mission. For purposes of this paragraph (e), end of mission is defined as the time at which the individual spacecraft is no longer capable of conducting collision avoidance maneuvers. For spacecraft without collision avoidance capabilities, end of mission is defined as the point in which the individual spacecraft has completed its primary mission.",
+  "citations": [
+    {
+      "cfrTitle": 47,
+      "part": 25,
+      "section": "25.283",
+      "paragraphPath": "(e)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "FCC 22-74 (5-Year Orbital Disposal Rule)",
+      "paragraphPath": "",
+      "amddate": "2022-09-29",
+      "sourceUrl": "https://docs.fcc.gov/public/attachments/FCC-22-74A1.pdf"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "FCC 22-74 (5-Year Orbital Disposal Rule)",
+      "paragraphPath": "",
+      "amddate": "2022-09-29",
+      "sourceUrl": "https://docs.fcc.gov/public/attachments/FCC-22-74A1.pdf"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

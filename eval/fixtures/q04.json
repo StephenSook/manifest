@@ -1,0 +1,32 @@
+{
+  "answer": "From 47 CFR 97.207(a) (AMDDATE 2026-08-13), addressing: What frequencies are eligible for amateur space station operation under 47 CFR 97.207?\n\nAny amateur station may be a space station. A holder of any class operator license may be the control operator of a space station, subject to the privileges of the class of operator license held by the control operator.",
+  "citations": [
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.207",
+      "paragraphPath": "(a)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.207",
+      "paragraphPath": "(b)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.207",
+      "paragraphPath": "(c)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

@@ -1,21 +1,27 @@
-// app/judge/page.tsx
-// Judge view: three-minute itinerary for evaluators.
-// Task 3.3 wires the live content: live eval score, live engine run, live
-// solar verdict, all recomputed on load with no key required.
-//
-// This stub renders a designed empty state that explains what each section
-// will contain and how to verify each claim without credentials.
-//
-// Server component. No interactive client components are mounted here yet.
-// The graph and solar panels that will live here mount as client components
-// (tasks 2.2, 2.7) to avoid SSR sizing issues.
-//
-// Regulatory citations are never hardcoded. Every claim flows through a
-// citation prop once the corpus is wired (task 2.4).
+'use client';
 
-// Itinerary item: describes one beat the judge will step through.
-// Citation values arrive from the corpus snapshot in task 3.3. Until then
-// the abstention branch renders. No unpinned CFR section ships on this page.
+// app/judge/page.tsx
+// Task 3.3: judge view, wired with live /api/status data.
+//
+// ItineraryItem is preserved exactly from the stub. Its citation prop
+// behavior is unchanged: when citation is absent, the abstention line
+// renders. corpus_amddate == "PENDING_CORPUS_FREEZE" -> no citation passed.
+//
+// Client component: needs useState to receive the StatusPanel payload for
+// corpus_amddate gating. The fetch itself lives in components/judge/StatusPanel.
+//
+// No regulatory text typed into JSX. Citation strings come from the payload.
+// No em-dashes and no double-hyphens in copy or comments.
+
+import { useState, useCallback } from 'react';
+import { StatusPanel } from '@/components/judge/StatusPanel';
+import type { StatusPayload } from '@/components/judge/StatusPanel';
+
+// ---------------------------------------------------------------------------
+// ItineraryItem: kept verbatim from the stub (task 1.17).
+// citation absent -> abstention line. citation present -> source line.
+// ---------------------------------------------------------------------------
+
 function ItineraryItem({
   step,
   heading,
@@ -84,7 +90,7 @@ function ItineraryItem({
             lineHeight: '1.5',
           }}
         >
-                    <span style={{ fontWeight: 600 }}>Verify: </span>
+          <span style={{ fontWeight: 600 }}>Verify: </span>
           {verifyInstruction}
         </p>
         {citation ? (
@@ -116,7 +122,50 @@ function ItineraryItem({
   );
 }
 
+// ---------------------------------------------------------------------------
+// Section label style (reuse globals.css tokens, no new colors)
+// ---------------------------------------------------------------------------
+
+const SECTION_LABEL: React.CSSProperties = {
+  fontSize: '11px',
+  fontWeight: 600,
+  letterSpacing: '0.1em',
+  textTransform: 'uppercase',
+  color: 'var(--color-muted)',
+  margin: '0 0 1rem',
+};
+
+// ---------------------------------------------------------------------------
+// Page component
+// ---------------------------------------------------------------------------
+
+const CORPUS_PENDING = 'PENDING_CORPUS_FREEZE';
+
 export default function JudgePage() {
+  // Receive the payload from StatusPanel so we can gate citation rendering
+  // on whether corpus_amddate is a real snapshot date.
+  const [payload, setPayload] = useState<StatusPayload | null>(null);
+
+  const handleLoad = useCallback((data: StatusPayload) => {
+    setPayload(data);
+  }, []);
+
+  // corpus_amddate gating: only pass a citation string when the snapshot
+  // is real. Until task 1.3 lands, corpus_amddate == PENDING_CORPUS_FREEZE
+  // and the abstention line renders in ItineraryItem.
+  const corpusSnapshotDate =
+    payload?.corpus_amddate && payload.corpus_amddate !== CORPUS_PENDING
+      ? payload.corpus_amddate
+      : null;
+
+  const step1Citation = corpusSnapshotDate
+    ? `GT-1 seed mission, engine run anchored ${payload?.today}. Corpus snapshot: ${corpusSnapshotDate}.`
+    : undefined;
+
+  const step2Citation = corpusSnapshotDate
+    ? `Deorbit swing from /api/status. Corpus snapshot: ${corpusSnapshotDate}.`
+    : undefined;
+
   return (
     <div
       style={{
@@ -128,7 +177,7 @@ export default function JudgePage() {
         gap: '1.5rem',
       }}
     >
-      {/* Page title + state badge */}
+      {/* Page title */}
       <div
         style={{
           display: 'flex',
@@ -148,19 +197,18 @@ export default function JudgePage() {
         >
           Judge view
         </h1>
-        {/* State badge: text label + border, never color alone */}
         <span
-          aria-label="Status: itinerary not yet wired"
+          aria-label="Status: live"
           style={{
             fontSize: '11px',
             padding: '1px 6px',
-            border: '1px solid var(--color-border)',
+            border: '1px solid var(--color-ok)',
             borderRadius: '3px',
-            color: 'var(--color-muted)',
+            color: 'var(--color-ok)',
             fontWeight: 500,
           }}
         >
-          Itinerary wires in task 3.3
+          Live
         </span>
       </div>
 
@@ -176,14 +224,7 @@ export default function JudgePage() {
       >
         <p
           id="purpose-heading"
-          style={{
-            fontSize: '11px',
-            fontWeight: 600,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            color: 'var(--color-muted)',
-            margin: '0 0 0.5rem',
-          }}
+          style={SECTION_LABEL}
         >
           Purpose
         </p>
@@ -195,10 +236,11 @@ export default function JudgePage() {
             lineHeight: '1.6',
           }}
         >
-          This page is the judge's door. Every claim it makes is reachable
-          without logging in, without a key, and without running anything
-          locally. The seeded GT-1 mission ensures an empty state is
-          impossible: the engine recomputes on every page load.
+          Every claim on this page is reachable without logging in, without
+          a key, and without running anything locally. The seeded GT-1
+          mission ensures an empty state is impossible: the engine recomputes
+          on every page load. The data blocks under steps 1 and 2 are fetched
+          live from /api/status on this page load.
         </p>
         <p
           style={{
@@ -209,25 +251,17 @@ export default function JudgePage() {
           }}
         >
           The numbered itinerary below guides a three-minute evaluation pass.
-          Each step names the claim, names the surface that proves it, and
-          gives a one-line verification instruction that requires no special
-          access. Steps 1 through 5 will be wired in task 3.3.
+          Each step names the claim, the surface that proves it, and a
+          one-line verification instruction requiring no special access.
         </p>
       </section>
 
+      {/* Live data panel: steps 1, 2 and 5 data blocks */}
+      <StatusPanel onLoad={handleLoad} />
+
       {/* Three-minute itinerary */}
       <section aria-labelledby="itinerary-heading">
-        <p
-          id="itinerary-heading"
-          style={{
-            fontSize: '11px',
-            fontWeight: 600,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            color: 'var(--color-muted)',
-            margin: '0 0 1rem',
-          }}
-        >
+        <p id="itinerary-heading" style={SECTION_LABEL}>
           Three-minute itinerary
         </p>
 
@@ -246,28 +280,32 @@ export default function JudgePage() {
             description={
               'The engine recomputes the GT-1 seed mission on every request ' +
               'and returns the worst single overrun in days among violated ' +
-              'licensing nodes. This figure is the product\'s primary claim.'
+              "licensing nodes. This figure is the product's primary claim. " +
+              'The data block above shows the live value, node count, and ' +
+              'compute time.'
             }
             verifyInstruction={
               'GET /api/status (no key). Read deadline_violations_days ' +
               'from the JSON response. The value is recomputed live, not cached.'
             }
+            citation={step1Citation}
           />
           <ItineraryItem
             step={2}
             heading="Deorbit compliance swing: same orbit, different verdict"
             description={
-              'The deorbit compliance node is the core differentiator. ' +
-              'The same 3U at 550 km can be compliant or non-compliant ' +
-              'depending on where the solar cycle sits. The swing between ' +
-              'the NOAA solar-minimum and solar-maximum bounds is reported.'
+              'The same 3U at 550 km perigee can be compliant or non-compliant ' +
+              'depending on where the solar cycle sits. Solar minimum produces ' +
+              'the longest lifetime and the worst compliance outcome. Solar ' +
+              'maximum produces the shortest lifetime and the best compliance ' +
+              'outcome. The swing table above shows both verdicts.'
             }
             verifyInstruction={
               'GET /api/status. Read deorbit_swing: ' +
-              'verdict_solar_min vs verdict_solar_max. ' +
-              'The lifetime estimates and the F10.7 value that produced ' +
-              'the nominal verdict are shown beside them.'
+              'lifetimeYears_solar_min with verdict_solar_min vs ' +
+              'lifetimeYears_solar_max with verdict_solar_max.'
             }
+            citation={step2Citation}
           />
           <ItineraryItem
             step={3}
@@ -275,13 +313,13 @@ export default function JudgePage() {
             description={
               'The corpus retrieval and Granite generation pipeline is ' +
               'scored against 34 questions (28 regulatory, 6 abstention ' +
-              'traps). The score and the trap result are both reported ' +
-              'here when task 3.3 wires the live eval panel.'
+              'traps). The score is written to docs/FACTS.json by a real ' +
+              'run of eval/runner.py. CI re-runs against committed fixtures ' +
+              'on every PR.'
             }
             verifyInstruction={
-              'The eval score is written to docs/FACTS.json by a real run ' +
-              'of eval/runner.py. Read the score from FACTS.json. ' +
-              'CI re-runs the eval against committed fixtures on every PR.'
+              'Read docs/FACTS.json. The eval score and trap results are ' +
+              'there. CI re-runs the eval against committed fixtures on every PR.'
             }
           />
           <ItineraryItem
@@ -307,7 +345,9 @@ export default function JudgePage() {
               'Five write-scoped Bob modes enforce lane ownership across ' +
               'three contributors. Four regulatory skills (Part 97, Part 5, ' +
               'NOAA CRSRA, eval bank) are loaded at authoring time. The eval ' +
-              'bank is exposed as an MCP tool via IBM Context Forge (task 3.2).'
+              'bank is exposed as an MCP tool via IBM Context Forge (task 3.2). ' +
+              'The model inventory table above shows what is actually running, ' +
+              'self-reported by /api/status.'
             }
             verifyInstruction={
               'Read .bob/custom_modes.yaml (five modes with fileRegex scopes). ' +
@@ -319,9 +359,9 @@ export default function JudgePage() {
         </ol>
       </section>
 
-      {/* What is empty and why */}
+      {/* What remains unwired */}
       <section
-        aria-labelledby="empty-state-heading"
+        aria-labelledby="pending-heading"
         style={{
           border: '1px solid var(--color-border)',
           borderRadius: '4px',
@@ -329,17 +369,7 @@ export default function JudgePage() {
           backgroundColor: 'var(--color-surface)',
         }}
       >
-        <p
-          id="empty-state-heading"
-          style={{
-            fontSize: '11px',
-            fontWeight: 600,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            color: 'var(--color-muted)',
-            margin: '0 0 0.75rem',
-          }}
-        >
+        <p id="pending-heading" style={SECTION_LABEL}>
           What is not wired yet
         </p>
 
@@ -379,16 +409,15 @@ export default function JudgePage() {
             </tr>
           </thead>
           <tbody>
-            {[
-              ['Live eval score panel', 'Task 3.3 (judge page wiring)'],
-              ['Dependency graph view', 'Task 1.14 (React Flow + dagre), 2.2'],
-              ['Timeline view', 'Task 2.3 (vis-timeline client component)'],
-              ['Deorbit swing panel', 'Task 2.7 (deorbit panel component)'],
-              ['Citation panel', 'Task 1.3 (corpus freeze), 2.4'],
-              ['Abstention screen', 'Task 1.6 (Guardian audit wiring), 2.5'],
-              ['Mission setup form', 'Task 2.1 (mission entry flow)'],
-              ['Deadline banner', 'Task 2.9 (deadline banner component)'],
-            ].map(([surface, waiting]) => (
+            {(
+              [
+                ['Eval score panel (live)', 'Task 1.5 (eval runner), docs/FACTS.json'],
+                ['Solar panel (/api/solar)', 'Task 2.8 (solar route, Surya)'],
+                ['Citation panel with snapshot date', 'Task 1.3 (corpus freeze)'],
+                ['Abstention screen (Q&A)', 'Task 1.6 (Guardian wiring), 2.5'],
+                ['Timeline view', 'Task 2.3 (vis-timeline)'],
+              ] as const
+            ).map(([surface, waiting]) => (
               <tr key={surface}>
                 <td
                   style={{
@@ -396,6 +425,8 @@ export default function JudgePage() {
                     paddingRight: '1rem',
                     color: 'var(--color-fg)',
                     verticalAlign: 'top',
+                    borderBottom: '1px solid var(--color-border)',
+                    paddingBottom: '0.5rem',
                   }}
                 >
                   {surface}
@@ -405,6 +436,8 @@ export default function JudgePage() {
                     paddingTop: '0.5rem',
                     color: 'var(--color-muted)',
                     verticalAlign: 'top',
+                    borderBottom: '1px solid var(--color-border)',
+                    paddingBottom: '0.5rem',
                   }}
                 >
                   {waiting}

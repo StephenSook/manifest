@@ -40,6 +40,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 import urllib.error
 import urllib.request
@@ -107,14 +108,21 @@ def citation_matches(expected: dict, got: dict) -> bool:
     exp_part = int(expected.get("part") or 0)
     if exp_part and int(got.get("part") or 0) != exp_part:
         return False
-    exp_path = str(expected.get("paragraphPath") or "")
-    got_path = str(got.get("paragraphPath") or "")
-    if exp_path and not got_path.startswith(exp_path):
+    # Paragraph paths compare by complete segments: expected (g) accepts the
+    # deeper (g)(1) but never the sibling-shaped (g4) or a fabricated branch
+    # that merely shares a string prefix.
+    exp_segs = re.findall(r"\(([^)]+)\)", str(expected.get("paragraphPath") or ""))
+    got_segs = re.findall(r"\(([^)]+)\)", str(got.get("paragraphPath") or ""))
+    if exp_segs and got_segs[: len(exp_segs)] != exp_segs:
+        return False
+    if exp_segs and not got_segs:
         return False
     exp_amd = str(expected.get("amddate") or "")
     got_amd = str(got.get("amddate") or "")
     if exp_amd == "VERIFY_FROM_SNAPSHOT":
-        if not got_amd:
+        # The snapshot pin: a real date in ISO shape, as ingested (eCFR
+        # snapshots and dated source documents both carry one).
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", got_amd):
             return False
     elif exp_amd and got_amd != exp_amd:
         return False

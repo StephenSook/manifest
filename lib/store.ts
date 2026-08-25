@@ -53,10 +53,19 @@ function getDB(): Promise<IDBPDatabase<ManifestDB>> {
 // Public API
 // ---------------------------------------------------------------------------
 
+// Fired after every successful mission write so listeners (the mobile
+// shell's notification resync, task 2.13) never hold stale deadline alerts.
+function emitMissionChanged(): void {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('manifest:mission-changed'));
+  }
+}
+
 /** Persist a MissionInput. Overwrites any previously saved mission. */
 export async function saveMission(mission: MissionInput): Promise<void> {
   const db = await getDB();
   await db.put(STORE, mission, CURRENT_KEY);
+  emitMissionChanged();
 }
 
 /**
@@ -78,4 +87,5 @@ export async function loadMission(): Promise<MissionInput | null> {
 export async function clearMission(): Promise<void> {
   const db = await getDB();
   await db.delete(STORE, CURRENT_KEY);
+  emitMissionChanged();
 }

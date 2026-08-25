@@ -26,7 +26,7 @@ on:
   workflow_dispatch:
 
 env:
-  RATCHET_MIN_SCORE: "50"
+  RATCHET_MIN_SCORE: "53.5"
 
 jobs:
   eval-fixtures:
@@ -53,4 +53,18 @@ jobs:
               sys.exit(1)
           print(f"ok: {scored} rows scored, score {report['score_pct']}%, "
                 f"traps {report['traps_abstained']}/{report['traps']}")
+          PY
+
+      - name: Assert no previously-passing id regressed
+        run: |
+          python3 - << 'PY'
+          import json, sys
+          report = json.load(open("eval/report.json"))
+          baseline = json.load(open("eval/baseline_passing.json"))
+          passing_now = {r["id"] for r in report["results"] if r["pass"]}
+          regressed = sorted(set(baseline["passing"]) - passing_now)
+          if regressed:
+              print(f"::error::previously-passing ids regressed: {regressed}")
+              sys.exit(1)
+          print(f"ok: all {len(baseline['passing'])} baseline ids still pass")
           PY

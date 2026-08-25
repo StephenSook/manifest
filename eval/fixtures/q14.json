@@ -1,11 +1,11 @@
 {
-  "answer": "From 47 CFR 97.3(a)(2)(40) (AMDDATE 2026-08-13), addressing: What triggers the IARU coordination requirement for an amateur CubeSat frequency allocation?\n\nRepeater. An amateur station that simultaneously retransmits the transmission of another amateur station on a different channel or channels.",
+  "answer": "From 47 CFR 97.3(a)(40) (AMDDATE 2026-08-13), addressing: What triggers the IARU coordination requirement for an amateur CubeSat frequency allocation?\n\nRepeater. An amateur station that simultaneously retransmits the transmission of another amateur station on a different channel or channels.",
   "citations": [
     {
       "cfrTitle": 47,
       "part": 97,
       "section": "97.3",
-      "paragraphPath": "(a)(2)(40)",
+      "paragraphPath": "(a)(40)",
       "amddate": "2026-08-13",
       "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
     },

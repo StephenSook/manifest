@@ -12,6 +12,8 @@ const eslintConfig = [
       "android/**",
       "ios/**",
       "mobile/**",
+      ".venv-forge/**",
+      "public/sw.js",
     ],
   },
   {

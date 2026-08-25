@@ -1,0 +1,28 @@
+{
+  "note": "Every id here must keep passing. The eval gate fails on any regression from this list. Raise-only: add ids as retrieval improves, never remove.",
+  "recordedAt": "2026-08-25T01:30:45.545006+00:00",
+  "score_pct": 53.6,
+  "passing": [
+    "a01",
+    "a02",
+    "a03",
+    "a04",
+    "a05",
+    "a06",
+    "q01",
+    "q02",
+    "q03",
+    "q04",
+    "q05",
+    "q10",
+    "q12",
+    "q13",
+    "q16",
+    "q18",
+    "q19",
+    "q20",
+    "q21",
+    "q25",
+    "q26"
+  ]
+}

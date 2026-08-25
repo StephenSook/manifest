@@ -35,6 +35,12 @@ function addDays(isoDate: string, days: number): string {
   return d.toISOString().split('T')[0];
 }
 
+/** The alert instant: 09:00 LOCAL time on the given calendar day. */
+function nineLocal(isoDate: string): Date {
+  const [y, m, d] = isoDate.split('-').map(Number);
+  return new Date(y, m - 1, d, 9, 0, 0);
+}
+
 function atNineLocal(isoDate: string): string {
   return isoDate + 'T09:00:00';
 }
@@ -47,20 +53,29 @@ function offsetLabel(offset: number): string {
 
 /**
  * Compute every future deadline alert for a mission, sorted soonest first.
- * Ids are assigned after sorting, starting at 1. Alerts on or before `today`
- * are dropped: a reminder for a passed instant is noise.
+ * Ids are assigned after sorting, starting at 1.
+ *
+ * `now` is the current instant (device local clock). An alert survives iff
+ * its 09:00 LOCAL fire instant is strictly in the future, so a sync at
+ * 08:00 on a deadline day KEEPS that day's 09:00 reminder, and a UTC-ahead
+ * evening in the US cannot misclassify tomorrow's alert as passed.
  */
 export function buildDeadlineAlerts(
   mission: MissionInput,
-  today: string,
+  now: Date,
 ): DeadlineAlert[] {
+  const localToday = [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, '0'),
+    String(now.getDate()).padStart(2, '0'),
+  ].join('-');
   const { nodes, edges } = buildGraph(mission);
   const result = computeCriticalPath(
     nodes,
     edges,
     mission.deliveryDate,
-    today,
-    today,
+    localToday,
+    localToday,
   );
 
   const raw: Omit<DeadlineAlert, 'id'>[] = [];
@@ -69,7 +84,7 @@ export function buildDeadlineAlerts(
     if (!node.latestStart) continue;
     for (const offset of ALERT_OFFSETS_DAYS) {
       const fireDay = addDays(node.latestStart, -offset);
-      if (fireDay <= today) continue;
+      if (nineLocal(fireDay).getTime() <= now.getTime()) continue;
       raw.push({
         title: node.label,
         body: `Latest start ${offsetLabel(offset)} (${node.latestStart}) to hold the delivery date.`,
@@ -80,7 +95,7 @@ export function buildDeadlineAlerts(
 
   for (const offset of ALERT_OFFSETS_DAYS) {
     const fireDay = addDays(mission.deliveryDate, -offset);
-    if (fireDay <= today) continue;
+    if (nineLocal(fireDay).getTime() <= now.getTime()) continue;
     raw.push({
       title: 'Delivery deadline',
       body: `Delivery to the launch provider is ${offsetLabel(offset)} (${mission.deliveryDate}). All licensing milestones must be complete.`,

@@ -119,7 +119,7 @@ The eval bank, 28 regulatory questions with exact expected citations plus 6 abst
 | Verify in one command | `curl https://[DEPLOY-URL]/api/status` |
 | Repo | `https://github.com/StephenSook/manifest` |
 | Video | `[YOUTUBE-URL]` |
-| iOS | `[TESTFLIGHT-URL, if the beta review is approved in time]` |
+| iOS | https://testflight.apple.com/join/huQrZpek (approved by Apple in external Beta App Review, 2026-08-25) |
 | Android (direct APK, no sign-in) | `https://github.com/StephenSook/manifest/releases/tag/v1.0-beta.1` |
 | Android (Firebase App Distribution, Google sign-in required) | `https://appdistribution.firebase.dev/i/2adff092da3659d7` |
 

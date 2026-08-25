@@ -209,8 +209,8 @@ Every number in this section is sourced. Unsourced figures do not ship.
 - **Web app:** [manifest-web-roan.vercel.app/mission](https://manifest-web-roan.vercel.app/mission)
 - **Judge page:** [manifest-web-roan.vercel.app/judge](https://manifest-web-roan.vercel.app/judge): numbered walkthrough, every claim reachable without login or key
 - **Status API:** [manifest-web-roan.vercel.app/api/status](https://manifest-web-roan.vercel.app/api/status): unauthenticated, recomputes the headline number on every request, self-reports which models are running
-- **iOS:** native Capacitor build 1.0 (1) uploaded to App Store Connect and submitted for external TestFlight Beta App Review on 2026-08-24 *(public TestFlight link lands here on approval)*
-- **Android:** *(signed APK download link lands here with the 2.21 release)*
+- **iOS:** [**Join the TestFlight beta**](https://testflight.apple.com/join/huQrZpek). Native Capacitor build 1.0 (1), **approved by Apple** in external Beta App Review on 2026-08-25. Open on an iPhone or iPad, no account needed beyond a free Apple ID, no invite code.
+- **Android:** [**Download the signed APK**](https://github.com/StephenSook/manifest/releases/download/v1.0-beta.1/manifest-v1.0-release.apk) from the `v1.0-beta.1` release, or join through Firebase App Distribution. Release-signed, not a debug build.
 
 ---
 

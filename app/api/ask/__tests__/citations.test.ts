@@ -99,3 +99,44 @@ describe('resolveCfrCitations fail-closed resolution', () => {
     expect(unresolved).toHaveLength(1);
   });
 });
+
+describe('round-5 probes: citation spans, prose parens, mixed titles', () => {
+  it('a list after §§ cues every member: fabricated 97.999 abstains', () => {
+    const { unresolved } = resolveCfrCitations(
+      'See 47 CFR §§ 97.207 and 97.999 for details.',
+      [chunk()],
+    );
+    expect(unresolved).toHaveLength(1);
+    expect(unresolved[0].section).toBe('97.999');
+    expect(unresolved[0].title).toBe(47);
+  });
+
+  it('a comma does not break title inheritance: 15 CFR, section 97.207(g) abstains', () => {
+    const { chunks, unresolved } = resolveCfrCitations(
+      'Under 15 CFR, section 97.207(g), notification is due.',
+      [chunk()],
+    );
+    expect(chunks).toHaveLength(0);
+    expect(unresolved).toHaveLength(1);
+    expect(unresolved[0].title).toBe(15);
+  });
+
+  it('prose parentheses are not paragraph paths: 2.5 (months) never abstains', () => {
+    const { chunks, unresolved } = resolveCfrCitations(
+      'Delivery takes 2.5 (months) after the 97.207(g) filing.',
+      [chunk()],
+    );
+    expect(chunks).toHaveLength(1);
+    expect(unresolved).toHaveLength(0);
+  });
+
+  it('a titled bare mention is not suppressed by a differently-titled pathed reference', () => {
+    const { chunks, unresolved } = resolveCfrCitations(
+      'Both 15 CFR 97.207 and 47 CFR 97.207(g) apply.',
+      [chunk()],
+    );
+    expect(chunks).toHaveLength(1);
+    expect(unresolved).toHaveLength(1);
+    expect(formatCfrReference(unresolved[0])).toBe('15 CFR 97.207');
+  });
+});

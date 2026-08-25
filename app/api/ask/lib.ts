@@ -197,28 +197,65 @@ export interface CfrReference {
   cued: boolean;
 }
 
+// A paragraph label must have a valid CFR shape: digits "(1)", letters
+// "(a)" / "(aa)", or roman numerals "(iii)" / "(VII)". Prose parentheses
+// ("2.5 (months)") are not paragraph paths and must not turn a bare
+// number into a cued CFR reference (Codex round 5: false abstention).
+const CFR_SEG = String.raw`\((?:\d{1,3}|[a-z]{1,2}|[A-Z]{1,2}|[ivxlcdm]{3,8}|[IVXLCDM]{3,8})\)`;
+
 /**
  * Parse every CFR reference in generated text with canonical,
  * whitespace-tolerant boundaries: "97.3(a)(41)", "97.3 (a)(41)", and
  * "97.3 (a) (41)" all yield section 97.3 path (a)(41). Digit boundaries
- * prevent substring collisions (297.31 never yields 97.3). A preceding
- * title ("47 CFR", "47 C.F.R. §") is captured so resolution can reject a
- * wrong-title reference instead of matching on section number alone.
+ * prevent substring collisions (297.31 never yields 97.3).
+ *
+ * Titles and cues govern whole CITATION SPANS, not single numbers
+ * (Codex round 5): in "47 CFR §§ 97.207 and 97.999" both sections
+ * inherit title 47 and the cue, because only connective material
+ * (whitespace, punctuation, list words, cue words, other references)
+ * separates them from the anchor. "15 CFR, section 97.207(g)" keeps
+ * title 15 across the comma. A number separated from every anchor by
+ * real prose stays uncued.
  */
 export function parseCfrReferences(answer: string): CfrReference[] {
   const refs: CfrReference[] = [];
-  const re = /(?<!\d)(\d{1,3}\.\d+)((?:\s*\([a-zA-Z0-9]+\))*)/g;
-  const titleCue = /(\d{1,2})\s*C\.?\s*F\.?\s*R\.?\s*(?:(?:§+|section|part)\s*)?$/i;
-  const bareCue = /(?:§+|section)\s*$/i;
+  const re = new RegExp(
+    String.raw`(?<!\d)(\d{1,3}\.\d+)((?:\s*${CFR_SEG})*)`,
+    'g',
+  );
+  const titleAnchors: Array<{ end: number; title: number }> = [];
+  const tRe = /(\d{1,2})\s*C\.?\s*F\.?\s*R\.?/g;
+  let am: RegExpExecArray | null;
+  while ((am = tRe.exec(answer))) {
+    titleAnchors.push({ end: tRe.lastIndex, title: parseInt(am[1], 10) });
+  }
+  const cueEnds: number[] = [];
+  const cRe = /§+|\bsections?\b|\bparts?\b/gi;
+  while ((am = cRe.exec(answer))) {
+    cueEnds.push(cRe.lastIndex);
+  }
+  // Connective material between an anchor and the number it governs.
+  // Bounded to 160 chars: a title three sentences back governs nothing.
+  const connective = new RegExp(
+    String.raw`^(?:[\s,;]|and\b|or\b|through\b|to\b|§+|sections?\b|parts?\b|\d{1,3}\.\d+|${CFR_SEG})*$`,
+    'i',
+  );
+  const governs = (end: number, idx: number): boolean =>
+    end <= idx && idx - end <= 160 && connective.test(answer.slice(end, idx));
   let m: RegExpExecArray | null;
   while ((m = re.exec(answer))) {
-    const segs = (m[2].match(/\(([a-zA-Z0-9]+)\)/g) ?? []).map((s) =>
+    const segs = (m[2].match(/\([a-zA-Z0-9]+\)/g) ?? []).map((s) =>
       s.toLowerCase().replace(/\s/g, ''),
     );
-    const before = answer.slice(Math.max(0, m.index - 24), m.index);
-    const t = titleCue.exec(before);
-    const title = t ? parseInt(t[1], 10) : null;
-    const cued = title !== null || bareCue.test(before) || segs.length > 0;
+    const idx = m.index;
+    let title: number | null = null;
+    for (const a of titleAnchors) {
+      if (governs(a.end, idx)) title = a.title;
+    }
+    const cued =
+      title !== null ||
+      cueEnds.some((e) => governs(e, idx)) ||
+      segs.length > 0;
     refs.push({ title, section: m[1], path: segs.join(''), cued });
   }
   return refs;
@@ -251,9 +288,25 @@ export function resolveCfrCitations(
   contextChunks: ChunkRow[],
 ): ResolvedCitations {
   const refs = parseCfrReferences(answer);
-  const pathedSections = new Set(
-    refs.filter((r) => r.path).map((r) => r.section),
-  );
+  // Titles of every pathed reference, keyed by section. A bare mention is
+  // suppressed only by a TITLE-COMPATIBLE pathed reference to the same
+  // section (Codex round 5): "15 CFR 97.207 and 47 CFR 97.207(g)" must
+  // not let the Title 15 claim ride on the Title 47 citation. An untitled
+  // bare mention defers to any pathed reference; a titled one only to a
+  // pathed reference carrying that same title.
+  const pathedTitles = new Map<string, Set<number | null>>();
+  for (const r of refs) {
+    if (r.path) {
+      const titles = pathedTitles.get(r.section) ?? new Set<number | null>();
+      titles.add(r.title);
+      pathedTitles.set(r.section, titles);
+    }
+  }
+  const suppressedByPathed = (r: CfrReference): boolean => {
+    const titles = pathedTitles.get(r.section);
+    if (!titles) return false;
+    return r.title === null || titles.has(r.title);
+  };
   const chunks: ChunkRow[] = [];
   const unresolved: CfrReference[] = [];
   const seen = new Set<string>();
@@ -280,9 +333,9 @@ export function resolveCfrCitations(
       } else {
         unresolved.push(ref);
       }
-    } else if (pathedSections.has(ref.section)) {
-      // A pathed reference to this section governs; the bare mention is
-      // satisfied by (or already failed with) that pathed reference.
+    } else if (suppressedByPathed(ref)) {
+      // A title-compatible pathed reference to this section governs; the
+      // bare mention is satisfied by (or already failed with) it.
       continue;
     } else if (candidates.length > 0) {
       candidates.forEach(push);

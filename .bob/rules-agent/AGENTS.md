@@ -25,14 +25,17 @@ You are building production code. Every change must be minimal, targeted, and tr
 # Engine tests
 npm run test:engine
 
-# Eval (against Ollama, not watsonx)
-python eval/runner.py --backend ollama
+# Eval, offline against the committed fixtures: no network, no key.
+# There is no --backend flag; --mode is required and takes url or fixtures.
+python3 eval/runner.py --mode fixtures
 
 # Em-dash check
-python scripts/no_em_dash.py --check
+python3 scripts/no_em_dash.py --check
 
-# Anti-fabrication (after FACTS.json exists)
-python tests/test_no_fabricated_numbers.py
+# Anti-fabrication guard. It is a pytest suite, so it needs a runner:
+# executing the file directly collects nothing and exits 0, which is a
+# false green. This is the command CI runs.
+uv run --python 3.12 --with pytest python -m pytest tests/ -q
 ```
 
 ## Commit format

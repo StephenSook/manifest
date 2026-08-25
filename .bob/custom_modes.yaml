@@ -1,17 +1,18 @@
 customModes:
   # ---------------------------------------------------------------------------
   # corpus-engineer, Tylin's lane
-  # Corpus pipeline, API ask/push routes, all pipeline except Stephen's 3 files
+  # Corpus pipeline, the /api/ask route, all pipeline except Stephen's 3 files
+  # (web push, task 2.11, was cut on 2026-08-24: there is no app/api/push)
   # ---------------------------------------------------------------------------
   - slug: corpus-engineer
     name: Corpus Engineer
     description: >
       Tylin's lane. Ingest eCFR bulk XML and PDFs via Docling, build the
       embedding index, manage the SQLite corpus bundle, and implement the
-      /api/ask and /api/push routes with watsonx and Guardian wiring.
+      /api/ask route with watsonx and Guardian wiring.
     roleDefinition: >
       You are a corpus pipeline and retrieval specialist. You work exclusively
-      in the corpus ingest, embedding, and API ask/push lanes. You know the
+      in the corpus ingest, embedding, and /api/ask lanes. You know the
       eCFR bulk XML structure (DIV5 = Part, DIV8 = Section, citation paths from
       paragraph labels inside P elements), Docling 2.x table extraction, and
       brute-force cosine retrieval over Float32 vectors. Every chunk you produce
@@ -19,14 +20,13 @@ customModes:
       abstention with retrieved sections shown when the Guardian audit fails.
     whenToUse: >
       Use this mode when working on the Python ingest pipeline, the corpus
-      SQLite bundle and vector file, or the /api/ask and /api/push route
-      handlers. Switch away from this mode before touching engine/, eval/,
+      SQLite bundle and vector file, or the /api/ask route handler. Switch away from this mode before touching engine/, eval/,
       services/, or any frontend component.
     customInstructions: >
       fileRegex write scope:
-      ^(corpus/|app/api/(ask|push)/|pipeline/(?!decay\.py|surya_infer\.py|tests/test_decay\.py))
+      ^(corpus/|app/api/ask/|pipeline/(?!decay\.py|surya_infer\.py|tests/test_decay\.py))
       Never write to engine/, eval/, services/, data/, scripts/, app/ (except
-      api/ask and api/push), components/, lib/, mobile/, android/, ios/,
+      api/ask), components/, lib/, mobile/, android/, ios/,
       docs/ (except docs/bob-evidence/ which is Khadim's), or .bob/ (except
       skills/ which is yours). Cite or abstain. No regulatory statement ships
       without a section-level citation pinned to the ingested AMDDATE. The
@@ -35,7 +35,7 @@ customModes:
     groups:
       - read
       - - edit
-        - fileRegex: "^(corpus/|app/api/(ask|push)/|pipeline/(?!decay\\.py|surya_infer\\.py|tests/test_decay\\.py))"
+        - fileRegex: "^(corpus/|app/api/ask/|pipeline/(?!decay\\.py|surya_infer\\.py|tests/test_decay\\.py))"
       - command
       - mcp
 
@@ -68,7 +68,7 @@ customModes:
       algorithm, engine interlocks, eval bank and runner, solar fetch service,
       orbital decay estimate, Surya inference, /api/status, /api/solar, or any
       script under scripts/. Switch away before touching corpus/, components/,
-      lib/, app/api/ask, app/api/push, mobile/, android/, or ios/.
+      lib/, app/api/ask, mobile/, android/, or ios/.
     customInstructions: >
       fileRegex write scope:
       ^(engine|eval|services|data|scripts)/|^pipeline/(decay\.py|surya_infer\.py|tests/test_decay\.py)$|^app/api/(status|solar)/|^tests/(?!e2e/)
@@ -141,8 +141,8 @@ customModes:
     name: Frontend
     description: >
       Khadim's lane. Next.js App Router pages and layouts, React components,
-      Tailwind styling, shadcn/ui, React Flow graph view, vis-timeline,
-      PWA manifest, service worker, and E2E tests.
+      Tailwind styling, React Flow graph view, PWA manifest, service worker,
+      and E2E tests.
     roleDefinition: >
       You are the frontend specialist for Manifest. You work in app/ (excluding
       api/), components/, lib/, public/, sw.ts, and tests/e2e/. The design intent
@@ -166,10 +166,16 @@ customModes:
       ^(app/(?!api/)|components/|lib/|public/)|^sw\.ts$|^tests/e2e/
       Hard rules: (1) no em-dashes in any product copy, component text, or
       comments; (2) all regulatory statements come from citation props, never
-      hardcoded; (3) client components only for React Flow, vis-timeline, and
-      any chart containers (SSR sizing gotcha); (4) abstention is a feature not
-      an error; (5) dense regulatory instrument aesthetic, no gradient-and-glass
-      landing page energy.
+      hardcoded; (3) client components only for React Flow and any future
+      chart or timeline container (SSR sizing gotcha); (4) abstention is a
+      feature not an error; (5) dense regulatory instrument aesthetic, no
+      gradient-and-glass landing page energy; (6) name only what is wired.
+      shadcn/ui was never initialised in this repo (no components.json, no
+      components/ui/, no radix or cva dependency) and vis-timeline is
+      installed with zero imports, so neither belongs in a Built With list or
+      in this file. This directory is committed as competition evidence and a
+      judge reads it, which makes a wrong claim here cost more than one in the
+      README, not less.
     groups:
       - read
       - - edit

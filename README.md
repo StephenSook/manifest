@@ -2,7 +2,7 @@
 
 **Regulatory critical-path planner for US university CubeSat missions.**
 
-> "IBM and NASA's own space model decides whether your satellite's orbit is legal."
+> "The sun decides whether your satellite's orbit is legal. Manifest is the first launch-licensing planner that knows it."
 
 [![CI](https://github.com/StephenSook/manifest/actions/workflows/ci.yml/badge.svg)](https://github.com/StephenSook/manifest/actions/workflows/ci.yml)
 [![Eval](https://github.com/StephenSook/manifest/actions/workflows/eval-gate.yml/badge.svg)](https://github.com/StephenSook/manifest/actions/workflows/eval-gate.yml)

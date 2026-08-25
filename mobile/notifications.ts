@@ -38,7 +38,7 @@ async function cancelAllPending(): Promise<void> {
  */
 export async function syncDeadlineNotifications(
   mission: MissionInput | null,
-  today: string,
+  now: Date,
 ): Promise<SyncResult> {
   if (!Capacitor.isNativePlatform()) {
     return { permission: 'denied', scheduled: 0 };
@@ -75,7 +75,7 @@ export async function syncDeadlineNotifications(
 
   await cancelAllPending();
 
-  const alerts = capToPendingLimit(buildDeadlineAlerts(mission, today));
+  const alerts = capToPendingLimit(buildDeadlineAlerts(mission, now));
   if (alerts.length > 0) {
     await LocalNotifications.schedule({
       notifications: alerts.map((a) => ({

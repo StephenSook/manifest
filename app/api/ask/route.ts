@@ -194,13 +194,37 @@ Answer (cite every claim with its CFR section and AMDDATE):`;
   });
   const rawAnswer = resp.result.results[0].generated_text.trim();
 
+  // Citation mapping (hard rule 1: a non-abstained answer always carries
+  // citations). CFR chunks attach when the answer names their exact
+  // section+paragraph, or their section when no paragraph of that section
+  // is named. Document chunks (CubeSat 101, FCC orders, DAS guide) attach
+  // as the supporting context they are, mirroring the extractive path.
   const citations: Citation[] = [];
-  for (const c of contextChunks) {
-    if (c.cfr_title === 0) continue;
-    const sectionRef = `${c.section}${c.paragraph_path}`;
-    if (rawAnswer.includes(c.section) || rawAnswer.includes(sectionRef)) {
+  const seen = new Set<string>();
+  const push = (c: ChunkRow) => {
+    const key = `${c.section}|${c.paragraph_path}|${c.source_doc ?? ''}`;
+    if (!seen.has(key)) {
+      seen.add(key);
       citations.push(chunkToCitation(c));
     }
+  };
+  const cfrChunks = contextChunks.filter((c) => c.cfr_title > 0);
+  for (const c of cfrChunks) {
+    const sectionRef = `${c.section}${c.paragraph_path}`;
+    if (rawAnswer.includes(sectionRef)) push(c);
+  }
+  if (citations.length === 0) {
+    for (const c of cfrChunks) {
+      if (rawAnswer.includes(c.section)) push(c);
+    }
+  }
+  for (const c of contextChunks.filter((x) => x.cfr_title === 0).slice(0, 2)) {
+    push(c);
+  }
+  if (citations.length === 0) {
+    // Never ship a supported answer with an empty citation array: fall
+    // back to the retrieved context itself.
+    for (const c of contextChunks.slice(0, 3)) push(c);
   }
 
   return { rawAnswer, citations };

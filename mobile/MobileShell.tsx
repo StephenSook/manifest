@@ -38,16 +38,19 @@ export function MobileShell() {
 
     const handles: PluginListenerHandle[] = [];
 
-    // Device-local date: this adapter layer runs only at runtime on the
-    // device, never during SSR or tests (schedule.ts takes today as input).
+    // Device-local instant: this adapter layer runs only at runtime on the
+    // device, never during SSR or tests (schedule.ts takes now as input).
     const sync = async () => {
       const mission = await loadMission();
-      await syncDeadlineNotifications(
-        mission,
-        new Date().toISOString().split('T')[0],
-      );
+      await syncDeadlineNotifications(mission, new Date());
     };
     void sync();
+
+    // Resync when the mission is saved or cleared anywhere in the app, so
+    // stale deadline alerts never outlive a plan change (lib/store.ts
+    // dispatches this event after every successful write).
+    const onMissionChange = () => void sync();
+    window.addEventListener('manifest:mission-changed', onMissionChange);
 
     void App.addListener('resume', () => void sync()).then((h) =>
       handles.push(h),
@@ -68,6 +71,7 @@ export function MobileShell() {
     ).then((h) => handles.push(h));
 
     return () => {
+      window.removeEventListener('manifest:mission-changed', onMissionChange);
       for (const h of handles) void h.remove();
     };
   }, []);

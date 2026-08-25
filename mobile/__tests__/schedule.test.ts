@@ -10,7 +10,7 @@ import {
   type DeadlineAlert,
 } from '../schedule';
 
-const TODAY = '2026-08-24';
+const NOW = new Date('2026-08-24T12:00:00');
 
 const BASE_INPUT: MissionInput = {
   launchDate: '2027-06-01',
@@ -27,10 +27,10 @@ const BASE_INPUT: MissionInput = {
 
 describe('buildDeadlineAlerts', () => {
   it('produces only future alerts, sorted ascending, with unique integer ids', () => {
-    const alerts = buildDeadlineAlerts(BASE_INPUT, TODAY);
+    const alerts = buildDeadlineAlerts(BASE_INPUT, NOW);
     expect(alerts.length).toBeGreaterThan(0);
     for (const a of alerts) {
-      expect(a.at > TODAY).toBe(true);
+      expect(new Date(a.at).getTime()).toBeGreaterThan(NOW.getTime());
       expect(Number.isInteger(a.id)).toBe(true);
     }
     const sorted = [...alerts].sort((a, b) => (a.at < b.at ? -1 : 1));
@@ -39,7 +39,7 @@ describe('buildDeadlineAlerts', () => {
   });
 
   it('fires 7 days before, 1 day before, and on the delivery deadline', () => {
-    const alerts = buildDeadlineAlerts(BASE_INPUT, TODAY);
+    const alerts = buildDeadlineAlerts(BASE_INPUT, NOW);
     const delivery = alerts.filter((a) => a.title === 'Delivery deadline');
     const days = delivery.map((a) => a.at.split('T')[0]).sort();
     expect(days).toEqual(['2027-04-24', '2027-04-30', '2027-05-01']);
@@ -53,9 +53,9 @@ describe('buildDeadlineAlerts', () => {
       deliveryDate: '2026-08-27',
       integrationDate: '2026-08-26',
     };
-    const alerts = buildDeadlineAlerts(near, TODAY);
+    const alerts = buildDeadlineAlerts(near, NOW);
     for (const a of alerts) {
-      expect(a.at > TODAY).toBe(true);
+      expect(new Date(a.at).getTime()).toBeGreaterThan(NOW.getTime());
     }
     const delivery = alerts.filter((a) => a.title === 'Delivery deadline');
     expect(delivery.map((a) => a.at.split('T')[0]).sort()).toEqual([
@@ -65,7 +65,7 @@ describe('buildDeadlineAlerts', () => {
   });
 
   it('alerts fire at 09:00 local', () => {
-    const alerts = buildDeadlineAlerts(BASE_INPUT, TODAY);
+    const alerts = buildDeadlineAlerts(BASE_INPUT, NOW);
     for (const a of alerts) {
       expect(a.at.endsWith('T09:00:00')).toBe(true);
     }
@@ -86,5 +86,30 @@ describe('capToPendingLimit', () => {
     expect(capped.map((a) => a.at)).toEqual(
       many.slice(0, IOS_PENDING_LIMIT).map((a) => a.at),
     );
+  });
+});
+
+
+describe('day-of alert survival (Codex round-1 regression)', () => {
+  const near: MissionInput = {
+    ...BASE_INPUT,
+    deliveryDate: '2026-08-27',
+    integrationDate: '2026-08-26',
+  };
+
+  it('keeps the 09:00 day-of alert when syncing at 08:00 that morning', () => {
+    const alerts = buildDeadlineAlerts(near, new Date('2026-08-27T08:00:00'));
+    const dayOf = alerts.filter(
+      (a) => a.title === 'Delivery deadline' && a.at.startsWith('2026-08-27'),
+    );
+    expect(dayOf.length).toBe(1);
+  });
+
+  it('drops the day-of alert once 09:00 has passed', () => {
+    const alerts = buildDeadlineAlerts(near, new Date('2026-08-27T10:00:00'));
+    const dayOf = alerts.filter(
+      (a) => a.title === 'Delivery deadline' && a.at.startsWith('2026-08-27'),
+    );
+    expect(dayOf.length).toBe(0);
   });
 });

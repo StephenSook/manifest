@@ -132,13 +132,31 @@ export function hybridSelect(
   const sectionMatch = question.match(/(\d{1,3}\.\d+)/);
   if (!sectionMatch) return cosineTop.slice(0, k);
   const section = sectionMatch[1];
-  const paraMatch = question.match(/\(([a-z0-9]+)(?:\(([a-z0-9]+)\))?\)/i);
+  // Parse the ENTIRE parenthetical path after the section number, so a
+  // question naming 97.3(a)(41) routes to (a)(41), never to (a)(1).
+  const afterSection = question.slice(
+    question.indexOf(sectionMatch[1]) + sectionMatch[1].length,
+  );
+  const requestedSegs: string[] = [];
+  const segRe = /^\(([a-zA-Z0-9]+)\)/;
+  let rest = afterSection;
+  let m = rest.match(segRe);
+  while (m) {
+    requestedSegs.push(m[1].toLowerCase());
+    rest = rest.slice(m[0].length);
+    m = rest.match(segRe);
+  }
+  const requestedPath = requestedSegs.map((s) => `(${s})`).join('');
   const hits = allChunks.filter((c) => c.section === section);
   hits.sort((a, b) => {
     const score = (c: ChunkRow): number => {
       let s = 0;
-      if (paraMatch && c.paragraph_path.startsWith(`(${paraMatch[1]}`)) s += 10;
-      if (paraMatch && c.paragraph_path === `(${paraMatch[1]})(1)`) s += 6;
+      const path = c.paragraph_path.toLowerCase();
+      if (requestedPath) {
+        if (path === requestedPath) s += 20;
+        else if (path.startsWith(requestedPath + '(')) s += 12;
+        else if (requestedPath.startsWith(path) && path) s += 6;
+      }
       if (/30 days/i.test(c.text) && /deadline|notification|90 days/i.test(question)) s += 8;
       return s;
     };

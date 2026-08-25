@@ -20,9 +20,11 @@ No account. No keys. Every claim below is either a live link or a `grep` command
 
 | To verify... | Go here |
 |---|---|
-| **Try it, zero setup** | *(Vercel URL -- populated after first deploy)* `/judge` page: numbered 3-minute walkthrough |
+| **Try it, zero setup** | [manifest-web-roan.vercel.app/judge](https://manifest-web-roan.vercel.app/judge): numbered walkthrough. [/mission](https://manifest-web-roan.vercel.app/mission): the planner |
+| **The headline, recomputed live** | [manifest-web-roan.vercel.app/api/status](https://manifest-web-roan.vercel.app/api/status): unauthenticated, recomputes the violated-days number on every request and self-reports the wired models |
 | **The differentiator** | [`engine/interlocks/deorbit-compliance.ts`](engine/interlocks/deorbit-compliance.ts) + [`data/decay-table.json`](data/decay-table.json) -- same orbit, opposite verdict, solar cycle decides |
-| **74 engine tests passing** | `npm install && npm run test:engine` |
+| **79 engine and mobile tests passing** | `npm install && npm run test:engine` |
+| **The eval suite, offline** | `python3 eval/runner.py --mode fixtures` -- 28 questions + 6 abstention traps, no network, no key |
 | **Claims are wired, not aspirational** | `grep -r "ibm/granite" app/ pipeline/` -- every named model has an import or call |
 | **IBM Bob is committed and inspectable** | [`.bob/custom_modes.yaml`](.bob/custom_modes.yaml), [`.bob/mcp.json`](.bob/mcp.json), [`docs/bob-evidence/`](docs/bob-evidence/) |
 | **Honesty live** | `/api/status` -- unauthenticated, self-reports which models are actually running |
@@ -71,17 +73,17 @@ The deorbit compliance verdict is computed from live NOAA SWPC F10.7 flux, NOAA'
 
 **Audit:** `ibm/granite-guardian-3-8b` reviews every citation-bearing answer for groundedness before display. An answer that fails the audit degrades to abstention with the retrieved source sections shown. Abstention is a designed state, not an error.
 
-**Retrieval:** `ibm/granite-embedding-278m-multilingual` over a precomputed brute-force cosine index. The corpus is a frozen SQLite bundle plus Float32 vectors committed to the repo.
+**Retrieval:** `ibm/granite-embedding-278m-multilingual` over a precomputed brute-force cosine index. The corpus ships as a frozen SQLite bundle plus Float32 vectors, built by `pipeline/embed_and_store.py` and stored in Vercel Blob (fetched on cold start, cached in memory). Until watsonx credentials land, the freeze uses IDF-weighted hashing-trick vectors with the identical transform on both corpus and query side.
 
 **Solar outlook:** `nasa-ibm-ai4science/Surya-1.0` (IBM and NASA heliophysics foundation model, Apache-2.0, checkpoint `surya.366m.v1.pt`), run locally with a real forward pass over NASA SDO benchmark frames. Its activity index narrows the near-term end of NOAA's predicted-flux envelope. Output is a frozen artifact at `data/surya-outlook.json` that the demo reads (D7); if Surya is absent, the verdict computes from NOAA alone and the panel says so.
 
 **Local fallback (disclosed):** Ollama `granite4.1:8b` and `granite-embedding:278m`. Rehearsed on Ollama; watsonx tokens reserved for the live demo and judging week.
 
-**Corpus:** Title 47 Parts 5, 25, 97 and Title 15 Part 960 from eCFR bulk XML (govinfo.gov), plus FCC-26-47A1.pdf, NASA-STD-8719.14C, and NASA CubeSat 101 (2017, age flagged). Every chunk carries its snapshot AMDDATE. Part 100 (FCC 26-47, adopted July 22, 2026) is ingested separately and tagged PENDING regime: the effective date has not been announced, and Part 25 remains binding today.
+**Corpus:** Title 47 Parts 5, 25, 97 and Title 15 Part 960 from eCFR bulk XML (govinfo.gov), plus FCC-26-47A1.pdf, FCC-22-74A1.pdf, the NASA DAS 3.2 User Guide (cited as authority, not a DAS run), and NASA CubeSat 101 (2017, age flagged). NASA-STD-8719.14C sits behind the NASA Technical Standards login wall and is deliberately not ingested; questions about it abstain with a pointer. Every chunk carries its snapshot AMDDATE. Part 100 (FCC 26-47, adopted July 22, 2026) is ingested separately and tagged PENDING regime: the effective date has not been announced, and Part 25 remains binding today.
 
-**Eval:** 28-question bank plus 6 abstention traps, passing bar 90% with exact citations. Runs in CI against committed fixtures (no network, no key). Real watsonx score published to `docs/FACTS.json` and dated.
+**Eval:** 28-question bank plus 6 abstention traps with exact-citation scoring (`eval/runner.py`). Runs in CI on every push against committed fixtures (no network, no key), with a raise-only regression floor and a hard requirement that every abstention trap abstains. Current honest baseline on the credential-free extractive path: 53.6 percent with 6/6 traps abstaining (2026-08-24). The 90 percent submission bar applies to the full watsonx pipeline (Granite generation plus Guardian audit) and is published to `docs/FACTS.json`, dated, when that run happens.
 
-**IBM Context Forge:** The eval runner is exposed as an MCP tool (port 4444, JWT auth) so IBM Bob can invoke it during development.
+**Eval as an MCP tool:** `eval/mcp_server.py` exposes `run_eval` and `eval_last_report` over MCP, wired into `.bob/mcp.json` so IBM Bob invokes the regression suite during development.
 
 ### How IBM Bob Was Used
 
@@ -96,7 +98,7 @@ IBM Bob 2.0.3 is the primary development tool (competition requirement). The `.b
 | Custom modes (5, write-scoped) | `.bob/custom_modes.yaml` |
 | Workspace skills | `.bob/skills/` |
 | Workspace MCP config | `.bob/mcp.json` |
-| Bobalytics screenshots | `docs/bob-evidence/bobalytics-*.png` |
+| Bobalytics and subscription usage screenshots | `docs/bob-evidence/bob-usage-*.png` |
 | Plan-mode critical-path transcript | `docs/bob-evidence/plan-mode-critical-path.md` |
 | Orchestrator delegation transcript | `docs/bob-evidence/orchestrator-run.md` |
 
@@ -126,7 +128,7 @@ Manifest advances space exploration by removing the licensing bottleneck that de
 
 | Criterion | How Manifest earns it |
 |---|---|
-| **Technical Execution** | 74 engine tests passing (`npm run test:engine`). NRLMSISE-00 orbital lifetime integrator (pyatmos 1.2.7) producing real numbers committed to `data/decay-table.json`. Six regulatory interlocks wired against 47 CFR and 15 CFR with citation paths. Granite generation + Guardian audit + Granite embeddings, self-reported by `/api/status`. |
+| **Technical Execution** | 79 engine and mobile tests passing (`npm run test:engine`). NRLMSISE-00 orbital lifetime integrator (pyatmos 1.2.7) producing real numbers committed to `data/decay-table.json`. Six regulatory interlocks wired against 47 CFR and 15 CFR with citation paths. Granite generation + Guardian audit + Granite embeddings, self-reported by `/api/status`. |
 | **Innovation** | The only project in this field where space weather changes a legal outcome. At 550 km with Bc=180 kg/m^2: solar max lifetime 2.57 yr (FCC-compliant), solar min lifetime 15.0 yr (VIOLATED). Same orbit, opposite verdict -- the solar cycle decides. No planning tool has connected F10.7 to a regulatory determination before this. |
 | **Challenge Fit** | Live NOAA SWPC F10.7 ingest. IBM/NASA Surya heliophysics model (`solar_flares_surya` checkpoint, Apache-2.0) narrows the predicted-flux envelope. The IBMxNASA space model is a regulatory input, not a dashboard. |
 | **Feasibility** | One-command reproduction: `npm install && npm run test:engine`. No credentials on the deterministic path. CI green. `data/decay-table.json` regeneratable in under 3 minutes from `pipeline/decay.py`. |
@@ -172,11 +174,23 @@ Every number in this section is sourced. Unsourced figures do not ship.
 
 ## Live Demo
 
-- **Web app:** *(Vercel URL, populated after first deploy)*
-- **Judge page:** `/judge`: numbered three-minute walkthrough, every claim reachable without login or key
-- **Status API:** `/api/status`: unauthenticated, recomputes the headline number on every request, self-reports which models are running
-- **iOS:** *(TestFlight link, populated if Beta App Review passes by Aug 26)*
-- **Android:** *(Firebase App Distribution link, populated after signed APK/AAB)*
+- **Web app:** [manifest-web-roan.vercel.app/mission](https://manifest-web-roan.vercel.app/mission)
+- **Judge page:** [manifest-web-roan.vercel.app/judge](https://manifest-web-roan.vercel.app/judge): numbered walkthrough, every claim reachable without login or key
+- **Status API:** [manifest-web-roan.vercel.app/api/status](https://manifest-web-roan.vercel.app/api/status): unauthenticated, recomputes the headline number on every request, self-reports which models are running
+- **iOS:** native Capacitor build 1.0 (1) uploaded to App Store Connect and submitted for external TestFlight Beta App Review on 2026-08-24 *(public TestFlight link lands here on approval)*
+- **Android:** *(signed APK download link lands here with the 2.21 release)*
+
+---
+
+## Mobile
+
+The same engine ships as a native app (Capacitor 8 wrapping the Next.js static export, no server inside the WebView):
+
+- **Local deadline notifications, no push server:** every future latest-start date in the computed critical path schedules an on-device alert (7 days, 1 day, day-of). iOS keeps only the soonest 64 pending requests, so the schedule is capped and resynced on every launch and resume. `mobile/schedule.ts` is pure and unit-tested.
+- **Offline by design:** mission data persists to IndexedDB and the dependency engine runs on-device, so airplane mode is a working state, not an error. An offline strip says so.
+- **Native navigation:** bottom tab bar with safe-area handling, Android hardware-back support.
+
+Build it: `npm run build:mobile` then open `ios/App/App.xcodeproj` or `android/` in their IDEs.
 
 ---
 
@@ -217,8 +231,11 @@ npm run test:engine
 npm run dev
 npm run test:e2e
 
-# Eval (rehearse on Ollama, no watsonx tokens spent)
-python eval/runner.py --backend ollama
+# Eval against the committed fixtures (offline, no key)
+python3 eval/runner.py --mode fixtures
+
+# Eval against a running server (uses whatever backend the server has)
+python3 eval/runner.py --mode url --url http://localhost:3000
 
 # Generate FACTS.json from a real engine run
 python scripts/facts.py

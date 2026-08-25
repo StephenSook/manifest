@@ -9,5 +9,5 @@
   "sourceDataRange": "2014-10-23 10:00:00 / 2014-10-23 11:00:00 UTC",
   "inferenceDate": "2026-08-16T21:41:36.246741+00:00",
   "generatedAt": "2026-08-16T21:41:36.246741+00:00",
-  "notes": "ESTIMATED. Activity index is mean top-1% AIA 94A pixel intensity from one forward pass on Oct 2014 benchmark data, normalized to ~Oct 2014 reference level. This is a scalar proxy for near-term flare-associated EUV activity, not a calibrated X-ray flux value. Source: Roy et al. 2025 Surya-1.0, NASA SDO bench, AIA 94A channel. Used only to NARROW the near-term end of NOAA predicted-flux envelope; the deorbit compliance verdict computes from NOAA alone if this is absent."
+  "notes": "ESTIMATED. Activity index is mean top-1% AIA 94A pixel intensity from one forward pass on Oct 2014 benchmark data, normalized to ~Oct 2014 reference level. This is a scalar proxy for near-term flare-associated EUV activity, not a calibrated X-ray flux value. Source: Roy et al. 2025 Surya-1.0, NASA SDO bench, AIA 94A channel. REPORTED ALONGSIDE the NOAA predicted-flux envelope for context; no code applies this index to the envelope or to the deorbit compliance verdict, which computes from the frozen NRLMSISE-00 decay table."
 }

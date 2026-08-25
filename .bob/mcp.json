@@ -1,17 +1,17 @@
 {
   "mcpServers": {
     "manifest-eval": {
-      "command": "python",
+      "command": ".venv-forge/bin/python",
       "args": [
         "-m",
         "eval.mcp_server"
       ],
-      "env": {
-        "MCP_SERVER_URL": "http://localhost:4444",
-        "MCP_AUTH": "see ~/.bob/settings/mcp.json for the bearer value (never commit credentials here)"
-      },
+      "env": {},
       "disabled": false,
-      "alwaysAllow": []
+      "alwaysAllow": [
+        "run_eval",
+        "eval_last_report"
+      ]
     }
   }
 }

@@ -237,7 +237,9 @@ function CitationBlock({ result }: { result: DeorbitComplianceResult }) {
     <div style={{ marginTop: '0.75rem' }}>
       <p style={SECTION_LABEL}>Governing authority</p>
       <p style={{ ...ROW_VALUE, marginBottom: '0.2rem' }}>
-        {citation.cfrTitle} CFR {citation.part}.{citation.section}
+        {/* `section` already carries the part ("25.283"), so it is rendered
+            alone: prefixing `part` produced "47 CFR 25.25.283". */}
+        {citation.cfrTitle} CFR {citation.section}
         {/* Paragraph path only shown once the snapshot is verified */}
         {!snapshotPending && citation.paragraphPath && (
           <span style={{ color: 'var(--color-muted)' }}>

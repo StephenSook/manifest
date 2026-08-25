@@ -29,8 +29,12 @@ function cfr(
   return { cfrTitle, part, section, paragraphPath, amddate, sourceUrl };
 }
 
-// Placeholder AMDDATE, replaced by Tylin's eCFR snapshot AMDDATE in task 1.1
-const SNAPSHOT = 'VERIFY_FROM_SNAPSHOT';
+// Real AMDDATEs from the committed corpus freeze (task 1.1). Every chunk of a
+// given title carries one date, so a citation is pinned per title, not per
+// section. Re-verify both whenever the corpus is re-ingested:
+//   python3 -c "import json,glob;print({(c['cfrTitle'],c['amddate']) for f in glob.glob('corpus/chunks/*.json') for c in json.load(open(f)) if c.get('cfrTitle')})"
+const SNAPSHOT_T47 = '2026-08-13';
+const SNAPSHOT_T15 = '2026-08-18';
 const ECFR_BASE = 'https://www.ecfr.gov/current/title-';
 
 // ---------------------------------------------------------------------------
@@ -59,7 +63,7 @@ export function buildGraph(input: MissionInput): {
       durationDays: 0, // Point-in-time action by the team
       durationBasis: 'DOCUMENTED',
       source: 'IARU Amateur Satellite Frequency Coordination procedure, iaru.org',
-      citation: cfr(47, 97, '97.207', '(c)', SNAPSHOT, `${ECFR_BASE}47/part-97/section-97.207`),
+      citation: cfr(47, 97, '97.207', '(c)', SNAPSHOT_T47, `${ECFR_BASE}47/part-97/section-97.207`),
       feeUsd: null,
       reworkTriggers: ['Frequency change forces re-coordination'],
       latenessConsequence: 'IARU letter delayed, which delays ITU API filing and FCC grant',
@@ -80,7 +84,7 @@ export function buildGraph(input: MissionInput): {
       durationDays: 42,
       durationBasis: 'ESTIMATED',
       source: 'CubeSat 101 Ch 2.6 (2017, age flagged), 4 to 8 weeks typical',
-      citation: cfr(47, 97, '97.207', '(c)', SNAPSHOT, `${ECFR_BASE}47/part-97/section-97.207`),
+      citation: cfr(47, 97, '97.207', '(c)', SNAPSHOT_T47, `${ECFR_BASE}47/part-97/section-97.207`),
       feeUsd: null,
       reworkTriggers: ['Frequency change forces re-coordination from scratch'],
       latenessConsequence: 'Blocks ITU API filing; no API number means IARU request incomplete',
@@ -99,7 +103,7 @@ export function buildGraph(input: MissionInput): {
       durationDays: 0, // Point-in-time submission
       durationBasis: 'DOCUMENTED',
       source: '47 CFR 25.114(d), ITU filing coordinated through FCC International Bureau',
-      citation: cfr(47, 25, '25.114', '(d)', SNAPSHOT, `${ECFR_BASE}47/part-25/section-25.114`),
+      citation: cfr(47, 25, '25.114', '(d)', SNAPSHOT_T47, `${ECFR_BASE}47/part-25/section-25.114`),
       feeUsd: null,
       reworkTriggers: ['Frequency change requires re-filing'],
       latenessConsequence: 'No ITU publication means FCC cannot grant; blocks FCC grant node',
@@ -119,7 +123,7 @@ export function buildGraph(input: MissionInput): {
       durationDays: 75, // 2.5 months midpoint; ESTIMATED basis
       durationBasis: 'ESTIMATED',
       source: 'CubeSat 101 Ch 2.6 (2017, age flagged), 2-3 months; shortening post-WRC-23',
-      citation: cfr(47, 25, '25.114', '(d)', SNAPSHOT, `${ECFR_BASE}47/part-25/section-25.114`),
+      citation: cfr(47, 25, '25.114', '(d)', SNAPSHOT_T47, `${ECFR_BASE}47/part-25/section-25.114`),
       feeUsd: null,
       reworkTriggers: [],
       latenessConsequence: 'FCC will not grant without published ITU API; critical predecessor',
@@ -140,8 +144,8 @@ export function buildGraph(input: MissionInput): {
       durationBasis: 'ESTIMATED',
       source: 'CubeSat 101 Ch 2.6 (2017, age flagged), preparation is team-driven',
       citation: isPart97
-        ? cfr(47, 97, '97.207', '(g)', SNAPSHOT, `${ECFR_BASE}47/part-97/section-97.207`)
-        : cfr(47, 25, '25.114', '', SNAPSHOT, `${ECFR_BASE}47/part-25/section-25.114`),
+        ? cfr(47, 97, '97.207', '(g)', SNAPSHOT_T47, `${ECFR_BASE}47/part-97/section-97.207`)
+        : cfr(47, 25, '25.114', '', SNAPSHOT_T47, `${ECFR_BASE}47/part-25/section-25.114`),
       feeUsd: null,
       reworkTriggers: ['Frequency change', 'Orbit change above 600 km triggers disposal analysis'],
       latenessConsequence: 'Delays FCC filing date, compresses review window before delivery',
@@ -161,8 +165,8 @@ export function buildGraph(input: MissionInput): {
       durationBasis: 'DOCUMENTED',
       source: '47 CFR 97.207(g) (Part 97) or 47 CFR 25.114 (Part 25)',
       citation: isPart97
-        ? cfr(47, 97, '97.207', '(g)', SNAPSHOT, `${ECFR_BASE}47/part-97/section-97.207`)
-        : cfr(47, 25, '25.114', '', SNAPSHOT, `${ECFR_BASE}47/part-25/section-25.114`),
+        ? cfr(47, 97, '97.207', '(g)', SNAPSHOT_T47, `${ECFR_BASE}47/part-97/section-97.207`)
+        : cfr(47, 25, '25.114', '', SNAPSHOT_T47, `${ECFR_BASE}47/part-25/section-25.114`),
       feeUsd: null,
       reworkTriggers: [],
       latenessConsequence: 'Compresses FCC review window; late filing risks no grant before delivery',
@@ -206,7 +210,7 @@ export function buildGraph(input: MissionInput): {
       durationDays: 1,
       durationBasis: 'DOCUMENTED',
       source: 'FCC 22-74 (2022); 47 CFR 25.283(e), 5-year post-mission disposal rule',
-      citation: cfr(47, 25, '25.283', '(e)', SNAPSHOT, `${ECFR_BASE}47/part-25/section-25.283`),
+      citation: cfr(47, 25, '25.283', '(e)', SNAPSHOT_T47, `${ECFR_BASE}47/part-25/section-25.283`),
       feeUsd: null,
       reworkTriggers: ['Orbit change above 600 km re-triggers compliance check', 'Launch date change re-triggers (solar cycle position changes)'],
       latenessConsequence: 'FCC will not grant if disposal compliance cannot be demonstrated',
@@ -227,7 +231,7 @@ export function buildGraph(input: MissionInput): {
             durationDays: 0,
             durationBasis: 'DOCUMENTED' as const,
             source: '15 CFR Part 960, NOAA Commercial Remote Sensing Regulatory Affairs',
-            citation: cfr(15, 960, '960.4', '', SNAPSHOT, `${ECFR_BASE}15/part-960/section-960.4`),
+            citation: cfr(15, 960, '960.4', '', SNAPSHOT_T15, `${ECFR_BASE}15/part-960/section-960.4`),
             feeUsd: null,
             reworkTriggers: ['Change to imaging payload requires re-application'],
             latenessConsequence: 'NOAA CRSRA license is a hard predecessor of FCC grant for imaging missions',
@@ -245,7 +249,7 @@ export function buildGraph(input: MissionInput): {
             durationDays: 60,
             durationBasis: 'DOCUMENTED' as const,
             source: '15 CFR 960.8, 60-day statutory review clock after completeness',
-            citation: cfr(15, 960, '960.8', '', SNAPSHOT, `${ECFR_BASE}15/part-960/section-960.8`),
+            citation: cfr(15, 960, '960.8', '', SNAPSHOT_T15, `${ECFR_BASE}15/part-960/section-960.8`),
             feeUsd: null,
             reworkTriggers: [],
             latenessConsequence: 'FCC will not grant without NOAA CRSRA license for imaging missions; CubeSat 101 Ch 2.8',
@@ -269,8 +273,8 @@ export function buildGraph(input: MissionInput): {
       durationBasis: 'ESTIMATED',
       source: 'CubeSat 101 Ch 2.6 (2017, age flagged), 3 to 6 months after complete filing',
       citation: isPart97
-        ? cfr(47, 97, '97.207', '(g)', SNAPSHOT, `${ECFR_BASE}47/part-97/section-97.207`)
-        : cfr(47, 25, '25.114', '', SNAPSHOT, `${ECFR_BASE}47/part-25/section-25.114`),
+        ? cfr(47, 97, '97.207', '(g)', SNAPSHOT_T47, `${ECFR_BASE}47/part-97/section-97.207`)
+        : cfr(47, 25, '25.114', '', SNAPSHOT_T47, `${ECFR_BASE}47/part-25/section-25.114`),
       feeUsd: null,
       reworkTriggers: [],
       latenessConsequence: 'No FCC grant means no legal operation; demanifest risk if grant arrives after delivery',

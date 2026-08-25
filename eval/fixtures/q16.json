@@ -1,0 +1,48 @@
+{
+  "answer": "From 15 CFR 960.1(b)(7) (AMDDATE 2026-08-18), addressing: Which CubeSat missions require a NOAA Commercial Remote Sensing Regulatory Affairs license?\n\nThe remote sensing regulatory environment in other nations; and",
+  "citations": [
+    {
+      "cfrTitle": 15,
+      "part": 960,
+      "section": "960.1",
+      "paragraphPath": "(b)(7)",
+      "amddate": "2026-08-18",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+    },
+    {
+      "cfrTitle": 15,
+      "part": 960,
+      "section": "960.2",
+      "paragraphPath": "(c)",
+      "amddate": "2026-08-18",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+    },
+    {
+      "cfrTitle": 15,
+      "part": 960,
+      "section": "960.4",
+      "paragraphPath": "",
+      "amddate": "2026-08-18",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA CubeSat 101 (2017)",
+      "paragraphPath": "",
+      "amddate": "2017-08-01",
+      "sourceUrl": "https://www.nasa.gov/wp-content/uploads/2017/08/nasa_csli_cubesat_101_508.pdf"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA CubeSat 101 (2017)",
+      "paragraphPath": "",
+      "amddate": "2017-08-01",
+      "sourceUrl": "https://www.nasa.gov/wp-content/uploads/2017/08/nasa_csli_cubesat_101_508.pdf"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

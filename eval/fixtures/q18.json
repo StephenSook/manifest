@@ -1,0 +1,24 @@
+{
+  "answer": "From NASA CubeSat 101 (2017) (AMDDATE 2017-08-01), addressing: What NASA standard governs orbital debris mitigation requirements for CubeSat missions?\n\n[Source: NASA CubeSat 101, August 2017. Note: figures and durations date to 2017.] | 0 | 1 |\n| --- | --- |\n| Document Number | Title |\n| NASA-STD-6016 | Standard Materials and Processes |\n| NASA Technical Standards Program | Requirements for Spacecraft |\n| NASA-STD-8719.14A | Process for Limiting Orbital Debris |\n| NPR 8715.6A | NASA Procedural Requirements for Limiting Orbital Debris Generation |",
+  "citations": [
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA CubeSat 101 (2017)",
+      "paragraphPath": "",
+      "amddate": "2017-08-01",
+      "sourceUrl": "https://www.nasa.gov/wp-content/uploads/2017/08/nasa_csli_cubesat_101_508.pdf"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA CubeSat 101 (2017)",
+      "paragraphPath": "",
+      "amddate": "2017-08-01",
+      "sourceUrl": "https://www.nasa.gov/wp-content/uploads/2017/08/nasa_csli_cubesat_101_508.pdf"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

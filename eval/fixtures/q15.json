@@ -1,0 +1,48 @@
+{
+  "answer": "From 47 CFR 25.161(b) (AMDDATE 2026-08-13), addressing: What is the statutory clock for the NOAA CRSRA license review after an application is deemed complete?\n\nThe expiration of the license term, unless, in the case of an earth station license, an application for renewal of the license has been filed with the Commission pursuant to \u00a7 25.121(e) or, in the case of a space station license, an application for extension of the license term has been filed with the Commission; or",
+  "citations": [
+    {
+      "cfrTitle": 47,
+      "part": 25,
+      "section": "25.161",
+      "paragraphPath": "(b)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 15,
+      "part": 960,
+      "section": "960.5",
+      "paragraphPath": "(c)",
+      "amddate": "2026-08-18",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+    },
+    {
+      "cfrTitle": 15,
+      "part": 960,
+      "section": "960.15",
+      "paragraphPath": "(a)",
+      "amddate": "2026-08-18",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "FCC 26-47 (Part 100 Report and Order)",
+      "paragraphPath": "",
+      "amddate": "2026-07-22",
+      "sourceUrl": "https://docs.fcc.gov/public/attachments/FCC-26-47A1.pdf"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "FCC 26-47 (Part 100 Report and Order)",
+      "paragraphPath": "",
+      "amddate": "2026-07-22",
+      "sourceUrl": "https://docs.fcc.gov/public/attachments/FCC-26-47A1.pdf"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

@@ -1,0 +1,32 @@
+{
+  "answer": "From 47 CFR 25.260(d) (AMDDATE 2026-08-13), addressing: What does a frequency change on an in-progress CubeSat license application trigger in the regulatory process?\n\nInitially, a NVNG licensee time-sharing spectrum with DoD in the 400.15-401 MHz band shall be able to change the frequency on which its system satellites are operating within 125 minutes of receiving notification from a DoD required frequency change in the 400.15-401 MHz band. Thereafter, when a NVNG licensee constructs additional gateway earth stations located outside of North and South America, it shall use its best efforts to decrease to 90 minutes the time required to implement a DoD required frequency change. A NVNG licensee promptly shall notify the Commission and NTIA of any decrease in the time it requires to implement a DoD required frequency change.",
+  "citations": [
+    {
+      "cfrTitle": 47,
+      "part": 25,
+      "section": "25.260",
+      "paragraphPath": "(d)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA CubeSat 101 (2017)",
+      "paragraphPath": "",
+      "amddate": "2017-08-01",
+      "sourceUrl": "https://www.nasa.gov/wp-content/uploads/2017/08/nasa_csli_cubesat_101_508.pdf"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA CubeSat 101 (2017)",
+      "paragraphPath": "",
+      "amddate": "2017-08-01",
+      "sourceUrl": "https://www.nasa.gov/wp-content/uploads/2017/08/nasa_csli_cubesat_101_508.pdf"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

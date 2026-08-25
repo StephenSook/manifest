@@ -1,0 +1,56 @@
+# eval-gate.yml - Stephen's lane (tasks 1.5 and 3.1). Never merged into ci.yml.
+#
+# Runs the 28+6 eval bank against committed fixtures: no network, no key.
+# This tests retrieval scoring, citation extraction, and abstention logic
+# deterministically on every push.
+#
+# THRESHOLD POLICY, stated honestly:
+#   The submission bar (CLAUDE.md section 5) is 90 percent with exact
+#   citations and all 6 traps abstaining. The current extractive,
+#   hashing-trick baseline measures 53.6 percent (2026-08-24, fixtures
+#   recorded from that run). The CI ratchet below fails on any REGRESSION
+#   from the recorded baseline and on any trap answering; the 90 percent
+#   bar is enforced at the Phase 4 freeze gate once watsonx embeddings and
+#   generation land (task 0.13 credentials). Raise RATCHET_MIN_SCORE
+#   whenever the recorded fixtures improve. Do not lower it.
+#
+# Every gate runs BARE: no pipe on the exit path. A missing fixture FAILS
+# inside the runner, never skips.
+
+name: Eval gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  RATCHET_MIN_SCORE: "50"
+
+jobs:
+  eval-fixtures:
+    name: Eval bank against committed fixtures
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run eval bank (fixtures, offline)
+        run: python3 eval/runner.py --mode fixtures --min-score "$RATCHET_MIN_SCORE"
+
+      - name: Assert every bank row was scored, none skipped
+        run: |
+          python3 - << 'PY'
+          import json, sys
+          report = json.load(open("eval/report.json"))
+          bank_rows = sum(1 for line in open("eval/bank.jsonl") if line.strip())
+          scored = len(report["results"])
+          if scored != bank_rows:
+              print(f"::error::guard skipped: {scored} scored of {bank_rows} bank rows")
+              sys.exit(1)
+          if report["traps"] != report["traps_abstained"]:
+              print("::error::an abstention trap answered")
+              sys.exit(1)
+          print(f"ok: {scored} rows scored, score {report['score_pct']}%, "
+                f"traps {report['traps_abstained']}/{report['traps']}")
+          PY

@@ -1,0 +1,32 @@
+{
+  "answer": "From 47 CFR 25.110(b)(3)(ii) (AMDDATE 2026-08-13), addressing: What NOAA data product provides the solar flux forecast used to compute orbital lifetime under the FCC five-year disposal rule?\n\nAn application for GSO FSS space station operation subject to the provisions in Appendix 30B of the ITU Radio Regulations (incorporated by reference, see \u00a7 25.108) may be initiated by submitting to the Commission, in accordance with the applicable provisions of part 1, subpart Y of this chapter, a draft ITU filing to convert an allotment into an assignment, to introduce an additional system, or to modify an assignment in the Appendix 30B List accompanied by a simplified Form 312 and a declaration of acceptance of ITU cost-recovery responsibility in accordance with \u00a7 25.111(d). The simplified Form 312, Main Form submission must include the information required by items 1-17, 43, 45, and 46. In addition, the applicant must submit the results of an analysis demonstrating that no U.S. filing under Appendix 30B would be deemed affected by the proposed operation under the relevant ITU criteria or, for any affected filings, a letter signed by the affected operator that it consents to the new filing.",
+  "citations": [
+    {
+      "cfrTitle": 47,
+      "part": 25,
+      "section": "25.110",
+      "paragraphPath": "(b)(3)(ii)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "FCC 22-74 (5-Year Orbital Disposal Rule)",
+      "paragraphPath": "",
+      "amddate": "2022-09-29",
+      "sourceUrl": "https://docs.fcc.gov/public/attachments/FCC-22-74A1.pdf"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "FCC 22-74 (5-Year Orbital Disposal Rule)",
+      "paragraphPath": "",
+      "amddate": "2022-09-29",
+      "sourceUrl": "https://docs.fcc.gov/public/attachments/FCC-22-74A1.pdf"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

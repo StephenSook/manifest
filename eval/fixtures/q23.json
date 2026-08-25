@@ -1,0 +1,48 @@
+{
+  "answer": "From 47 CFR 25.142(b)(3) (AMDDATE 2026-08-13), addressing: What orbit altitude threshold triggers the propulsion or drag augmentation decision under the FCC five-year disposal rule?\n\nCoordination among non-voice, non-geostationary mobile-satellite service systems. Applicants for authority to establish non-voice, non-geostationary mobile-satellite service systems are encouraged to coordinate their proposed frequency usage with existing permittees and licensees in the non-voice, non-geostationary mobile-satellite service whose facilities could be affected by the new proposal in terms of frequency interference or restricted system capacity. All affected applicants, permittees, and licensees shall, at the direction of the Commission, cooperate fully and make every reasonable effort to resolve technical problems and conflicts that may inhibit effective and efficient use of the radio spectrum; however, the permittee or licensee being coordinated with is not obligated to suggest changes or re-engineer an applicant's proposal in cases involving conflicts.",
+  "citations": [
+    {
+      "cfrTitle": 47,
+      "part": 25,
+      "section": "25.142",
+      "paragraphPath": "(b)(3)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 25,
+      "section": "25.253",
+      "paragraphPath": "(f)(2)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 25,
+      "section": "25.114",
+      "paragraphPath": "(vii)(C)(13)(d)(2)(14)(vii)(A)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "FCC 22-74 (5-Year Orbital Disposal Rule)",
+      "paragraphPath": "",
+      "amddate": "2022-09-29",
+      "sourceUrl": "https://docs.fcc.gov/public/attachments/FCC-22-74A1.pdf"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA DAS 3.2 User Guide (cited as authority per D4 - not a DAS run)",
+      "paragraphPath": "",
+      "amddate": "2024-01-01",
+      "sourceUrl": "https://www.orbitaldebris.jsc.nasa.gov/library/das/DAS3.2_UsersGuide.pdf"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

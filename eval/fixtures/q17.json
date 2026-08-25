@@ -1,0 +1,48 @@
+{
+  "answer": "From 47 CFR 97.21(a)(3)(ii) (AMDDATE 2026-08-13), addressing: Does the FCC require a NOAA CRSRA license to be obtained before it will grant a satellite license for an Earth-imaging mission?\n\nFor a primary station license grant showing a call sign obtained through the sequential call sign system, and for a primary station license grant showing a call sign obtained through the vanity call sign system but whose grantee does not want to have the vanity call sign reassigned to the station, the application must be filed with the FCC in accordance with \u00a7 1.913 of this chapter. When the application has been received by the FCC on or before the license expiration date, the license operating authority is continued until the final disposition of the application.",
+  "citations": [
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.21",
+      "paragraphPath": "(a)(3)(ii)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.21",
+      "paragraphPath": "(a)(3)(iii)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.21",
+      "paragraphPath": "(a)(1)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "FCC 26-47 (Part 100 Report and Order)",
+      "paragraphPath": "",
+      "amddate": "2026-07-22",
+      "sourceUrl": "https://docs.fcc.gov/public/attachments/FCC-26-47A1.pdf"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "FCC 26-47 (Part 100 Report and Order)",
+      "paragraphPath": "",
+      "amddate": "2026-07-22",
+      "sourceUrl": "https://docs.fcc.gov/public/attachments/FCC-26-47A1.pdf"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

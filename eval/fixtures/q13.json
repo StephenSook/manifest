@@ -1,0 +1,24 @@
+{
+  "answer": "From FCC 26-47 (Part 100 Report and Order) (AMDDATE 2026-07-22), addressing: When was FCC Part 100 adopted and under which order?\n\ntransition but give clear direction as to how particular areas of the transition should be handled. We direct a process to ensure licenses issued under or referencing part 25 remain intelligible and enforceable and to allow for identification of any conflicts the transition creates which make compliance impossible. We also allow for licensees to opt-in to the part 100 bonds and milestones if so desired (while immediately relieving all non-processing round licensees of the bond requirement). We also direct the Space Bureau to prepare educational materials on the new part 100, which may include Frequently Asked Questions, flowcharts, or informational sessions. 27. Further Notice of Proposed Rulemaking. With part 100 establishing the comprehensive framework, we seek further comment on several areas the Commission may consider to further refine these rules in the Further Notice of Proposed Rulemaking ( FNPRM ). III. DISCUSSION 28. Part 100. The NPRM proposed to adopt a new part 100 of the Commission's rules as a reformed, reorganized, and improved version of the existing part 25 rules. 13 We adopt part 100, reserved under 47 CFR Subchapter D - Safety and Special Radio Services, titled as 'Space and Earth Station Services.' We also adopt the proposed organization and subparts of part 100 as follows: Subpart A - General. Subpart B - Applications and Licenses. Subpart C - Operational Rules. Subpart D - Compliance. We believe that this overhaul of the space and earth station rules will improve the organization and clarity of the rules and simplify the application process for both current operators and new entrants to the market. As a general matter, the record is overall in favor of adopting part 100 in place of part 25 as a more organized, efficient, and modern regulatory framework that will better support today's nextgeneration systems and enable innovation. 14 Some commenters raise questions or concerns in moving to an entirely new rule part. 15 We recognize these concerns and address topic-specific transitions in section III.G. However, we counter the concern that moving to part 100 would make any references to part 25 rules in existing authorizations obsolete. 16 Substantively, the majority, if not all, of the specific operational and technical requirements for space and earth station applications and operators remain the same, and any part 25 rules cited in current authorizations will still be subject to those corresponding rules in part 100, unless addressed otherwise. Part 100 primarily focuses on reforms to the licensing process, which includes making the relevant rules easier to follow, both for incumbents and new entrants alike. Unlike part 25, the organization of part 100 clearly distinguishes between rules that apply to applications and those that apply to operations under an authorization. We also expect that the new organization within part 100 will facilitate future revisions to the rules by allowing the Commission to cleanly adjust application elements, operational rules, and compliance measures. Accordingly, we adopt part 100 - Space and Earth Station Services. 17 The Commission will sunset part 25 once part 100 becomes effective. We address issues related to the transition from part 25 to part 100 below. 13 NPRM, 40 FCC Rcd at 8200-01, para. 28. 14 See Leaf Comments at 5 ('The Part 100 NPRM has been perceived as necessary and welcomed by the sector.'); Plan-S Comments at 1; Lockheed Martin Comments at 2; Telesat Comments at 1; Kongsberg Comments at 2; Blue Origin Comments at 1; Globalstar Comments at 1; The Consortium for Execution of Rendezvous and Servicing Operations (CONFERS) Comments at 1; Amazon LEO Comments at 1; Sateliot Comments at 1; Kepler Comments at 1; Intuitive Machines Comments at 3-4; SpaceX Comments at 1. 15 See SiriusXM Comments at 2-3. 16 Id.",
+  "citations": [
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "FCC 26-47 (Part 100 Report and Order)",
+      "paragraphPath": "",
+      "amddate": "2026-07-22",
+      "sourceUrl": "https://docs.fcc.gov/public/attachments/FCC-26-47A1.pdf"
+    },
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "FCC 26-47 (Part 100 Report and Order)",
+      "paragraphPath": "",
+      "amddate": "2026-07-22",
+      "sourceUrl": "https://docs.fcc.gov/public/attachments/FCC-26-47A1.pdf"
+    }
+  ],
+  "audited": false,
+  "abstained": false,
+  "reason": "Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text."
+}

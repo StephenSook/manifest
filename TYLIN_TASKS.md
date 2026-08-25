@@ -55,7 +55,7 @@ Files you own exclusively:
 
 - [x] **1.1** Leg A. Parse eCFR bulk XML to citable sections. Nested `paragraphPath` repaired 2026-08-24 (`97.207(g)(1)` dual clock). AMDDATE Title 47 `2026-08-13`, Title 15 `2026-08-18`.
 - [x] **1.2** Leg A. PDF corpus through Docling. NASA-STD-8719.14C not ingested (login wall). Q3 answered in PLAN.md.
-- [x] **1.3** Leg A. Embeddings + SQLite bundle frozen. Local freeze is hashing-trick-768 (Lite cap). Binaries gitignored. Blob upload waits on `BLOB_READ_WRITE_TOKEN`.
+- [x] **1.3** Leg A. Embeddings + SQLite bundle frozen. Hashing-trick-768 freeze committed 2026-08-25 so Vercel packs sqlite + vectors into `/api/ask`. Blob overlay still optional (`BLOB_READ_WRITE_TOKEN`).
 - [x] **1.6** Leg B. Guardian audit wired, degrade-to-abstain on failure. File: `app/api/ask/route.ts`
 
 ---
@@ -78,7 +78,7 @@ Files you own exclusively:
 
 ## Phase 4: Freeze and Submit (Thu Aug 27 to Sun Aug 30)
 
-- [ ] **4.3** Deploy the frozen build, run the eval once more, publish the score. Verify `.vercel/project.json` names `manifest-web` before `--prod`.
+- [-] **4.3** Deploy the frozen build, run the eval once more, publish the score. Verify `.vercel/project.json` names `manifest-web` before `--prod`. Live URL is `manifest-web-roan.vercel.app`. `/api/ask` 503 is the missing sqlite; freeze is rebuilt and ready to push. No local `.vercel/project.json`, so `--prod` waits on Khadim's link or GitHub auto-deploy.
 - [ ] **4.10** Post-merge main CI watched to completion on the merged SHA. Read `gh api repos/StephenSook/manifest/commits/<SHA>/check-runs` and require every conclusion to be `success`. Never trust a `--watch` exit code.
 
 ---
@@ -87,7 +87,7 @@ Files you own exclusively:
 
 - [x] **Q2** resolved 2026-08-24. See PLAN.md and the credentials table above.
 - [x] **Q3** resolved 2026-08-24. See PLAN.md.
-- [x] **Q6** resolved. Blob in CI, binaries gitignored.
+- [x] **Q6** resolved. Hashing-trick freeze committed 2026-08-25. Blob remains optional overlay.
 
 ---
 

@@ -13,6 +13,21 @@
 
 ---
 
+## Recording and publishing rules, taken from what the field is losing points on
+
+A forensic pass over all 45 gallery submissions on 2026-08-25 found the demo video to be one of the cheapest places to lose. Three rivals are being marked down or disqualified on it: one shipped 3:13 against a hard 3:00 cap, two published videos that are private so a judge clicking the only link sees "Video unavailable", and one submitted a Rickroll. Meanwhile the strongest submission in the field never says the sponsor's name out loud even once.
+
+1. **Say the IBM Bob sentence inside the first 40 seconds, and name the modes.** Criterion 1 is worded "Effective use of IBM Bob", and two of the four monthly awards are Bob-named at $750 each. A judge who has to wait 2:30 to hear it may already have scored that criterion. Name the five write-scoped modes and the eval MCP tool specifically, not "we used IBM Bob".
+2. **Every sentence with a number in it must have that number visible on screen at that moment.** A spoken figure with nothing on screen is a claim; the same figure beside the running product is evidence. If a number cannot be shown, cut the sentence.
+3. **Every spoken number comes from `docs/FACTS.json`, never from memory or from this file.** Re-run `python3 scripts/facts.py` immediately before recording narration, and re-read the beats against it. A published video is immutable: a wrong number in it can never be corrected, and it then becomes the reference every other artifact has to match.
+4. **Record in an Incognito window.** The URL bar in frame then proves no login, no local server, and no seeded session, which is exactly what a judge cannot otherwise verify from a screen recording.
+5. **Hard cap 3:00, and leave margin.** Target 2:50. YouTube rounds durations up in page metadata, so a file at exactly 3:00.000 can display as "3M1S" to anyone reading the page. Measure the shipped file with ffmpeg, not the editor's timeline.
+6. **Measure the shipped file before it is final**: ffmpeg ebur128 integrated loudness in the -14 to -16 LUFS band, plus duration, resolution and frame rate against target. A frame-verified video is not a verified video.
+7. **Publish to a second public host and paste both links.** The rules require a publicly viewable video, and it is the single point of failure on the whole submission. Verify public availability from a logged-out browser, not from the account that uploaded it: `curl -s "https://www.youtube.com/oembed?url=<watch-url>&format=json"` returning HTTP 200 with a title is the check.
+8. **Do not narrate a claim the product refutes.** One rival's video promises a what-if simulation that its own API returns identical results for. Before recording any beat, run the exact interaction being described and watch it behave as narrated.
+
+---
+
 ## Voice Assignment
 
 | Voice | Person | Owns |

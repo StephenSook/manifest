@@ -55,7 +55,22 @@ export function buildGraph(input: MissionInput): {
   // ---------------------------------------------------------------------------
 
   const allNodes: GraphNode[] = [
-    // 1. IARU coordination request submitted
+    // 1 and 2. The IARU coordination chain, AMATEUR PATHWAY ONLY.
+    //
+    // These were previously emitted on every pathway while the edge joining
+    // them was added only for Part 97, so a Part 5 or Part 25 mission left
+    // `iaru-request` with no successor. The graph then had two terminal
+    // nodes and computeCriticalPath threw. The mission form lets a judge
+    // choose the pathway, so that crash was reachable from the product; it
+    // survived because the GT-1 seed is Part 97 and every fixture followed
+    // it. The NOAA chain below was already conditional on imagingEarth, so
+    // this is that same pattern applied to the thing that was missing it.
+    //
+    // IARU coordination is an amateur-satellite procedure. It does not gate
+    // an experimental or commercial filing, so on those pathways the nodes
+    // are ABSENT rather than present-and-unconnected.
+    ...(isPart97
+      ? ([
     {
       id: 'iaru-request',
       label: 'IARU Coordination Request',
@@ -94,6 +109,8 @@ export function buildGraph(input: MissionInput): {
       float: null,
       pendingPart100: false,
     },
+        ] as GraphNode[])
+      : []),
 
     // 3. ITU Advance Publication Information filed via FCC
     {
@@ -318,8 +335,11 @@ export function buildGraph(input: MissionInput): {
         ]
       : []),
 
-    // ITU chain
-    { from: 'iaru-letter', to: 'itu-api-filed' },
+    // ITU chain. On the amateur pathway the IARU letter gates the ITU
+    // filing; on the other pathways there is no IARU step, so the ITU
+    // advance publication is a root of the graph rather than hanging off a
+    // node that does not exist.
+    ...(isPart97 ? [{ from: 'iaru-letter', to: 'itu-api-filed' }] : []),
     { from: 'itu-api-filed', to: 'itu-api-published' },
     { from: 'itu-api-published', to: 'fcc-application-prepared' },
 

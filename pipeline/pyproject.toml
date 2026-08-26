@@ -9,6 +9,19 @@ dependencies = [
     "numpy>=1.26.0",
     "docling>=2.0.0",
     "pytest>=8.0.0",
+    # decay.py imports pyatmos for the NRLMSISE-00 integration that produces
+    # data/decay-table.json, and it was never declared here. The README invites
+    # a judge to reproduce that table, so the documented command could not work
+    # for anyone starting from a fresh clone.
+    #
+    # Pinned to the version already recorded in the table's own `method` field,
+    # so the artifact and the resolver agree.
+    "pyatmos==1.2.7",
+    # NOT optional, and not a lint. pyatmos imports pkg_resources at
+    # pyatmos/standardatmos/coesa76.py:9, which setuptools 81 removed. Without
+    # this pin the import dies with ModuleNotFoundError even when pyatmos is
+    # installed correctly. Verified both directions before pinning.
+    "setuptools<81",
 ]
 
 [build-system]

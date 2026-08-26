@@ -90,6 +90,72 @@ The deorbit compliance verdict is computed by an NRLMSISE-00 orbital lifetime in
 
 **Eval as an MCP tool:** `eval/mcp_server.py` exposes `run_eval` and `eval_last_report` over MCP, wired into `.bob/mcp.json` so IBM Bob invokes the regression suite during development.
 
+### Architecture, wired paths only
+
+Designed artifact: [`docs/architecture.svg`](docs/architecture.svg). The mermaid below is the same map in a form GitHub renders. Every edge is a path that exists in the shipped tree. Cut surfaces (timeline view, web push, Context Forge gateway) are named in Known Limitations, not drawn as if they run.
+
+```mermaid
+flowchart TB
+  subgraph batch["Offline batch: run once, artifacts committed"]
+    decay["pipeline/decay.py\nNRLMSISE-00 via pyatmos"]
+    suryaPy["pipeline/surya_infer.py\nSurya-1.0, ESTIMATED"]
+    embed["pipeline/embed_and_store.py\neCFR plus Docling, hashing-trick-768"]
+  end
+
+  subgraph frozen["Frozen artifacts: shipped in the deploy"]
+    table["data/decay-table.json\n21 entries"]
+    outlook["data/surya-outlook.json\nreported, not applied"]
+    corpus["corpus/\nmanifest.sqlite plus vectors.f32"]
+  end
+
+  noaa["NOAA SWPC\nlive F10.7 plus predicted envelope"]
+
+  subgraph routes["Server routes: Vercel serverless, force-dynamic"]
+    solar["GET /api/solar"]
+    status["GET /api/status\nruntime.generation_backend self-report"]
+    ask["POST /api/ask\nextractive today; Granite plus Guardian wired, credentials absent"]
+  end
+
+  subgraph engine["Engine: pure TypeScript, no network"]
+    graph["engine/graph.ts\nnodes depend on pathway"]
+    cp["engine/critical-path.ts"]
+    interlocks["engine/interlocks/\ndeorbit, 97.207(g), rework"]
+  end
+
+  subgraph client["Client"]
+    store["lib/store.ts\nIndexedDB, nothing transmitted"]
+    depGraph["DependencyGraph\nxyflow plus dagre"]
+    panels["DeorbitPanel, AskPanel\nDeadlineBanner"]
+  end
+
+  subgraph surfaces["User-facing"]
+    mission["/mission"]
+    judge["/judge"]
+  end
+
+  evalBox["eval/runner.py plus eval/mcp_server.py\n28 questions, 6 traps, fixtures, no key"]
+  mobile["Capacitor 8 static export\nlocal notifications, hosted API"]
+
+  decay --> table
+  suryaPy --> outlook
+  embed --> corpus
+  table -.-> status
+  outlook -.-> solar
+  corpus -.-> ask
+  noaa --> solar
+  status --> graph
+  graph --> cp
+  interlocks --> graph
+  mission --> store
+  store --> depGraph
+  depGraph -.-> graph
+  mission --> panels
+  panels --> ask
+  judge --> status
+```
+
+Solid arrows are per-request. Dashed arrows are committed artifacts, read at startup or statically imported. The engine never calls Python at runtime. `/api/ask` is extractive on the current deploy; `/api/status.runtime` is the check.
+
 ### How IBM Bob Was Used
 
 <!-- Build-trace table and evidence populated as features land. Updated after each phase boundary. -->
@@ -236,6 +302,38 @@ Build it: `npm run build:mobile` then open `ios/App/App.xcodeproj` or `android/`
 ---
 
 ## Repo Layout
+
+```mermaid
+flowchart LR
+  subgraph product["Product"]
+    app["app/\nApp Router"]
+    components["components/"]
+    lib["lib/\nIndexedDB store"]
+  end
+  subgraph core["Deterministic core"]
+    engine["engine/"]
+    data["data/\ndecay table, Surya, missions"]
+    services["services/\nNOAA fetch"]
+  end
+  subgraph knowledge["Corpus"]
+    pipeline["pipeline/\nDocling, eCFR, embed"]
+    corpus["corpus/\nsqlite plus vectors"]
+    evalDir["eval/\nbank, runner, MCP"]
+  end
+  subgraph ship["Ship"]
+    mobile["mobile, ios, android"]
+    bob[".bob/\nmodes, skills, mcp.json"]
+    ci[".github/workflows"]
+  end
+  pipeline --> corpus
+  pipeline --> data
+  corpus --> app
+  engine --> app
+  data --> engine
+  services --> app
+  evalDir --> bob
+  app --> mobile
+```
 
 ```
 /app                  Next.js App Router

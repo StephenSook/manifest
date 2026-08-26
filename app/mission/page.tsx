@@ -18,6 +18,7 @@ import { saveMission, loadMission, clearMission } from '@/lib/store';
 import { DeadlineBanner } from '@/components/deadline-banner/DeadlineBanner';
 import { DependencyGraph } from '@/components/graph/DependencyGraph';
 import { DeorbitPanel } from '@/components/deorbit/DeorbitPanel';
+import { AskPanel } from '@/components/abstain/AskPanel';
 
 // ---------------------------------------------------------------------------
 // Styles: reuse globals.css tokens exactly. No new colors introduced.
@@ -499,6 +500,9 @@ export default function MissionPage() {
           <DeorbitPanel mission={savedMission} />
         </div>
       )}
+
+      {/* Regulatory Q&A: always visible, no mission required. */}
+      <AskPanel />
 
       <form onSubmit={handleSubmit} noValidate aria-label="Mission setup form">
 

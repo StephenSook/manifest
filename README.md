@@ -86,7 +86,7 @@ The deorbit compliance verdict is computed by an NRLMSISE-00 orbital lifetime in
 
 **Corpus:** Title 47 Parts 5, 25, 97 and Title 15 Part 960 from eCFR bulk XML (govinfo.gov), plus FCC-26-47A1.pdf, FCC-22-74A1.pdf, the NASA DAS 3.2 User Guide (cited as authority, not a DAS run), and NASA CubeSat 101 (2017, age flagged). NASA-STD-8719.14C sits behind the NASA Technical Standards login wall and is deliberately not ingested; questions about it abstain with a pointer. Every chunk carries its snapshot AMDDATE. Part 100 (FCC 26-47, adopted July 22, 2026) is ingested separately and tagged PENDING regime: the effective date has not been announced, and Part 25 remains binding today.
 
-**Eval:** 28-question bank plus 6 abstention traps with exact-citation scoring (`eval/runner.py`). Runs in CI on every push against committed fixtures (no network, no key), with a raise-only regression floor and a hard requirement that every abstention trap abstains. Current honest baseline on the credential-free extractive path: 53.6 percent with 6/6 traps abstaining (2026-08-24). The 90 percent submission bar applies to the full watsonx pipeline (Granite generation plus Guardian audit) and is published to `docs/FACTS.json`, dated, when that run happens.
+**Eval:** 28-question bank plus 6 abstention traps with exact-citation scoring (`eval/runner.py`). Runs in CI on every push against committed fixtures (no network, no key), with a raise-only regression floor and a hard requirement that every abstention trap abstains. Current honest baseline on the credential-free extractive path: 53.6 percent with 6/6 traps abstaining (2026-08-26). The 90 percent submission bar applies to the full watsonx pipeline (Granite generation plus Guardian audit) and is published to `docs/FACTS.json`, dated, when that run happens.
 
 **Eval as an MCP tool:** `eval/mcp_server.py` exposes `run_eval` and `eval_last_report` over MCP, wired into `.bob/mcp.json` so IBM Bob invokes the regression suite during development.
 
@@ -113,13 +113,13 @@ The last two rows say "not yet committed" because they are not in the repo. This
 
 | Mode | Lane | fileRegex scope |
 |---|---|---|
-| `regulatory-engine` | Engine, eval, solar, data, scripts | `^(engine\|eval\|services\|data\|scripts)/` |
-| `corpus-engineer` | Corpus pipeline, the ask route | `^(corpus/\|app/api/ask/)` |
-| `frontend` | App, components, lib | `^(app/(?!api/)\|components/\|lib/\|public/)` |
-| `mobile-shell` | Capacitor, iOS, Android | `^(mobile\|android\|ios)/` |
-| `evidence-writer` | Docs, README | `^docs/\|^README\.md$` |
+| `regulatory-engine` | Engine, eval, solar, data, scripts, status/solar routes, decay/surya | engine, eval, services, data, scripts, pipeline decay/surya, `/api/status`, `/api/solar`, tests except e2e |
+| `corpus-engineer` | Corpus, ask, pipeline except Stephen's three files | corpus, `/api/ask`, pipeline minus decay/surya/test_decay |
+| `frontend` | App except api, components, lib, public, sw, e2e | `app/` except `api/`, components, lib, public, `sw.ts`, `tests/e2e/` |
+| `mobile-shell` | Capacitor, iOS, Android | mobile, android, ios, `capacitor.config.ts`, `next.config.mobile.ts` |
+| `evidence-writer` | Docs, README | `docs/`, `README.md` |
 
-**Human/AI boundary:** Bob authored code within these scoped sessions. The team made all architectural and product decisions: the deorbit-compliance-as-legal-verdict framing, the cite-or-abstain policy, the decision to cut Surya rather than claim it if inference does not produce a real output, and all citations and numbers. Bob does not decide whether a regulatory claim is correct; humans do, backed by primary sources.
+**Human/AI boundary:** Bob authored code within these scoped sessions. The team made all architectural and product decisions: the deorbit-compliance-as-legal-verdict framing, the cite-or-abstain policy, the decision to serve Surya as a frozen artifact beside the NOAA envelope rather than apply it to the verdict, and all citations and numbers. Bob does not decide whether a regulatory claim is correct; humans do, backed by primary sources.
 
 ---
 

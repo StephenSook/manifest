@@ -27,6 +27,8 @@ import json
 import os
 import subprocess
 import sys
+import urllib.error
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -157,6 +159,62 @@ def run_test_counts() -> dict | None:
     return counts
 
 
+def load_eval_live(report_path: Path, url: str) -> dict | None:
+    """Load a URL-mode eval report produced by eval/runner.py --mode url.
+
+    Fixtures stay the clone-reproducible score in `eval`. The live score is a
+    separate measurement of the deployed extractive path. --check does not
+    re-hit the network; it leaves this block alone.
+    """
+    if not report_path.exists():
+        print(f"WARNING: live eval report missing: {report_path}", file=sys.stderr)
+        return None
+    try:
+        report = json.loads(report_path.read_text())
+    except json.JSONDecodeError:
+        print("WARNING: live eval report is not JSON; eval_live omitted",
+              file=sys.stderr)
+        return None
+    if report.get("mode") != "url":
+        print(f"WARNING: live eval report mode is {report.get('mode')!r}, "
+              "not 'url'; eval_live omitted", file=sys.stderr)
+        return None
+    bank_rows = sum(
+        1 for line in (REPO_ROOT / "eval" / "bank.jsonl").read_text().splitlines()
+        if line.strip()
+    )
+    results = report.get("results") or []
+    if len(results) != bank_rows:
+        print(f"WARNING: live eval scored {len(results)} of {bank_rows} "
+              "bank rows; eval_live omitted", file=sys.stderr)
+        return None
+    passing = [r["id"] for r in results if r.get("pass")]
+    failing = [r["id"] for r in results if not r.get("pass")]
+    runtime = None
+    if url:
+        try:
+            req = urllib.request.Request(url.rstrip("/") + "/api/status")
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                runtime = json.loads(resp.read().decode("utf-8")).get("runtime")
+        except (OSError, urllib.error.URLError, json.JSONDecodeError, TimeoutError) as exc:
+            print(f"WARNING: could not read /api/status runtime for eval_live "
+                  f"({exc})", file=sys.stderr)
+    return {
+        "score_pct": report.get("score_pct"),
+        "questions_correct": report.get("questions_correct"),
+        "questions_total": report.get("questions"),
+        "traps_total": report.get("traps"),
+        "traps_abstained": report.get("traps_abstained"),
+        "rows_scored": len(results),
+        "mode": "url",
+        "url": url,
+        "passing_ids": passing,
+        "failing_ids": failing,
+        "runtime": runtime,
+        "measured_at": report.get("generatedAt"),
+    }
+
+
 def run_eval() -> dict | None:
     """Measure the eval score by RUNNING the bank, never by hand.
 
@@ -238,7 +296,7 @@ def run_eval() -> dict | None:
     }
 
 
-def compute_facts() -> dict:
+def compute_facts(live_report: Path | None = None, live_url: str | None = None) -> dict:
     table = load_decay_table()
 
     # 3U CubeSat at 550 km -- the headline differentiator orbit
@@ -331,6 +389,14 @@ def compute_facts() -> dict:
 
     test_counts = run_test_counts()
     eval_result = run_eval()
+    eval_live = None
+    if live_report is not None:
+        eval_live = load_eval_live(live_report, live_url or "")
+    elif FACTS_OUT.exists():
+        try:
+            eval_live = json.loads(FACTS_OUT.read_text()).get("eval_live")
+        except (OSError, json.JSONDecodeError):
+            eval_live = None
     generated_at = datetime.now(timezone.utc).isoformat()
 
     return {
@@ -442,6 +508,16 @@ def compute_facts() -> dict:
             "answering."
             if eval_result else
             "NOT MEASURED on this run."
+        ),
+        "eval_live": eval_live,
+        "eval_live_note": (
+            "Production URL run of the same bank, recorded separately so the "
+            "clone-reproducible fixtures score cannot be overwritten by a "
+            "network measurement. Re-run with --live-report after "
+            "`python3 eval/runner.py --mode url --url <deploy> --min-score 0`. "
+            "--check does not re-hit the network."
+            if eval_live else
+            "NOT MEASURED: pass --live-report PATH after a URL-mode runner."
         ),
     }
 
@@ -560,6 +636,17 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Generate or verify docs/FACTS.json")
     parser.add_argument("--check", action="store_true",
                         help="Check that FACTS.json is current; exit 1 if stale")
+    parser.add_argument(
+        "--live-report",
+        type=Path,
+        default=None,
+        help="Path to eval/runner.py --mode url report.json to record as eval_live",
+    )
+    parser.add_argument(
+        "--live-url",
+        default="https://manifest-web-roan.vercel.app",
+        help="Deploy URL that produced --live-report (recorded, not fetched)",
+    )
     args = parser.parse_args()
 
     if args.check:
@@ -567,7 +654,7 @@ def main() -> None:
         return
 
     FACTS_OUT.parent.mkdir(parents=True, exist_ok=True)
-    facts = compute_facts()
+    facts = compute_facts(live_report=args.live_report, live_url=args.live_url)
     with open(FACTS_OUT, "w") as f:
         json.dump(facts, f, indent=2)
         f.write("\n")
@@ -576,6 +663,13 @@ def main() -> None:
     print(f"  Differentiator: {facts['differentiator']['swing_sentence']}")
     if facts.get("surya"):
         print(f"  Surya activity index: {facts['surya']['activity_index']}")
+    if facts.get("eval"):
+        print(f"  Eval fixtures: {facts['eval'].get('score_pct')} percent, "
+              f"{facts['eval'].get('traps_abstained')}/"
+              f"{facts['eval'].get('traps_total')} traps")
+    if facts.get("eval_live"):
+        print(f"  Eval live: {facts['eval_live'].get('score_pct')} percent "
+              f"at {facts['eval_live'].get('url')}")
 
 
 if __name__ == "__main__":

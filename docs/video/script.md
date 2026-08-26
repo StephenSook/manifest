@@ -187,7 +187,7 @@ Presenter narration: **Stephen** leads and closes. Tylin and Khadim narrate thei
 1. `.bob/custom_modes.yaml` open in Bob -- the five write-scoped modes visible
 2. One Bob custom mode in action -- the `regulatory-engine` mode refusing a file outside its scope
 3. Bobalytics screenshot showing session count
-4. Orchestrator delegation transcript in `docs/bob-evidence/orchestrator-run.md`
+4. Lane-enforcement transcript in `docs/bob-evidence/lane-enforcement.md`: a write-scoped mode REFUSING a file outside its own fileRegex and naming the mode to switch to
 5. `eval/bank.jsonl` -- the 28-question bank
 6. CI green badge on the eval gate workflow
 7. Final frame: The Manifest /judge page loaded, the headline number visible, the mobile app TestFlight link and Firebase App Distribution link side by side
@@ -196,7 +196,7 @@ Presenter narration: **Stephen** leads and closes. Tylin and Khadim narrate thei
 
 > "IBM Bob 2.0.3 built this. Five write-scoped custom modes -- one per team member's lane -- enforced by fileRegex at the editor level. 192 tests. An eval bank of 28 regulatory questions and 6 abstention traps, exposed to Bob as an MCP tool. A CI gate that blocks any pull request that regresses a citation.
 >
-> The repo is public. The `.bob/` directory is committed. Every mode, every skill, every Orchestrator run is inspectable right now at github.com/StephenSook/manifest.
+> The repo is public. The `.bob/` directory is committed. Every mode, every skill, and a transcript of one mode refusing to write outside its own lane are all inspectable right now at github.com/StephenSook/manifest.
 >
 > Manifest. The sun decides if your satellite is legal. And now, so do you."
 
@@ -242,7 +242,7 @@ Per PLAN.md D12, do not re-stage everything on Aug 28. Capture each beat the day
 - Beat 2 deorbit flip: capture the day Khadim's deorbit panel (2.7) lands on Vercel
 - Beat 3 solar swing: capture same day as above
 - Beat 4 Q&A abstention: capture the day Tylin's corpus and /api/ask route ship
-- Beat 5 montage stills: capture Bobalytics screenshot, orchestrator run, eval CI run each the day they happen -- they go in `docs/video/raw/`
+- Beat 5 montage stills: capture Bobalytics screenshot, the lane-refusal transcript, eval CI run each the day they happen -- they go in `docs/video/raw/`
 
 ### Audio
 - Target integrated loudness: -14 to -16 LUFS (verified with `ffmpeg -i video.mp4 -filter_complex ebur128 -f null -` after cut)

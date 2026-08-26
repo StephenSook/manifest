@@ -105,7 +105,7 @@ IBM Bob 2.0.3 is the primary development tool (competition requirement). The `.b
 | Workspace MCP config | `.bob/mcp.json` |
 | Bobalytics and subscription usage screenshots | `docs/bob-evidence/bob-usage-*.png` |
 | Plan-mode critical-path transcript | **not yet committed** (task 1.13) |
-| Orchestrator delegation transcript | **not yet committed** (task 2.22) |
+| Lane-enforcement transcript, a mode refusing an out-of-scope write | **not yet committed** (task 2.22) |
 
 The last two rows say "not yet committed" because they are not in the repo. This table previously listed both as if they were present, which is the one kind of error an evidence table must never make: a judge clicking a path that does not resolve learns something worse about the rest of the table than the missing file itself would have told them.
 

@@ -191,3 +191,6 @@ Parent grep, not a Tylin-tree edit. File set: `git ls-files --cached --others --
 | elkjs / orbdetpy / ORBITM import | absent / gitignored vendor / `decay.py` uses pyatmos | still ABSENT / CUT FROM CODE |
 | `docs/THIRD_PARTY_NOTICES.md` Scan section says `.gitleaksignore` is empty | file now has fingerprint `1a9c419...:phase0-plan.md:generic-api-key:96` | STALE (Tylin 3.8). Same file as the vis-timeline rows. |
 | PLAN 2.8 said Surya "narrows the near-term end of that envelope" | shipped FACTS and `/api/solar` disclose the index is not applied | FIXED this pass in PLAN.md. Judge-facing README/JUDGE already honest. |
+| `/judge` StatusPanel renders `data.models` only, no `runtime` | `components/judge/StatusPanel.tsx` types no runtime; step 5 copy says the table "shows what is actually running" | STALE (Khadim). Curl `/api/status` is honest. The itinerary is not. |
+| `/judge` step 3: "Granite generation pipeline is scored" | fixtures and production are extractive; page never prints 53.6 | STALE (Khadim). FACTS and README are honest. |
+| `/judge` step 4 heading: "Solar verdict: live NOAA F10.7 plus Surya outlook" | live flux is not the verdict | STALE heading (Khadim). Body is more careful. |

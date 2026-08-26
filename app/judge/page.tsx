@@ -239,8 +239,10 @@ export default function JudgePage() {
           Every claim on this page is reachable without logging in, without
           a key, and without running anything locally. The seeded GT-1
           mission ensures an empty state is impossible: the engine recomputes
-          on every page load. The data blocks under steps 1 and 2 are fetched
-          live from /api/status on this page load.
+          on every page load. The data blocks under steps 1, 2 and 5 are
+          fetched live from /api/status on this page load. Step 5 prints
+          who is actually answering (runtime.generation_backend), not only
+          the configured model IDs.
         </p>
         <p
           style={{
@@ -311,25 +313,29 @@ export default function JudgePage() {
             step={3}
             heading="Eval score: citations correct, abstention traps refused"
             description={
-              'The corpus retrieval and Granite generation pipeline is ' +
-              'scored against 34 questions (28 regulatory, 6 abstention ' +
-              'traps). The score is written to docs/FACTS.json by a real ' +
-              'run of eval/runner.py. CI re-runs against committed fixtures ' +
-              'on every PR.'
+              'The 28 regulatory questions and 6 abstention traps are scored ' +
+              'by eval/runner.py. The published score in docs/FACTS.json is ' +
+              'the credential-free extractive path (eval_live on the deployed ' +
+              'URL, eval on committed fixtures). The 90 percent bar applies ' +
+              'only when watsonx generation and Guardian actually run. Diff ' +
+              'runtime.generation_backend on /api/status against the score ' +
+              'you are reading. CI re-runs fixtures on every PR.'
             }
             verifyInstruction={
-              'Read docs/FACTS.json. The eval score and trap results are ' +
-              'there. CI re-runs the eval against committed fixtures on every PR.'
+              'Read docs/FACTS.json eval and eval_live. GET /api/status and ' +
+              'read runtime.generation_backend. CI re-runs the eval against ' +
+              'committed fixtures on every PR.'
             }
           />
           <ItineraryItem
             step={4}
-            heading="Solar verdict: live NOAA F10.7 plus Surya outlook"
+            heading="Solar inputs: live NOAA F10.7, NOAA envelope, Surya outlook"
             description={
               'GET /api/solar returns the live F10.7 reading from NOAA SWPC, ' +
               'the NOAA predicted-flux envelope for the mission window, and ' +
               'the Surya activity outlook. All three are labelled by source. ' +
-              'If Surya is absent (cut per D7), the panel says so.'
+              'The deorbit verdict uses the NOAA envelope, not the Surya ' +
+              'index. If Surya is absent (cut per D7), the panel says so.'
             }
             verifyInstruction={
               'GET /api/solar (no key). Read f107_live, predicted_envelope, ' +
@@ -345,15 +351,16 @@ export default function JudgePage() {
               'Five write-scoped Bob modes enforce lane ownership across ' +
               'three contributors. Four regulatory skills (Part 97, Part 5, ' +
               'NOAA CRSRA, eval bank) are loaded at authoring time. The eval ' +
-              'bank is exposed as an MCP tool via IBM Context Forge (task 3.2). ' +
-              'The model inventory table above shows what is actually running, ' +
-              'self-reported by /api/status.'
+              'bank is exposed to Bob as a stdio MCP tool (eval/mcp_server.py, ' +
+              '.bob/mcp.json). Bob 2.0.3 switcher: Agent, Plan, Ask, plus those ' +
+              'five workspace modes. The runtime block above shows who is ' +
+              'answering this request. The model inventory lists configured IDs.'
             }
             verifyInstruction={
               'Read .bob/custom_modes.yaml (five modes with fileRegex scopes). ' +
               'Read .bob/skills/ (four SKILL.md files). ' +
-              'Read docs/bob-evidence/ for Bobalytics screenshots and ' +
-              'the Orchestrator run transcript.'
+              'Read .bob/mcp.json. GET /api/status and compare models against ' +
+              'runtime.generation_backend.'
             }
           />
         </ol>
@@ -411,11 +418,18 @@ export default function JudgePage() {
           <tbody>
             {(
               [
-                ['Eval score panel (live)', 'Task 1.5 (eval runner), docs/FACTS.json'],
-                ['Solar panel (/api/solar)', 'Task 2.8 (solar route, Surya)'],
-                ['Citation panel with snapshot date', 'Task 1.3 (corpus freeze)'],
-                ['Abstention screen (Q&A)', 'Task 1.6 (Guardian wiring), 2.5'],
-                ['Timeline view', 'Task 2.3 (vis-timeline)'],
+                [
+                  'watsonx credentials on this deploy',
+                  'Task 0.13. Until they land, GET /api/status runtime.generation_backend is offline-extractive and Guardian is inactive.',
+                ],
+                [
+                  'Plan-mode transcript (task 1.13)',
+                  'docs/bob-evidence/ does not yet contain the Plan-mode run.',
+                ],
+                [
+                  'Lane-enforcement transcript (task 2.22)',
+                  'docs/bob-evidence/lane-enforcement.md is not yet committed.',
+                ],
               ] as const
             ).map(([surface, waiting]) => (
               <tr key={surface}>

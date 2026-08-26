@@ -2,7 +2,8 @@
 
 // components/judge/StatusPanel.tsx
 // Task 3.3: fetches GET /api/status and renders the live values for steps
-// 1 and 2 of the judge itinerary.
+// 1, 2 and 5 of the judge itinerary. Step 5 prints runtime (who is
+// answering) above the configured model IDs.
 //
 // Three states:
 //   loading  -- designed skeleton, not a spinner
@@ -59,6 +60,17 @@ interface Models {
   local_fallback: string;
 }
 
+// Runtime is who is actually answering THIS request. Models (below) are
+// the configured IDs. A judge who only reads the inventory will think
+// Granite is running when watsonx credentials are absent.
+interface Runtime {
+  generation_backend: string;
+  embedding_backend: string;
+  guardian_audit: string;
+  corpus_source: string;
+  note: string;
+}
+
 interface StatusPayload {
   deadline_violations_days: number;
   violated_day_sum_all_nodes: number;
@@ -72,6 +84,7 @@ interface StatusPayload {
   deorbit_swing: DeorbitSwing;
   seed_mission: SeedMission;
   models: Models;
+  runtime?: Runtime;
   corpus_amddate: string;
   computed_at: string;
   today: string;
@@ -324,8 +337,77 @@ function SwingRow({
 }
 
 // ---------------------------------------------------------------------------
-// Step 5 content: models table
+// Step 5 content: who is answering (runtime) then configured model IDs
 // ---------------------------------------------------------------------------
+
+function RuntimeCard({ runtime }: { runtime: Runtime }) {
+  const rows: [string, string][] = [
+    ['Writer', runtime.generation_backend],
+    ['Embedding', runtime.embedding_backend],
+    ['Guardian audit', runtime.guardian_audit],
+    ['Corpus', runtime.corpus_source],
+  ];
+  return (
+    <div>
+      <table
+        style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}
+        aria-label="Who is answering this request"
+      >
+        <thead>
+          <tr>
+            {(['Role', 'Running now'] as const).map((h) => (
+              <th
+                key={h}
+                style={{
+                  textAlign: 'left',
+                  color: 'var(--color-muted)',
+                  fontWeight: 600,
+                  paddingBottom: '0.3rem',
+                  borderBottom: '1px solid var(--color-border)',
+                  paddingRight: '1rem',
+                }}
+              >
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(([role, value]) => (
+            <tr key={role}>
+              <td
+                style={{
+                  paddingTop: '0.35rem',
+                  paddingRight: '1rem',
+                  color: 'var(--color-muted)',
+                  borderBottom: '1px solid var(--color-border)',
+                  paddingBottom: '0.35rem',
+                }}
+              >
+                {role}
+              </td>
+              <td
+                style={{
+                  paddingTop: '0.35rem',
+                  color: 'var(--color-fg)',
+                  borderBottom: '1px solid var(--color-border)',
+                  paddingBottom: '0.35rem',
+                  fontFamily: 'inherit',
+                  fontWeight: role === 'Writer' ? 600 : 400,
+                }}
+              >
+                {value}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {runtime.note && (
+        <p style={{ ...MUTED, marginTop: '0.5rem' }}>{runtime.note}</p>
+      )}
+    </div>
+  );
+}
 
 function ModelsTable({ models }: { models: Models }) {
   const rows: [string, string][] = [
@@ -506,9 +588,20 @@ export function StatusPanel({ onLoad }: StatusPanelProps) {
         <Step2Content data={data} />
       </div>
 
-      {/* Step 5 data block: models */}
+      {/* Step 5 data block: runtime writer, then configured IDs */}
       <div style={CARD} id="step5-data">
-        <p style={LABEL}>Step 5: model inventory (claimed vs invoked)</p>
+        <p style={LABEL}>Step 5: who is answering (runtime)</p>
+        {data.runtime ? (
+          <RuntimeCard runtime={data.runtime} />
+        ) : (
+          <p style={MUTED}>
+            runtime block missing from this /api/status response. Do not
+            assume Granite is answering.
+          </p>
+        )}
+        <p style={{ ...LABEL, marginTop: '1rem' }}>
+          Configured model IDs (not the running path)
+        </p>
         <ModelsTable models={data.models} />
         <p style={{ ...MUTED, marginTop: '0.5rem' }}>
           Source: {data.seed_mission.name} ({data.seed_mission.source})

@@ -60,7 +60,7 @@ The worked example, computed by NRLMSISE-00 ballistic drag integration from NOAA
 
 Same orbit. Opposite legal answer. The solar cycle decides.
 
-Watching that verdict flip is the thing we would ask a judge to look at, because it is a state change on screen and not a claim in a paragraph, and it is reproducible by a stranger with no account and no key from the `deorbit_swing` block of the public status endpoint. The originality is not the heliophysics model, which is IBM and NASA's published work. It is the decision to let a physical forecast bind a regulatory node, so that the graph reroutes when the sun does.
+Watching that verdict flip is the thing we would ask a judge to look at, because it is a state change on screen and not a claim in a paragraph, and it is reproducible by a stranger with no account and no key from the `deorbit_swing` block of the public status endpoint. The originality is not the heliophysics model, which is IBM and NASA's published work. It is the decision to treat NOAA's published solar-min and solar-max flux bounds as a legal input: the same orbit gets opposite FCC five-year answers at those two bounds. Live NOAA and Surya are served beside that verdict at `/api/solar`. They are not inputs to the graph.
 
 ### Challenge Fit
 
@@ -68,7 +68,7 @@ Watching that verdict flip is the thing we would ask a judge to look at, because
 
 The August theme asks for solutions that move space exploration from data-heavy to insight-driven and that make space more accessible. Manifest takes the rawest regulatory text there is, the eCFR bulk XML for Title 47 Parts 5, 25 and 97 plus Title 15 Part 960, and turns it into one dated answer: which of your deadlines are already dead, and what you file first. Accessibility is the whole point of the user: university teams without licensing counsel, in a field where about 40% of manifested university-class missions fail to achieve any primary objective.
 
-The real-world half of this criterion is the headline the deployment recomputes on every request: **161 days of already-violated regulatory deadline** on the seeded GT-1 mission profile, across 10 of 10 nodes, computed in 1 millisecond. NASA's CubeSat 101 (2017) budgets 4 to 6 months for licensing and the FCC requires a minimum of 90 days from application receipt. Manifest tells one specific team which of their specific deadlines are gone, today, with the paragraph of regulation that says so.
+The real-world half of this criterion is the headline the deployment recomputes on every request: **161 days of already-violated regulatory deadline** on the seeded GT-1 mission profile, across 10 of 10 nodes. NASA's CubeSat 101 (2017) budgets 4 to 6 months for licensing and the FCC requires a minimum of 90 days from application receipt. Manifest tells one specific team which of their specific deadlines are gone, today, with the paragraph of regulation that says so.
 
 The incentive is inside the loop and it is concrete: a team that runs this gets a filing order and a dated deadline list they can act on the same afternoon, without hiring the consultant that the interviewed program could only afford because a NASA award paid for it.
 
@@ -100,7 +100,7 @@ Honesty is part of the engineering, not a disclaimer at the end. Durations are l
 
 Three people, one repository, sixteen days, zero merge collisions on the engine.
 
-That is a Bob-shaped outcome, not a git-shaped one. `.bob/custom_modes.yaml` defines five modes whose `fileRegex` write scopes partition the tree: a corpus mode that can only write under `/corpus` and `/pipeline`, a regulatory-engine mode confined to `/engine`, a mobile-shell mode, a frontend mode, and an evidence mode that can only write under `/docs`. The refusal happens at the editor, before a bad write exists, which is a different guarantee from catching it in review. Four skills under `.bob/skills/`, one per regulatory regime plus the eval bank, carry the rules each lane must not violate, including the cite-or-abstain rule and the verbatim Part 100 line. Every one of those files is committed and readable in the repository.
+That is a Bob-shaped outcome, not a git-shaped one. `.bob/custom_modes.yaml` defines five modes whose `fileRegex` write scopes partition the tree: corpus-engineer on corpus, ask, and pipeline except decay/surya; regulatory-engine on engine, eval, solar, status, and decay/surya; mobile-shell; frontend; evidence-writer on docs and README. The refusal happens at the editor, before a bad write exists, which is a different guarantee from catching it in review. Four skills under `.bob/skills/`, one per regulatory regime plus the eval bank, carry the rules each lane must not violate, including the cite-or-abstain rule and the verbatim Part 100 line. Every one of those files is committed and readable in the repository.
 
 ## Most Innovative Use of IBM Bob
 

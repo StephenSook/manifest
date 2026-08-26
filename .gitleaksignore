@@ -1,0 +1,12 @@
+# Verified false positive, hand-checked against the flagged commit before being
+# added here. phase0-plan.md line 96 documents a local command as
+# `WATSONX_API_KEY=... uv run ...` and the value is literally three dots:
+# three characters, no digits, no alphanumerics. The generic-api-key rule fires
+# on the assignment shape, not on a secret.
+#
+# Ignored rather than "fixed" by editing the doc, because the documentation is
+# correct as written and changing prose to dodge a scanner teaches the next
+# person to distrust the guard. The reason this entry matters is not the false
+# positive itself: a scan carrying known noise is exactly where a real leak
+# goes unnoticed, so full history should exit clean.
+1a9c4198f7f1b070bbf537178b85cde6ed6884c9:phase0-plan.md:generic-api-key:96

@@ -349,11 +349,10 @@ def compute_facts(live_report: Path | None = None, live_url: str | None = None) 
             "node_count": status.get("node_count"),
             "compute_ms": status.get("compute_ms"),
             "seed_note": (
-                "GT-1 mission profile re-based onto a live delivery date "
-                "(2026-12-01); the planner's question is 'standing at today, "
-                "licensing not started, which deadlines are already dead.' "
-                "All dates ESTIMATED per D5, replaced by data/missions/gt-1.json "
-                "when 2.16 lands."
+                "GT-1 mission profile from data/missions/gt-1.json (task 2.16), "
+                "re-based onto a live delivery date (2026-12-01). The planner's "
+                "question is 'standing at today, licensing not started, which "
+                "deadlines are already dead.' All dates ESTIMATED per D5."
             ),
             "measured_at": datetime.now(timezone.utc).isoformat(),
         }

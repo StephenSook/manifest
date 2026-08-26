@@ -169,11 +169,11 @@ IBM Bob 2.0.3 is the primary development tool (competition requirement). The `.b
 | Custom modes (5, write-scoped) | `.bob/custom_modes.yaml` |
 | Workspace skills | `.bob/skills/` |
 | Workspace MCP config | `.bob/mcp.json` |
-| Bobalytics and subscription usage screenshots | `docs/bob-evidence/bob-usage-*.png` |
-| Plan-mode critical-path transcript | **not yet committed** (task 1.13) |
-| Lane-enforcement transcript, a mode refusing an out-of-scope write | **not yet committed** (task 2.22) |
+| Bobalytics screenshots (subscription usage) | `docs/bob-evidence/bobalytics-01.png`, `bobalytics-02.png`, `bobalytics-03.png` |
+| Plan-mode session | Never captured. Honesty log: [`docs/bob-evidence/plan-mode-critical-path.md`](docs/bob-evidence/plan-mode-critical-path.md) |
+| Lane enforcement | [`docs/bob-evidence/lane-enforcement.md`](docs/bob-evidence/lane-enforcement.md) (shipped fileRegex, git event, CI test). Not a pasted Bob chat. |
 
-The last two rows say "not yet committed" because they are not in the repo. This table previously listed both as if they were present, which is the one kind of error an evidence table must never make: a judge clicking a path that does not resolve learns something worse about the rest of the table than the missing file itself would have told them.
+The Plan-mode row is an honesty log because the session was never exported. Inventing a transcript would be worse than the gap. Lane enforcement is a property of `.bob/custom_modes.yaml`: `frontend` cannot write `docs/architecture.svg`, `evidence-writer` can. `tests/test_bob_lane_enforcement.py` asserts that table on every CI run.
 
 **Five write-scoped custom modes** restrict Bob's write access to each team member's lane:
 
@@ -345,7 +345,7 @@ flowchart LR
 /mobile               Capacitor variant config and native projects
 /services             Solar data service (NOAA fetch, Surya interface)
 /data                 Frozen artifacts: decay-table.json, surya-outlook.json, missions
-/docs/bob-evidence    Bobalytics screenshots, Plan-mode outputs, mode and skill docs
+/docs/bob-evidence    Bobalytics screenshots, lane-enforcement log, Plan-mode honesty log
 .bob/                 Bob modes, skills, rules, mcp.json (committed)
 .github/workflows     CI, eval gate, anti-fabrication guard, scheduled uptime content-check
 ```

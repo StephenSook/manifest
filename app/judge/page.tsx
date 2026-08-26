@@ -358,6 +358,10 @@ export default function JudgePage() {
             }
             verifyInstruction={
               'Read .bob/custom_modes.yaml (five modes with fileRegex scopes). ' +
+              'Read docs/bob-evidence/lane-enforcement.md and run ' +
+              'tests/test_bob_lane_enforcement.py. ' +
+              'Read docs/bob-evidence/plan-mode-critical-path.md ' +
+              '(Plan-mode session was never captured; that file is the honesty log). ' +
               'Read .bob/skills/ (four SKILL.md files). ' +
               'Read .bob/mcp.json. GET /api/status and compare models against ' +
               'runtime.generation_backend.'
@@ -421,14 +425,6 @@ export default function JudgePage() {
                 [
                   'watsonx credentials on this deploy',
                   'Task 0.13. Until they land, GET /api/status runtime.generation_backend is offline-extractive and Guardian is inactive.',
-                ],
-                [
-                  'Plan-mode transcript (task 1.13)',
-                  'docs/bob-evidence/ does not yet contain the Plan-mode run.',
-                ],
-                [
-                  'Lane-enforcement transcript (task 2.22)',
-                  'docs/bob-evidence/lane-enforcement.md is not yet committed.',
                 ],
               ] as const
             ).map(([surface, waiting]) => (

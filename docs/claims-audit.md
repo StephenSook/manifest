@@ -194,3 +194,17 @@ Parent grep, not a Tylin-tree edit. File set: `git ls-files --cached --others --
 | `/judge` StatusPanel renders `data.models` only, no `runtime` | StatusPanel now renders `RuntimeCard` from `data.runtime`; AskPanel banners the same block | FIXED 2026-08-26 (Stephen backup). Guard: `tests/test_judge_runtime_honesty.py`. |
 | `/judge` step 3: "Granite generation pipeline is scored" | step 3 now points at FACTS eval_live and `runtime.generation_backend` | FIXED 2026-08-26 (Stephen backup). |
 | `/judge` step 4 heading: "Solar verdict: live NOAA F10.7 plus Surya outlook" | heading is now "Solar inputs"; body says the verdict uses the NOAA envelope, not Surya | FIXED 2026-08-26 (Stephen backup). |
+
+### Steal 25, 2026-08-26 (Stephen backup on Khadim 1.13 / 2.22)
+
+Inventing the missing Plan-mode and lane-enforcement chats would have been the anti-pattern. What landed:
+
+| Item | Was | Now |
+|---|---|---|
+| 1.13 Plan-mode transcript | Missing. README said "not yet committed". | Honesty log at `docs/bob-evidence/plan-mode-critical-path.md`. States the session was never captured. Points at `engine/critical-path.ts` and `.bob/rules-plan/AGENTS.md`. Not a composed Plan chat. |
+| 2.22 lane-enforcement transcript | Missing. Judge pending table listed the path as not committed. | `docs/bob-evidence/lane-enforcement.md` plus `tests/test_bob_lane_enforcement.py`. `frontend` fileRegex refuses `docs/architecture.svg`; `evidence-writer` allows it. CI asserts the table. Not a pasted Bob chat. |
+| `/judge` pending table | Named 1.13 and 2.22 as missing | Pending row is watsonx credentials only (0.13). Step 5 verifyInstruction points at both honesty logs. |
+| README evidence table | "not yet committed" for both rows; glob `bob-usage-*.png` (wrong filename) | Rows point at the files. Bobalytics glob is the three committed `bobalytics-0N.png` names. |
+| Video Beat 5 | Skip lane-enforcement still if the file is missing | File exists. Narrate fileRegex and the CI test. Do not act a chat that was never exported. |
+
+Guard: `tests/test_bob_lane_enforcement.py` (eval-gate pytest). Honesty phrases (`not a Plan-mode transcript`, `not a pasted Bob chat`) are asserted so a later swap for invented dialogue fails CI.

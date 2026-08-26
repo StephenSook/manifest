@@ -29,7 +29,7 @@ No account. No keys. Every claim below is either a live link or a `grep` command
 | **IBM Bob is committed and inspectable** | [`.bob/custom_modes.yaml`](.bob/custom_modes.yaml), [`.bob/mcp.json`](.bob/mcp.json), [`docs/bob-evidence/`](docs/bob-evidence/) |
 | **Honesty live** | `/api/status` -- unauthenticated, self-reports which models are actually running |
 | **The live solar reading** | [manifest-web-roan.vercel.app/api/solar](https://manifest-web-roan.vercel.app/api/solar): unauthenticated, reads NOAA SWPC on every request. Cross-check `f107_live` against [NOAA's own endpoint](https://services.swpc.noaa.gov/products/summary/10cm-flux.json) |
-| **Reproduce the decay table** | `uv sync --python 3.12 --project pipeline && uv pip install --python pipeline/.venv/bin/python3 'setuptools<81' && pipeline/.venv/bin/python3 pipeline/decay.py`. The setuptools pin is required: `pyatmos` imports `pkg_resources`, which setuptools 81 removed. No keys |
+| **Reproduce the decay table** | `uv sync --python 3.12 --project pipeline && pipeline/.venv/bin/python3 pipeline/decay.py`. Writes `data/decay-table.json` from a real NRLMSISE-00 integration. No keys |
 
 ---
 

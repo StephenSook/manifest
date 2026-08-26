@@ -49,7 +49,7 @@
 
   <rect x="304" y="226" width="196" height="52" rx="3" fill="#14161a" stroke="#2b2e33"/>
   <text x="402" y="245" text-anchor="middle" fill="#e6e8eb" font-size="11" font-weight="600">data/surya-outlook.json</text>
-  <text x="402" y="260" text-anchor="middle" fill="#8d8f94" font-size="10">activity_index scalar, ESTIMATED</text>
+  <text x="402" y="260" text-anchor="middle" fill="#8d8f94" font-size="10">activityIndex scalar, ESTIMATED</text>
   <text x="402" y="272" text-anchor="middle" fill="#8d8f94" font-size="9">reported for context only</text>
 
   <rect x="548" y="226" width="196" height="52" rx="3" fill="#14161a" stroke="#2b2e33"/>
@@ -83,12 +83,13 @@
   <text x="149" y="496" text-anchor="middle" fill="#8d8f94" font-size="10">surya_outlook labelled ESTIMATED</text>
 
   <!-- /api/status -->
-  <rect x="295" y="420" width="210" height="88" rx="3" fill="#14161a" stroke="#2b2e33"/>
+  <rect x="295" y="420" width="210" height="102" rx="3" fill="#14161a" stroke="#2b2e33"/>
   <text x="400" y="439" text-anchor="middle" fill="#8f6edb" font-size="11" font-weight="600">GET /api/status</text>
   <text x="400" y="454" text-anchor="middle" fill="#8d8f94" font-size="10">buildGraph + computeCriticalPath</text>
   <text x="400" y="468" text-anchor="middle" fill="#8d8f94" font-size="10">computeDeorbitCompliance</text>
   <text x="400" y="482" text-anchor="middle" fill="#8d8f94" font-size="10">GT-1 seed from data/missions/</text>
   <text x="400" y="496" text-anchor="middle" fill="#8d8f94" font-size="10">self-reports wired model IDs</text>
+  <text x="400" y="510" text-anchor="middle" fill="#8d8f94" font-size="10">6 named scenarios, each a real engine run</text>
 
   <!-- /api/ask -->
   <!-- Taller box: extra line for the honest fallback note -->
@@ -125,10 +126,13 @@
   <line x1="40" y1="544" x2="760" y2="544" stroke="#2b2e33" stroke-width="1" stroke-dasharray="4 4"/>
   <text x="400" y="562" text-anchor="middle" fill="#8d8f94" font-size="10" letter-spacing="0.1em">ENGINE   (pure TypeScript, browser and server, no network)</text>
 
-  <rect x="44"  y="572" width="188" height="58" rx="3" fill="#14161a" stroke="#2b2e33"/>
+  <rect x="44"  y="572" width="188" height="86" rx="3" fill="#14161a" stroke="#2b2e33"/>
   <text x="138" y="591" text-anchor="middle" fill="#e6e8eb" font-size="11" font-weight="600">engine/graph.ts</text>
   <text x="138" y="606" text-anchor="middle" fill="#8d8f94" font-size="10">buildGraph(MissionInput)</text>
-  <text x="138" y="620" text-anchor="middle" fill="#8d8f94" font-size="10">12 nodes, edges, citations</text>
+  <text x="138" y="620" text-anchor="middle" fill="#8d8f94" font-size="10">10 to 12 nodes depending on</text>
+  <text x="138" y="634" text-anchor="middle" fill="#8d8f94" font-size="10">pathway and imagingEarth</text>
+  <text x="138" y="648" text-anchor="middle" fill="#8d8f94" font-size="9">IARU nodes: Part 97 only</text>
+  <text x="138" y="660" text-anchor="middle" fill="#8d8f94" font-size="9">NOAA CRSRA nodes: imagingEarth only</text>
 
   <rect x="260" y="572" width="188" height="58" rx="3" fill="#14161a" stroke="#2b2e33"/>
   <text x="354" y="591" text-anchor="middle" fill="#e6e8eb" font-size="11" font-weight="600">engine/critical-path.ts</text>
@@ -147,7 +151,7 @@
   <text x="454" y="586" text-anchor="middle" fill="#8d8f94" font-size="9" font-style="italic">injected as node</text>
 
   <!-- /api/status calls engine -->
-  <line x1="400" y1="508" x2="295" y2="572" stroke="#2b2e33" stroke-width="1.5" marker-end="url(#arr-muted)"/>
+  <line x1="400" y1="522" x2="295" y2="572" stroke="#2b2e33" stroke-width="1.5" marker-end="url(#arr-muted)"/>
   <text x="322" y="543" text-anchor="middle" fill="#8d8f94" font-size="9" font-style="italic">calls engine directly</text>
 
   <!-- ================================================================ -->
@@ -233,7 +237,7 @@
   <text x="114" y="940" text-anchor="end" fill="#8d8f94" font-size="9" font-style="italic">nothing transmitted</text>
 
   <!-- /judge to /api/status -->
-  <line x1="583" y1="908" x2="400" y2="508" stroke="#2b2e33" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr-muted)"/>
+  <line x1="583" y1="908" x2="400" y2="522" stroke="#2b2e33" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr-muted)"/>
   <text x="552" y="748" text-anchor="middle" fill="#8d8f94" font-size="9" font-style="italic">StatusPanel fetches live</text>
 
   <!-- AskPanel to /api/ask -->

@@ -15,7 +15,7 @@
 //
 // No em-dashes. No regulatory text typed into JSX: all copy from payload.
 
-import { useState, useId, useRef } from 'react';
+import { useState, useId, useRef, useEffect } from 'react';
 import type { Citation } from '@/engine/types';
 
 // ---------------------------------------------------------------------------
@@ -28,6 +28,15 @@ interface AskResponse {
   audited: boolean;
   abstained: boolean;
   reason?: string;
+}
+
+// Who is answering. Fetched from GET /api/status.runtime, not inferred
+// from the answer text. Same source the judge page prints.
+interface RuntimeInfo {
+  generation_backend: string;
+  embedding_backend: string;
+  guardian_audit: string;
+  note: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -252,6 +261,32 @@ const S = {
     color: 'var(--color-muted)',
     margin: 0,
   } satisfies React.CSSProperties,
+
+  writerBanner: {
+    border: '1px solid var(--color-border)',
+    borderRadius: '3px',
+    padding: '0.5rem 0.65rem',
+    margin: '0 0 0.75rem',
+    fontSize: '12px',
+    color: 'var(--color-fg)',
+    lineHeight: 1.5,
+  } satisfies React.CSSProperties,
+
+  writerKicker: {
+    fontSize: '11px',
+    fontWeight: 600,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase' as const,
+    color: 'var(--color-muted)',
+    margin: '0 0 0.25rem',
+  } satisfies React.CSSProperties,
+
+  writerLine: {
+    fontSize: '12px',
+    color: 'var(--color-muted)',
+    margin: '0 0 0.5rem',
+    lineHeight: 1.5,
+  } satisfies React.CSSProperties,
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -289,7 +324,23 @@ function CitationRow({ c }: { c: Citation }) {
 // ResponseRegion: renders the four states
 // ---------------------------------------------------------------------------
 
-function ResponseRegion({ data }: { data: AskResponse }) {
+function WriterLine({ runtime }: { runtime: RuntimeInfo | null }) {
+  if (!runtime) return null;
+  return (
+    <p style={S.writerLine}>
+      Writer: {runtime.generation_backend}. Guardian:{' '}
+      {runtime.guardian_audit}. Embedding: {runtime.embedding_backend}.
+    </p>
+  );
+}
+
+function ResponseRegion({
+  data,
+  runtime,
+}: {
+  data: AskResponse;
+  runtime: RuntimeInfo | null;
+}) {
   const { abstained, audited, answer, citations, reason } = data;
 
   // State 1: abstained, no citations
@@ -297,6 +348,7 @@ function ResponseRegion({ data }: { data: AskResponse }) {
     return (
       <div style={S.abstainBlock}>
         <p style={S.abstainLabel}>Abstained</p>
+        <WriterLine runtime={runtime} />
         <p style={S.abstainReason}>{reason}</p>
       </div>
     );
@@ -307,6 +359,7 @@ function ResponseRegion({ data }: { data: AskResponse }) {
     return (
       <div style={S.abstainBlock}>
         <p style={S.abstainLabel}>Abstained</p>
+        <WriterLine runtime={runtime} />
         <p style={S.abstainReason}>{reason}</p>
         <p style={S.citationsHeading}>Retrieved sections</p>
         <ul style={S.citationList} aria-label="Retrieved sections">
@@ -323,6 +376,7 @@ function ResponseRegion({ data }: { data: AskResponse }) {
     return (
       <div style={S.answerBlock}>
         <p style={S.answerLabel}>Grounded answer</p>
+        <WriterLine runtime={runtime} />
         <p style={S.answerText}>{answer}</p>
         {citations.length > 0 && (
           <>
@@ -342,6 +396,7 @@ function ResponseRegion({ data }: { data: AskResponse }) {
   return (
     <div style={S.unauditedBlock}>
       <p style={S.unauditedLabel}>Answer - not audited</p>
+      <WriterLine runtime={runtime} />
       <p style={S.unauditedNotice}>
         {reason ?? 'This answer was not verified by an audit model.'}
       </p>
@@ -371,7 +426,27 @@ export function AskPanel() {
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<AskResponse | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [runtime, setRuntime] = useState<RuntimeInfo | null>(null);
   const responseRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/status')
+      .then((res) => {
+        if (!res.ok) throw new Error(`/api/status returned HTTP ${res.status}`);
+        return res.json() as Promise<{ runtime?: RuntimeInfo }>;
+      })
+      .then((data) => {
+        if (cancelled || !data.runtime) return;
+        setRuntime(data.runtime);
+      })
+      .catch(() => {
+        // Leave null. The banner stays absent rather than inventing a writer.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function submit(q: string) {
     const trimmed = q.trim();
@@ -421,6 +496,19 @@ export function AskPanel() {
         Questions are answered from the ingested corpus snapshot. The product
         abstains when the corpus cannot support an answer.
       </p>
+
+      {runtime && (
+        <div style={S.writerBanner} aria-label="Who is answering">
+          <p style={S.writerKicker}>Who is answering</p>
+          <p style={{ margin: 0 }}>
+            Writer: {runtime.generation_backend}. Guardian:{' '}
+            {runtime.guardian_audit}. Embedding: {runtime.embedding_backend}.
+          </p>
+          {runtime.note && (
+            <p style={{ ...S.hint, margin: '0.35rem 0 0' }}>{runtime.note}</p>
+          )}
+        </div>
+      )}
 
       <p style={S.suggestedLabel}>Try a question:</p>
       <ul style={S.suggestedList} aria-label="Suggested questions">
@@ -486,7 +574,7 @@ export function AskPanel() {
         )}
 
         {response && !loading && (
-          <ResponseRegion data={response} />
+          <ResponseRegion data={response} runtime={runtime} />
         )}
       </div>
     </div>

@@ -131,13 +131,13 @@ Post-3.7 tree, after Khadim's vis-timeline/tanstack removal and after production
 | NOAA SWPC | `services/solar/fetch.ts` | WIRED |
 | pyatmos NRLMSISE-00 | `pipeline/decay.py` | WIRED |
 | eval MCP stdio | `.bob/mcp.json`, `eval/mcp_server.py` | WIRED |
-| Context Forge gateway | no registration, PLAN 3.2 parked | CUT FROM CLAIM. Judge page step 5 still says "via IBM Context Forge (task 3.2)". Khadim. |
+| Context Forge gateway | no registration, PLAN 3.2 parked | CUT FROM CLAIM. Judge page step 5 now names the stdio MCP server (Stephen backup 2026-08-26). |
 | web-push / `app/api/push` | no route, no `web-push` dep, no `deadline-check.yml` | CUT. PLAN 2.11 row was still ⬜; cut list item 1 already named it. |
 | ORBITM | `pipeline/orbitm_vendor/` gitignored, not imported by `decay.py` | CUT FROM CODE |
 | elkjs / orbdetpy | lockfiles | ABSENT |
 | shadcn/ui | no `components.json`, no `components/ui/` | NEVER INITIALISED. Not claimed on judge-facing docs. |
 | Playwright e2e | `@playwright/test` in package.json, `test:e2e` script, zero spec files | STILL UNWIRED. 3.9 open. happy-dom is also present and unused (`vitest.config.ts` environment is `node`). |
-| Orchestrator transcript | `app/judge/page.tsx:356` | STALE CLAIM. Bob 2.0.3 has no Orchestrator. Khadim. |
+| Orchestrator transcript | `app/judge/page.tsx` | FIXED 2026-08-26 (Stephen backup). Step 5 names Agent, Plan, Ask plus five workspace modes. Guard: `tests/test_judge_runtime_honesty.py`. |
 | plan-mode + lane-enforcement transcripts | `docs/bob-evidence/` is three PNGs | MISSING. 1.13 and 2.22. Khadim. |
 
 ### Live eval (4.3 half, Stephen)
@@ -154,8 +154,8 @@ Re-measured the same day at 21:17 UTC (report `/tmp/manifest-eval-live.json`, th
 | `services/solar` vitest suite is not in `ci.yml` (eval-gate covers `tests/` pytest and facts.py) | **Tylin** | Add the services project to a CI job, or confirm `npm run test` already covers it and wire that job. |
 | `docs/THIRD_PARTY_NOTICES.md` still lists vis-timeline and `@tanstack/react-table` | **Tylin** (task 3.8) | Drop the rows. package.json no longer carries them. |
 | Playwright e2e / happy-dom leftover | **Khadim** | Wire 3.9 or cut the dep and the `test:e2e` script. |
-| vis-timeline leftover copy on `/mission` comment and `/judge` pending table | **Khadim** | 2.3 is cut. |
-| Orchestrator + Context Forge sentences on `/judge` step 5 | **Khadim** | Reword to lane-enforcement transcript + stdio eval MCP. |
+| vis-timeline leftover copy on `/mission` comment | **Khadim** | `/judge` pending table no longer names it (Stephen backup 2026-08-26). Mission page comment remains. |
+| Orchestrator + Context Forge sentences on `/judge` step 5 | **Stephen backup** | FIXED 2026-08-26. Guard in `tests/test_judge_runtime_honesty.py`. |
 | 1.13 plan-mode transcript, 2.22 `lane-enforcement.md` | **Khadim** | Prize-bearing. |
 | GitHub auto-deploy still absent | **Khadim** | Manual `--prod` is the path. Do not write "auto-deploy" in judge-facing copy. |
 
@@ -163,7 +163,7 @@ Re-measured the same day at 21:17 UTC (report `/tmp/manifest-eval-live.json`, th
 
 | Item | Owner | Status |
 |---|---|---|
-| `/judge` "What is not wired yet" table still lists eval, solar, corpus, abstention as pending, plus the cut timeline | **Khadim** | STALE. The itinerary above that table tells the judge those surfaces exist. |
+| `/judge` "What is not wired yet" table still lists eval, solar, corpus, abstention as pending, plus the cut timeline | **Stephen backup** | FIXED 2026-08-26. Table now names watsonx credentials, 1.13, and 2.22. |
 | `.bob/custom_modes.yaml` said vis-timeline "is installed with zero imports" | **Stephen** | FIXED this session: the dep was removed in `2b46358`. |
 | `eval/mcp_server.py` module docstring described Context Forge as the running architecture | **Stephen** | FIXED this session: docstring now matches stdio-only. |
 | Video Beat 5 staged `docs/bob-evidence/lane-enforcement.md` and narrated it as inspectable | **Stephen** | FIXED this session: still skipped unless the file exists. |
@@ -177,20 +177,20 @@ Parent grep, not a Tylin-tree edit. File set: `git ls-files --cached --others --
 | Claim | Evidence this pass | Verdict |
 |---|---|---|
 | vis-timeline / @tanstack/react-table in package.json | absent from dependencies and devDependencies | still CLOSED as deps |
-| vis-timeline leftover copy | `app/mission/page.tsx:9`, `app/judge/page.tsx:418` | still Khadim |
+| vis-timeline leftover copy | `app/mission/page.tsx:9` only; `/judge` pending table cleared 2026-08-26 | remaining Khadim comment |
 | notices table | `docs/THIRD_PARTY_NOTICES.md` lines 14-15 still list both | still Tylin 3.8 |
 | web-push / VAPID / `app/api/push` / `deadline-check.yml` | none of those paths exist; `.env.example` has no VAPID | still CUT |
 | Playwright e2e | `@playwright/test` and `test:e2e` present; `tests/e2e` directory does not exist; `happy-dom` present, vitest env is `node` | still UNWIRED, Khadim |
 | shadcn | no `components.json`, no `components/ui/` | still NEVER INITIALISED |
-| Context Forge vs stdio MCP | `.bob/mcp.json` points at `eval.mcp_server` stdio; judge page step 5 still says Context Forge | still SPLIT, Khadim copy |
-| Orchestrator | `app/judge/page.tsx:356` | still STALE, Khadim |
-| inverted pending table | `app/judge/page.tsx:413-418` still lists eval, solar, citation, abstention, timeline as waiting | still STALE, Khadim |
+| Context Forge vs stdio MCP | `.bob/mcp.json` points at `eval.mcp_server` stdio; judge page step 5 now names stdio | FIXED 2026-08-26 (Stephen backup) |
+| Orchestrator | `app/judge/page.tsx` | FIXED 2026-08-26 (Stephen backup) |
+| inverted pending table | `/judge` pending now names watsonx credentials, 1.13, 2.22 | FIXED 2026-08-26 (Stephen backup) |
 | watsonx credentials | `gh secret list` empty; live runtime extractive | still Tylin 0.13 |
 | pyatmos pin / NOAA skill path / gitleaks fingerprint | unchanged from the earlier freeze section | still CLOSED |
 | Git auto-deploy | Stephen's Vercel team has no `manifest-web` project (Khadim owns the production alias); production is live via manual `--prod` | still Khadim |
 | elkjs / orbdetpy / ORBITM import | absent / gitignored vendor / `decay.py` uses pyatmos | still ABSENT / CUT FROM CODE |
 | `docs/THIRD_PARTY_NOTICES.md` Scan section says `.gitleaksignore` is empty | file now has fingerprint `1a9c419...:phase0-plan.md:generic-api-key:96` | STALE (Tylin 3.8). Same file as the vis-timeline rows. |
 | PLAN 2.8 said Surya "narrows the near-term end of that envelope" | shipped FACTS and `/api/solar` disclose the index is not applied | FIXED this pass in PLAN.md. Judge-facing README/JUDGE already honest. |
-| `/judge` StatusPanel renders `data.models` only, no `runtime` | `components/judge/StatusPanel.tsx` types no runtime; step 5 copy says the table "shows what is actually running" | STALE (Khadim). Curl `/api/status` is honest. The itinerary is not. |
-| `/judge` step 3: "Granite generation pipeline is scored" | fixtures and production are extractive; page never prints 53.6 | STALE (Khadim). FACTS and README are honest. |
-| `/judge` step 4 heading: "Solar verdict: live NOAA F10.7 plus Surya outlook" | live flux is not the verdict | STALE heading (Khadim). Body is more careful. |
+| `/judge` StatusPanel renders `data.models` only, no `runtime` | StatusPanel now renders `RuntimeCard` from `data.runtime`; AskPanel banners the same block | FIXED 2026-08-26 (Stephen backup). Guard: `tests/test_judge_runtime_honesty.py`. |
+| `/judge` step 3: "Granite generation pipeline is scored" | step 3 now points at FACTS eval_live and `runtime.generation_backend` | FIXED 2026-08-26 (Stephen backup). |
+| `/judge` step 4 heading: "Solar verdict: live NOAA F10.7 plus Surya outlook" | heading is now "Solar inputs"; body says the verdict uses the NOAA envelope, not Surya | FIXED 2026-08-26 (Stephen backup). |

@@ -157,7 +157,7 @@ customModes:
       the D3 copy string that the engine exposes as a flag.
     whenToUse: >
       Use this mode when building or debugging pages, layouts, UI components,
-      the dependency graph view, the timeline view, the citation panel, the
+      the dependency graph view, the citation panel, the
       abstention screen, the deadline banner, the PWA manifest, or the service
       worker. Switch away before touching engine/, eval/, services/, pipeline/,
       corpus/, mobile/, android/, or ios/.
@@ -171,11 +171,11 @@ customModes:
       feature not an error; (5) dense regulatory instrument aesthetic, no
       gradient-and-glass landing page energy; (6) name only what is wired.
       shadcn/ui was never initialised in this repo (no components.json, no
-      components/ui/, no radix or cva dependency) and vis-timeline is
-      installed with zero imports, so neither belongs in a Built With list or
-      in this file. This directory is committed as competition evidence and a
-      judge reads it, which makes a wrong claim here cost more than one in the
-      README, not less.
+      components/ui/, no radix or cva dependency). vis-timeline was cut from
+      package.json (PLAN 2.3) and was never imported. Neither belongs in a
+      Built With list or in this file. This directory is committed as
+      competition evidence and a judge reads it, which makes a wrong claim
+      here cost more than one in the README, not less.
     groups:
       - read
       - - edit

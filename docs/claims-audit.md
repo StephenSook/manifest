@@ -156,3 +156,13 @@ Post-3.7 tree, after Khadim's vis-timeline/tanstack removal and after production
 | Orchestrator + Context Forge sentences on `/judge` step 5 | **Khadim** | Reword to lane-enforcement transcript + stdio eval MCP. |
 | 1.13 plan-mode transcript, 2.22 `lane-enforcement.md` | **Khadim** | Prize-bearing. |
 | GitHub auto-deploy still absent | **Khadim** | Manual `--prod` is the path. Do not write "auto-deploy" in judge-facing copy. |
+
+### Added from the 2026-08-26 whole-repo grep (explore pass, then re-verified)
+
+| Item | Owner | Status |
+|---|---|---|
+| `/judge` "What is not wired yet" table still lists eval, solar, corpus, abstention as pending, plus the cut timeline | **Khadim** | STALE. The itinerary above that table tells the judge those surfaces exist. |
+| `.bob/custom_modes.yaml` said vis-timeline "is installed with zero imports" | **Stephen** | FIXED this session: the dep was removed in `2b46358`. |
+| `eval/mcp_server.py` module docstring described Context Forge as the running architecture | **Stephen** | FIXED this session: docstring now matches stdio-only. |
+| Video Beat 5 staged `docs/bob-evidence/lane-enforcement.md` and narrated it as inspectable | **Stephen** | FIXED this session: still skipped unless the file exists. |
+| `JUDGE.md` said TestFlight was "submitted 2026-08-24" while README said approved 2026-08-25 | **Stephen** | FIXED this session: JUDGE now matches the approved public link. |

@@ -59,7 +59,7 @@ Five write-scoped modes restrict Bob's write access to each team member's lane, 
 - **Web app:** [manifest-web-roan.vercel.app/mission](https://manifest-web-roan.vercel.app/mission)
 - **Judge page:** [manifest-web-roan.vercel.app/judge](https://manifest-web-roan.vercel.app/judge): numbered walkthrough, every claim reachable without login or key
 - **Status API:** [manifest-web-roan.vercel.app/api/status](https://manifest-web-roan.vercel.app/api/status): unauthenticated, recomputes violated-deadline days live, self-reports which models are actually running
-- **iOS:** build 1.0 (1) uploaded to App Store Connect, submitted for external TestFlight Beta App Review 2026-08-24
+- **iOS:** build 1.0 (1), approved by Apple in external Beta App Review on 2026-08-25. Public link: https://testflight.apple.com/join/huQrZpek
 
 If the network is down: `npm install && npm run test:engine` is the one-command deterministic proof.
 

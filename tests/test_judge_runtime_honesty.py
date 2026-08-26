@@ -70,9 +70,14 @@ def test_judge_page_does_not_claim_unwired_bob_layers() -> None:
 def test_judge_pending_table_names_real_gaps() -> None:
     text = _read(JUDGE_PAGE)
     assert "offline-extractive" in text
-    assert "lane-enforcement.md" in text
+    assert "Task 0.13" in text
+    assert "lane-enforcement.md is not yet committed" not in text
+    assert "Plan-mode transcript (task 1.13)" not in text
     assert "Task 1.3 (corpus freeze)" not in text
     assert "Task 2.3 (vis-timeline)" not in text
+    # Step 5 now points at the honesty logs, not at missing paths.
+    assert "docs/bob-evidence/lane-enforcement.md" in text
+    assert "docs/bob-evidence/plan-mode-critical-path.md" in text
 
 
 def test_video_script_parks_one_tap_and_prior_rules() -> None:

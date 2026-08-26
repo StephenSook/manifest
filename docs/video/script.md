@@ -200,7 +200,7 @@ Presenter narration: **Stephen** leads and closes. Tylin and Khadim narrate thei
 1. `.bob/custom_modes.yaml` open in Bob -- the five write-scoped modes visible
 2. One Bob custom mode in action -- the `regulatory-engine` mode refusing a file outside its scope
 3. Bobalytics screenshot showing session count
-4. Only if `docs/bob-evidence/lane-enforcement.md` exists at recording time: a write-scoped mode REFUSING a file outside its own fileRegex. If the file is still missing, skip this still. Do not show a path that is not in the repo.
+4. `docs/bob-evidence/lane-enforcement.md` plus `.bob/custom_modes.yaml`: Frontend fileRegex refusing `docs/architecture.svg`, Evidence Writer allowing it. Do not act a Bob chat that was never exported. The CI test is the proof.
 5. `eval/bank.jsonl` -- the 28-question bank
 6. CI green badge on the eval gate workflow
 7. Final frame: The Manifest /judge page loaded, the headline number visible, the mobile app TestFlight link and Firebase App Distribution link side by side
@@ -220,7 +220,7 @@ Presenter narration: **Stephen** leads and closes. Tylin and Khadim narrate thei
 - This beat is fast -- 25 seconds. Keep each screen cut snappy. This is the IBM Bob evidence montage, not a tutorial.
 - "192 tests" -- this is `FACTS.engine.test_count_total`, measured by running the suites, not hand-maintained. Re-read it from `docs/FACTS.json` immediately before recording; `python scripts/facts.py --check` fails if the file has drifted.
 - The Context Forge claim was CUT from this beat 2026-08-25: the eval MCP server is verified over stdio and wired to Bob, but the Context Forge gateway was never registered. Do not put it back unless task 3.2 lands.
-- Do not narrate a lane-enforcement transcript until `docs/bob-evidence/lane-enforcement.md` is committed. As of 2026-08-26 that file is not in the repo (2.22 still open, Khadim). Showing a missing path on camera is unfixable.
+- Lane-enforcement file is committed. Narrate the fileRegex and the CI test. Do not narrate a pasted Bob chat; none was exported. Plan-mode session was never captured: skip any still that pretends otherwise. Read `docs/bob-evidence/plan-mode-critical-path.md` before this beat.
 - The close "The sun decides if your satellite is legal. And now, so do you." is the Stakes Close pattern from the Sookra guide: it connects to the hook, states the product's core claim, and ends on a handoff to the judge (not "thank you for watching"). No ask for a prize. No call to action URL. This is async-judged -- the close is the line that stays in the room.
 - The mobile links (TestFlight + Firebase App Distribution) appear in the final frame. If the TestFlight external link is not approved by recording date (Aug 26 gate), show only the Firebase App Distribution link and the PWA install prompt. Never show a link that does not work during judging week.
 ---

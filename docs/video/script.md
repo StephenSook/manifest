@@ -25,6 +25,14 @@ A forensic pass over all 45 gallery submissions on 2026-08-25 found the demo vid
 6. **Measure the shipped file before it is final**: ffmpeg ebur128 integrated loudness in the -14 to -16 LUFS band, plus duration, resolution and frame rate against target. A frame-verified video is not a verified video.
 7. **Publish to a second public host and paste both links.** The rules require a publicly viewable video, and it is the single point of failure on the whole submission. Verify public availability from a logged-out browser, not from the account that uploaded it: `curl -s "https://www.youtube.com/oembed?url=<watch-url>&format=json"` returning HTTP 200 with a title is the check.
 8. **Do not narrate a claim the product refutes.** One rival's video promises a what-if simulation that its own API returns identical results for. Before recording any beat, run the exact interaction being described and watch it behave as narrated.
+9. **PARKED FOR RECORDING (steal 2): one seeded mission, no typing.** Beat 1 and Beat 2 open on the GT-1 seed already loaded at the production /judge URL. Do not type a launch-vehicle date, do not fill the mission form, do not type a Q&A question. Tap a suggested question or read the live /judge blocks. A tired judge gets a live loop in the first 15 seconds.
+10. **Captions on.** Burn captions in the cut, or enable YouTube CC before the link is pasted. Judges watch muted. Recurring from prior cycles; this event is async-judged.
+11. **oEmbed 200 is not playback.** After publish, require `playabilityStatus: "OK"` on the watch page, and scan for `Age-restricted`, `LOGIN_REQUIRED`, and "Sign in to confirm your age". Same organizer, July cycle: an age-gated video passed oEmbed and a logged-out judge could not watch it. Companion: `yt-dlp` "not available" can be bot-blocking, not a private video. Confirm in a logged-out Incognito window.
+12. **Pre-warm the production URL before rolling.** Hit https://manifest-web-roan.vercel.app/judge and GET /api/status once in the recording browser, then start. A Vercel cold start eating the first 30 seconds of a 3:00 film is unrecoverable.
+13. **Do not narrate Granite as the writer unless GET /api/status.runtime.generation_backend is `watsonx`.** If it is `offline-extractive`, Beat 4 says the extractive path over the committed corpus, cite-or-abstain still enforced, Guardian not running. A live NOAA app in this field claimed Granite in the video while production returned the fallback. Do not repeat that.
+14. **BeMyApp illustration field wants the YouTube ID, not the URL.** Confirm after paste by reload. Public FAQ as of 2026-08-26.
+15. **Audio stream must exist on the shipped file.** ffprobe must show an audio track. A silent screen recording is a fail. Rule 6's ebur128 measurement catches this if it actually runs.
+16. **One continuous uncut real-time execution window.** Somewhere in the cut there is input going in, the system visibly working, and the output coming back, with no cut inside that window. If Ask takes several seconds, the viewer watches those seconds. Open on the product, not a title card. Never AI-upscale the screen capture: re-capture at native resolution.
 
 ---
 
@@ -67,13 +75,13 @@ Presenter narration: **Stephen** leads and closes. Tylin and Khadim narrate thei
 
 ## Beat 2: The Product, Live (0:25 to 1:25) -- KHADIM narrates, Stephen may assist on split-screen context
 
-*Screen: Manifest web app. Khadim is at the keyboard. The GT-1 mission is pre-loaded.*
+*Screen: Manifest web app at the production /judge URL, already pre-warmed. The GT-1 mission is pre-loaded. No form, no typing.*
 
 **[KHADIM]**
 
-> "This is Manifest. A regulatory critical-path planner for university CubeSat programs. The GT-1 mission is already loaded. I'll enter the launch-vehicle determination date now."
+> "This is Manifest. A regulatory critical-path planner for university CubeSat programs. The GT-1 mission is already loaded. No login, no typing. The 97.207(g) dual clock is already open from the published launch-vehicle determination date."
 
-*[Khadim types the LV determination date. The 97.207(g) dual clock fires immediately. Two deadline lines appear on the dependency graph.]*
+*[The two deadline lines are already on the dependency graph. Khadim does not type.]*
 
 **[KHADIM]**
 
@@ -96,9 +104,10 @@ Presenter narration: **Stephen** leads and closes. Tylin and Khadim narrate thei
 ---
 **Director's note (Beat 2):**
 - Khadim is the demo driver. Every action should be deliberate, not rushed.
-- The "shouldn't be possible" moment is NOT this beat -- do not rush to it. This beat establishes that the product is real, wired, and running on real mission data.
+- Steal 2: no typing. The seed is the demo. If a date must change for Beat 3's solar swing, change it with a control that is already on screen, not by filling the mission form from scratch.
+- The "shouldn't be possible" moment is NOT this beat. Do not rush to it. This beat establishes that the product is real, wired, and running on real mission data.
 - The headline number (violated-deadline days) should be clearly visible on screen when Khadim says "live engine run."
-- If the Vercel deploy is not yet live when recording this beat, record against a local `npm run dev` with the note in the script to re-record after deploy.
+- Record against the production URL, pre-warmed. Do not record localhost.
 ---
 
 ## Beat 3: The Thing Nobody Else Has (1:25 to 2:05) -- STEPHEN, phone on desk
@@ -152,11 +161,13 @@ Presenter narration: **Stephen** leads and closes. Tylin and Khadim narrate thei
 
 ## Beat 4: Cite or Abstain (2:05 to 2:35) -- TYLIN
 
-*Screen: Manifest Q&A panel. A question is typed: "What is the IARU coordination deadline for a Part 97 amateur satellite?"*
+*Screen: Manifest Q&A panel. Tap a suggested question. Do not type. First tap: "What is the pre-space notification deadline under 47 CFR 97.207(g)(1)?"*
 
 **[TYLIN]**
 
-> "Every regulatory answer in Manifest is grounded in the corpus we built: Title 47 Parts 5, 25, and 97, Title 15 Part 960, and the FCC's own Part 100 order -- ingested via Docling, embedded with IBM Granite, and stored in a versioned SQLite bundle. IBM Granite answers the question. IBM Granite Guardian audits the answer before it ever reaches the screen."
+> "Every regulatory answer in Manifest is grounded in the corpus we built: Title 47 Parts 5, 25, and 97, Title 15 Part 960, and the FCC's own Part 100 order, ingested via Docling and stored in a versioned SQLite bundle."
+
+*[GATE: if GET /api/status.runtime.generation_backend is watsonx, add: "IBM Granite answers the question. IBM Granite Guardian audits the answer before it ever reaches the screen." If it is offline-extractive, say instead: "This deploy answers from the offline extractive path over that same corpus. Cite-or-abstain still holds. Guardian is not running until watsonx credentials land. The writer is printed on the panel."]*
 
 *[The answer appears with the citation: 47 CFR 97.207(c), with the AMDDATE of the ingested snapshot.]*
 
@@ -164,7 +175,7 @@ Presenter narration: **Stephen** leads and closes. Tylin and Khadim narrate thei
 
 > "The citation is pinned to the snapshot AMDDATE -- the exact version of the regulation that was verified when we built this. That is not decoration. That is the product's thesis: cite or abstain."
 
-*[Now type an abstention trap: "What are the fees for Part 100 applications?"]*
+*[Now tap the suggested question "When does Part 100 take effect?" Do not type.]*
 
 *[The product refuses. The abstention screen appears: "Part 100 was adopted July 22, 2026 (FCC 26-47). The effective date has not been announced. Part 25 remains binding today. Fee schedule for Part 100 is not yet established."]*
 
@@ -175,6 +186,8 @@ Presenter narration: **Stephen** leads and closes. Tylin and Khadim narrate thei
 ---
 **Director's note (Beat 4):**
 - Tylin narrates this beat because the corpus, RAG pipeline, and Guardian audit are his lane. His voice signals to judges that this is a real team with real division of labor.
+- Steal 2: tap suggested questions. Do not type.
+- Rule 13: do not say Granite is answering unless runtime.generation_backend is watsonx at record time.
 - The abstention trap answer must match the D3 verbatim line: "Part 100 was adopted July 22, 2026 (FCC 26-47). The effective date has not been announced. Part 25 remains binding today." Do not paraphrase.
 - The AMDDATE on the citation must be real. If Tylin's corpus has not shipped by recording date, cut the Q&A section and replace with: "The corpus is frozen and versioned. Every answer cites its source. Ask something the corpus cannot support and the product says exactly what is missing." (30 seconds flat narration over the abstention screen.)
 ---
@@ -230,13 +243,18 @@ Record beats out of order to minimize re-takes:
 
 ### Dry-run checklist before final recording
 - [ ] Vercel deploy is live and /judge page loads in under 3 seconds
-- [ ] GT-1 mission is pre-loaded (not requiring login)
+- [ ] Production URL pre-warmed in the recording browser (rule 12)
+- [ ] GET /api/status.runtime.generation_backend read; Beat 4 gated on it (rule 13)
+- [ ] GT-1 mission is pre-loaded (not requiring login); no typing in Beat 1 or 2 (rule 9)
+- [ ] Captions on in the cut or YouTube CC enabled (rule 10)
 - [ ] Local notification pre-armed on a real iOS or Android device
 - [ ] Decay table is current (`python scripts/facts.py --check` returns OK)
 - [ ] FACTS.json numbers match what Stephen will speak aloud
 - [ ] All spoken numbers spot-checked against `docs/FACTS.json`
 - [ ] TestFlight link or Firebase App Distribution link verified live
 - [ ] Backup recording of the full demo run exists on a separate device
+- [ ] After publish: oEmbed 200 AND playabilityStatus OK, Incognito playback, YouTube ID (not URL) pasted into BeMyApp (rules 11, 14)
+- [ ] ffprobe shows an audio stream; ebur128 in band (rules 6, 15)
 
 ### What to capture as features land (D12)
 Per PLAN.md D12, do not re-stage everything on Aug 28. Capture each beat the day it ships:

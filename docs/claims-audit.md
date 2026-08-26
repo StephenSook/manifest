@@ -106,3 +106,53 @@ between them.
 | `package.json` carries four dependencies with zero first-party references: `@tanstack/react-table`, `vis-timeline`, `@playwright/test`, `happy-dom` | **Khadim** | Cut them, or wire them. `docs/THIRD_PARTY_NOTICES.md` lists three as if in use |
 | `docs/bob-evidence/` is missing the plan-mode transcript (1.13) and the lane-enforcement transcript (2.22, was "Orchestrator" until Bob 2.0.3 was found to have no such mode) | **Khadim** | Both are named in the README evidence table, now marked "not yet committed". 2.22 is prize-bearing |
 | `app/judge/page.tsx` step 5 promises an Orchestrator transcript, and Bob 2.0.3 has no Orchestrator mode | **Khadim** | The sentence must be reworded, not waited on: verified by grep over `/Applications/IBM Bob.app` that the only `orchestrator` matches are inside TypeScript's own compiler files. Resolves when 2.22 lands as a lane-enforcement transcript. Steps 3 and 4 are now TRUE with no edit needed, because the artifacts they name were built rather than the sentences rewritten |
+
+## Freeze re-run, 2026-08-26 (Stephen, backup on 3.6)
+
+Post-3.7 tree, after Khadim's vis-timeline/tanstack removal and after production caught up. Grep set: `git ls-files --cached --others --exclude-standard`. No edits in Tylin's tree (`app/api/ask/**`, `corpus/**`, `pipeline/**` except decay, `.bob/skills/**`, `ci.yml`).
+
+### Closed since the 2026-08-25 handoff
+
+| Item | Was | Now |
+|---|---|---|
+| pyatmos / setuptools pin | Open, Tylin | CLOSED. `pipeline/pyproject.toml` declares `pyatmos==1.2.7` and `setuptools<81` (commit `60d2147`). |
+| gitleaks false positive | Open, Tylin | CLOSED. `.gitleaksignore` carries fingerprint `1a9c419...:phase0-plan.md:generic-api-key:96` (commit `ca261e0`). |
+| NOAA skill dead path | Open, Tylin | CLOSED. `.bob/skills/noaa-crsra/SKILL.md` points at `engine/graph.ts` and names the test file honestly (commit `d9b7865`). |
+| vis-timeline and `@tanstack/react-table` in package.json | Open, Khadim | CLOSED as dependencies. Both ABSENT from `package.json` (commit `2b46358`). Residual comments remain: `app/mission/page.tsx:9` and `app/judge/page.tsx:418` still name vis-timeline. Those files are Khadim's. |
+| Production `/api/ask` 503 / missing corpus / missing runtime | Open, Khadim | CLOSED as a content-check. 2026-08-26 live: `/api/status` 200 with `runtime` and AMDDATE span `2017-08-01 to 2026-08-18`, `/api/solar` 200, `POST /api/ask` 200 citing `97.207(g)(1)`. GitHub auto-deploy is still NOT connected. Manual `--prod` is what landed. |
+
+### Still true
+
+| Claim | Grep | Verdict |
+|---|---|---|
+| granite-4-h-small / guardian / granite-embedding | `app/api/ask/route.ts` | WIRED IN CODE, NOT CREDENTIALED. `gh secret list` is empty. Live `runtime`: `generation_backend=offline-extractive`, `embedding_backend=hashing-trick-768`, `guardian_audit=inactive`. |
+| hashing-trick-768 freeze | `corpus/schema.json`, `app/api/ask/lib.ts` | WIRED. What production actually embeds with. |
+| Surya-1.0 | `pipeline/surya_infer.py`, `/api/solar` | WIRED as a frozen artifact served by `/api/solar`. Not applied to the deorbit verdict. |
+| NOAA SWPC | `services/solar/fetch.ts` | WIRED |
+| pyatmos NRLMSISE-00 | `pipeline/decay.py` | WIRED |
+| eval MCP stdio | `.bob/mcp.json`, `eval/mcp_server.py` | WIRED |
+| Context Forge gateway | no registration, PLAN 3.2 parked | CUT FROM CLAIM. Judge page step 5 still says "via IBM Context Forge (task 3.2)". Khadim. |
+| web-push / `app/api/push` | no route, no `web-push` dep, no `deadline-check.yml` | CUT. PLAN 2.11 row was still ⬜; cut list item 1 already named it. |
+| ORBITM | `pipeline/orbitm_vendor/` gitignored, not imported by `decay.py` | CUT FROM CODE |
+| elkjs / orbdetpy | lockfiles | ABSENT |
+| shadcn/ui | no `components.json`, no `components/ui/` | NEVER INITIALISED. Not claimed on judge-facing docs. |
+| Playwright e2e | `@playwright/test` in package.json, `test:e2e` script, zero spec files | STILL UNWIRED. 3.9 open. happy-dom is also present and unused (`vitest.config.ts` environment is `node`). |
+| Orchestrator transcript | `app/judge/page.tsx:356` | STALE CLAIM. Bob 2.0.3 has no Orchestrator. Khadim. |
+| plan-mode + lane-enforcement transcripts | `docs/bob-evidence/` is three PNGs | MISSING. 1.13 and 2.22. Khadim. |
+
+### Live eval (4.3 half, Stephen)
+
+`python3 eval/runner.py --mode url --url https://manifest-web-roan.vercel.app --min-score 0` on 2026-08-26: **15/28 (53.6 percent), 6/6 traps abstaining**. Same passing ids as the committed fixtures. Recorded in `docs/FACTS.json` as `eval_live` (separate from the clone-reproducible `eval` fixtures block). Production runtime at measurement: offline-extractive, hashing-trick-768, guardian inactive. The 90 percent bar still belongs to a credentialed watsonx path (0.13).
+
+### Still open, out of Stephen's lane
+
+| Item | Owner | What is needed |
+|---|---|---|
+| watsonx 0.13: models return 200, credentials in Vercel | **Tylin** | `WATSONX_*` are not in GitHub secrets and live runtime is extractive. Do not claim Granite generation is running. |
+| `services/solar` vitest suite is not in `ci.yml` (eval-gate covers `tests/` pytest and facts.py) | **Tylin** | Add the services project to a CI job, or confirm `npm run test` already covers it and wire that job. |
+| `docs/THIRD_PARTY_NOTICES.md` still lists vis-timeline and `@tanstack/react-table` | **Tylin** (task 3.8) | Drop the rows. package.json no longer carries them. |
+| Playwright e2e / happy-dom leftover | **Khadim** | Wire 3.9 or cut the dep and the `test:e2e` script. |
+| vis-timeline leftover copy on `/mission` comment and `/judge` pending table | **Khadim** | 2.3 is cut. |
+| Orchestrator + Context Forge sentences on `/judge` step 5 | **Khadim** | Reword to lane-enforcement transcript + stdio eval MCP. |
+| 1.13 plan-mode transcript, 2.22 `lane-enforcement.md` | **Khadim** | Prize-bearing. |
+| GitHub auto-deploy still absent | **Khadim** | Manual `--prod` is the path. Do not write "auto-deploy" in judge-facing copy. |

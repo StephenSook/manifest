@@ -14,7 +14,7 @@ When `imagingEarth: false`, no Part 960 node appears in the graph.
 
 ## Why NOAA Comes Before FCC
 
-The FCC will not grant a satellite license for a remote sensing mission until NOAA has issued its CRSRA license. This is enforced in engine interlock `engine/interlocks/noaa-precedes-fcc.ts` (task 1.9). The NOAA license node is a prerequisite of the FCC grant node when `imagingEarth` is true.
+The FCC will not grant a satellite license for a remote sensing mission until NOAA has issued its CRSRA license. This is enforced in `engine/graph.ts` (task 1.9), where the `noaa-crsra-license` to `fcc-grant` edge is added only when `imagingEarth` is true, so the NOAA license node becomes a hard prerequisite of the FCC grant node. The regression test carries the name `engine/interlocks/__tests__/noaa-precedes-fcc.test.ts`; there is no interlock source file of that name, and this line used to point at one.
 
 ## Key Sections
 

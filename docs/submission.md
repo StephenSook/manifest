@@ -68,7 +68,7 @@ Watching that verdict flip is the thing we would ask a judge to look at, because
 
 The August theme asks for solutions that move space exploration from data-heavy to insight-driven and that make space more accessible. Manifest takes the rawest regulatory text there is, the eCFR bulk XML for Title 47 Parts 5, 25 and 97 plus Title 15 Part 960, and turns it into one dated answer: which of your deadlines are already dead, and what you file first. Accessibility is the whole point of the user: university teams without licensing counsel, in a field where about 40% of manifested university-class missions fail to achieve any primary objective.
 
-The real-world half of this criterion is the headline the deployment recomputes on every request: **[FACTS: headline.deadline_violations_days] days of already-violated regulatory deadline** on the seeded GT-1 mission profile, across [FACTS: headline.violated_node_count] of [FACTS: headline.node_count] nodes, computed in [FACTS: headline.compute_ms] milliseconds. NASA's CubeSat 101 (2017) budgets 4 to 6 months for licensing and the FCC requires a minimum of 90 days from application receipt. Manifest tells one specific team which of their specific deadlines are gone, today, with the paragraph of regulation that says so.
+The real-world half of this criterion is the headline the deployment recomputes on every request: **161 days of already-violated regulatory deadline** on the seeded GT-1 mission profile, across 10 of 10 nodes, computed in 1 millisecond. NASA's CubeSat 101 (2017) budgets 4 to 6 months for licensing and the FCC requires a minimum of 90 days from application receipt. Manifest tells one specific team which of their specific deadlines are gone, today, with the paragraph of regulation that says so.
 
 The incentive is inside the loop and it is concrete: a team that runs this gets a filing order and a dated deadline list they can act on the same afternoon, without hiring the consultant that the interviewed program could only afford because a NASA award paid for it.
 
@@ -88,9 +88,9 @@ Feasibility is one command from a fresh clone:
 npm ci && npm run test:engine
 ```
 
-[FACTS: engine.test_count] engine and mobile tests plus [FACTS: engine.ask_route_test_count] ask-route tests, no network, no keys. The regulatory interlocks are unit-tested individually: the 97.207(g) dual clock, the NOAA-before-FCC ordering, IARU before Part 97, ITU publication lead time, and delivery as the hard wall.
+111 engine and mobile tests (`npm run test:engine`). 81 ask-route tests (`npm run test:ask`). No network, no keys. The regulatory interlocks are unit-tested individually: the 97.207(g) dual clock, the NOAA-before-FCC ordering, IARU before Part 97, ITU publication lead time, and delivery as the hard wall.
 
-The correctness bar is a committed eval bank of 28 regulatory questions and 6 abstention traps, run in CI on every push against committed fixtures with no network and no key, with a ratchet that fails the build on any regression and a per-question baseline that fails if a previously passing question stops passing. [FACTS: eval sentence, filled after the scored run.] The eval runner is also exposed to IBM Bob as an MCP tool over stdio, so the agent that wrote the engine can score it.
+The correctness bar is a committed eval bank of 28 regulatory questions and 6 abstention traps, run in CI on every push against committed fixtures with no network and no key, with a ratchet that fails the build on any regression and a per-question baseline that fails if a previously passing question stops passing. Today that suite scores 53.6 percent on the offline extractive path with all 6 abstention traps holding. The same score was measured against the live URL on 2026-08-26. The eval runner is also exposed to IBM Bob as an MCP tool over stdio, so the agent that wrote the engine can score it.
 
 Honesty is part of the engineering, not a disclaimer at the end. Durations are labeled DOCUMENTED with a source or ESTIMATED with a basis, never presented as fact when they are folklore. When the corpus cannot support an answer, the product abstains and names exactly what is missing, and six traps in the eval bank fail the build if it ever answers one of them instead. A regulatory tool that guesses confidently is worse than no tool, so this one is built to refuse.
 
@@ -114,11 +114,11 @@ The eval bank, 28 regulatory questions with exact expected citations plus 6 abst
 
 | Surface | Link |
 |---|---|
-| Live demo | `https://[DEPLOY-URL]` (no login, no key) |
-| Judge walkthrough | `https://[DEPLOY-URL]/judge` and `JUDGE.md` in the repo |
-| Verify in one command | `curl https://[DEPLOY-URL]/api/status` |
+| Live demo | `https://manifest-web-roan.vercel.app` (no login, no key) |
+| Judge walkthrough | `https://manifest-web-roan.vercel.app/judge` and `JUDGE.md` in the repo |
+| Verify in one command | `curl https://manifest-web-roan.vercel.app/api/status` |
 | Repo | `https://github.com/StephenSook/manifest` |
-| Video | `[YOUTUBE-URL]` |
+| Video | `[YOUTUBE-URL]` (still unmade) |
 | iOS | https://testflight.apple.com/join/huQrZpek (approved by Apple in external Beta App Review, 2026-08-25) |
 | Android (direct APK, no sign-in) | `https://github.com/StephenSook/manifest/releases/tag/v1.0-beta.1` |
 | Android (Firebase App Distribution, Google sign-in required) | `https://appdistribution.firebase.dev/i/2adff092da3659d7` |
@@ -130,15 +130,15 @@ The eval bank, 28 regulatory questions with exact expected citations plus 6 abst
 
 ## Fill-at-freeze checklist
 
-- [ ] Replace every `[FACTS: ...]` from a fresh `scripts/facts.py` run. Never by hand.
+- [x] Replace every `[FACTS: ...]` from the 2026-08-26 `scripts/facts.py` run (headline 161, 111+81 tests, eval 53.6 percent / 6 of 6 traps). Never by hand.
 - [x] Beneficiary figures resolved to primary sources 2026-08-16 (Swartwout and Jayne SmallSat 2016; CubeSat 101 2017). The "full year for licensing" research-pack claim was cut: the primary says 4 to 6 months.
 - [x] Restructured against the four binding criteria 2026-08-25, and the two IBM Bob prize sections added.
 - [x] Claim audit against shipped code 2026-08-25: the Granite generation, Guardian audit and embedding claims now state the credential condition and point at the runtime self-report; the Context Forge claim is reduced to the stdio MCP server that is actually verified; the engine test count and headline number are `[FACTS: ...]` placeholders rather than stale literals.
 - [x] Corpus claim re-checked the same afternoon after Tylin committed the frozen bundle (`564dc22`): the corpus now genuinely ships in the repository and is traced into the deployed function, so that claim is restored and strengthened.
-- [ ] **Verify `POST /api/ask` returns 200 with a citation on the LIVE url before submitting.** As of 2026-08-25 10:50 ET production still served the pre-fix build and returned 503. The repo is correct; the deploy had not caught up.
-- [ ] Re-run the claim audit after the corpus lands, and upgrade the watsonx sentences if credentials are in place by the freeze.
-- [ ] Replace `[DEPLOY-URL]`, `[YOUTUBE-URL]`, and the TestFlight link with live ones and click each from a logged-out browser.
-- [ ] Confirm the eval sentence states the real score verbatim.
+- [x] **Verify `POST /api/ask` returns 200 with a citation on the LIVE url.** 2026-08-26: 200, cites 97.207(g)(1), URL eval 15/28 (53.6 percent) with 6/6 traps.
+- [x] Claim audit freeze re-run 2026-08-26 in `docs/claims-audit.md`. watsonx credentials still unset; do not upgrade those sentences.
+- [x] Deploy URL and TestFlight link filled. `[YOUTUBE-URL]` remains empty until the video exists.
+- [x] Eval sentence states 53.6 percent with all 6 traps holding.
 - [ ] Confirm every field on the platform page is 255 characters or under where the form silently truncates, and verify each save by a full page reload.
 - [ ] Ask the validator for per-surface consent or keep the paraphrase fully anonymized as written.
 - [ ] Em-dash and AI-tone sweep (4.6) over this file.

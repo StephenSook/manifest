@@ -1,0 +1,117 @@
+{
+  "_meta": {
+    "purpose": "Named scenario stories for the judge surface. Each one is a real MissionInput run through the real engine at request time, never a stored result. The set exists so a judge can see the range of the engine in about a minute without typing anything, and so no screen can ever show an empty state.",
+    "rule": "Every scenario must end somewhere DIFFERENT. A set of buttons that all produce the same verdict reads as one hardcoded answer and costs the credibility of the one that matters. engine/__tests__/scenarios.test.ts asserts the outcomes actually differ.",
+    "provenance": "Orbits and ballistic coefficients are drawn from the same NRLMSISE-00 decay table the verdict uses (data/decay-table.json). Dates are illustrative and are labelled as such: these are worked examples of the regulatory clocks, not records of real missions. The one real seeded mission is GT-1 in data/missions/gt-1.json."
+  },
+  "scenarios": [
+    {
+      "id": "disposal-clear-schedule-tight",
+      "name": "Disposal is fine, the schedule is not",
+      "demonstrates": "The two axes come apart. At 400 km the satellite reenters well inside the FCC five-year limit, so disposal is clear, and the licensing campaign is still late enough that regulatory deadlines are violated. Passing one test is not passing the other.",
+      "interlock": "baseline",
+      "mission": {
+        "launchDate": "2027-06-15",
+        "deliveryDate": "2027-04-20",
+        "lvDeterminationDate": "2026-09-01",
+        "integrationDate": "2027-05-10",
+        "pathway": "part-97-amateur",
+        "frequencyMHz": 437.525,
+        "imagingEarth": false,
+        "apogeeKm": 400,
+        "perigeeKm": 400,
+        "ballisticCoefficient": 120
+      }
+    },
+    {
+      "id": "solar-swing",
+      "name": "Same orbit, opposite legal answer",
+      "demonstrates": "The differentiator. At 550 km the same satellite is compliant near solar maximum and non-compliant near solar minimum, so the launch window decides the legal outcome rather than the design.",
+      "interlock": "deorbit-compliance",
+      "mission": {
+        "launchDate": "2027-06-15",
+        "deliveryDate": "2027-04-20",
+        "lvDeterminationDate": "2026-09-01",
+        "integrationDate": "2027-05-10",
+        "pathway": "part-97-amateur",
+        "frequencyMHz": 437.525,
+        "imagingEarth": false,
+        "apogeeKm": 550,
+        "perigeeKm": 550,
+        "ballisticCoefficient": 180
+      }
+    },
+    {
+      "id": "imaging-mission",
+      "name": "A camera puts NOAA in front of the FCC",
+      "demonstrates": "Imaging Earth makes the NOAA CRSRA licence a hard predecessor of FCC grant, adding a 60-day statutory clock that most planning tools never surface.",
+      "interlock": "noaa-precedes-fcc",
+      "mission": {
+        "launchDate": "2027-03-01",
+        "deliveryDate": "2027-01-10",
+        "lvDeterminationDate": "2026-09-05",
+        "integrationDate": "2027-02-01",
+        "pathway": "part-5-experimental",
+        "frequencyMHz": 2250,
+        "imagingEarth": true,
+        "apogeeKm": 500,
+        "perigeeKm": 500,
+        "ballisticCoefficient": 150
+      }
+    },
+    {
+      "id": "lv-undetermined",
+      "name": "No launch vehicle yet",
+      "demonstrates": "Without a launch-vehicle determination the 47 CFR 97.207(g) dual clock cannot start, so the pre-space notification window is undefined and the campaign has no anchor.",
+      "interlock": "lv-determination",
+      "mission": {
+        "launchDate": "2027-02-15",
+        "deliveryDate": "2026-12-20",
+        "lvDeterminationDate": null,
+        "integrationDate": "2027-01-10",
+        "pathway": "part-97-amateur",
+        "frequencyMHz": 437.525,
+        "imagingEarth": false,
+        "apogeeKm": 450,
+        "perigeeKm": 450,
+        "ballisticCoefficient": 140
+      }
+    },
+    {
+      "id": "high-orbit",
+      "name": "Above 600 km, the propulsion decision",
+      "demonstrates": "At 700 km atmospheric drag alone will not bring the satellite down inside five years, so the mission needs propulsion or a drag device before the FCC will grant.",
+      "interlock": "orbit-rework",
+      "mission": {
+        "launchDate": "2027-05-01",
+        "deliveryDate": "2027-03-05",
+        "lvDeterminationDate": "2026-09-01",
+        "integrationDate": "2027-03-25",
+        "pathway": "part-25",
+        "frequencyMHz": 8200,
+        "imagingEarth": false,
+        "apogeeKm": 700,
+        "perigeeKm": 700,
+        "ballisticCoefficient": 180
+      }
+    },
+    {
+      "id": "delivery-wall",
+      "name": "Delivery is in ten weeks",
+      "demonstrates": "The launch provider's delivery date is a hard wall. With the campaign started late, multiple regulatory nodes are already past their latest start and the mission is heading for demanifest.",
+      "interlock": "delivery-wall",
+      "mission": {
+        "launchDate": "2026-12-20",
+        "deliveryDate": "2026-11-05",
+        "lvDeterminationDate": "2026-08-20",
+        "integrationDate": "2026-11-20",
+        "pathway": "part-97-amateur",
+        "frequencyMHz": 437.525,
+        "imagingEarth": false,
+        "apogeeKm": 520,
+        "perigeeKm": 520,
+        "ballisticCoefficient": 160
+      }
+    }
+  ]
+}

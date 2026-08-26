@@ -144,6 +144,8 @@ Post-3.7 tree, after Khadim's vis-timeline/tanstack removal and after production
 
 `python3 eval/runner.py --mode url --url https://manifest-web-roan.vercel.app --min-score 0` on 2026-08-26: **15/28 (53.6 percent), 6/6 traps abstaining**. Same passing ids as the committed fixtures. Recorded in `docs/FACTS.json` as `eval_live` (separate from the clone-reproducible `eval` fixtures block). Production runtime at measurement: offline-extractive, hashing-trick-768, guardian inactive. The 90 percent bar still belongs to a credentialed watsonx path (0.13).
 
+Re-measured the same day at 21:17 UTC (report `/tmp/manifest-eval-live.json`, then `scripts/facts.py --live-report`). Score, trap count, passing ids, and runtime block were unchanged. `gh secret list` on `StephenSook/manifest` is still empty. Content-check (not status-code-check) of production: `/api/status` 200 with `deadline_violations_days=161` and AMDDATE `2017-08-01 to 2026-08-18`; `/api/solar` 200 with `f107_live` and `surya_outlook`; `POST /api/ask` 200 citing `97.207(g)(1)` with `audited=false`.
+
 ### Still open, out of Stephen's lane
 
 | Item | Owner | What is needed |
@@ -166,3 +168,24 @@ Post-3.7 tree, after Khadim's vis-timeline/tanstack removal and after production
 | `eval/mcp_server.py` module docstring described Context Forge as the running architecture | **Stephen** | FIXED this session: docstring now matches stdio-only. |
 | Video Beat 5 staged `docs/bob-evidence/lane-enforcement.md` and narrated it as inspectable | **Stephen** | FIXED this session: still skipped unless the file exists. |
 | `JUDGE.md` said TestFlight was "submitted 2026-08-24" while README said approved 2026-08-25 | **Stephen** | FIXED this session: JUDGE now matches the approved public link. |
+| PLAN 1.18 notes still name "the VAPID pair" and KV because 2.11 "declares durable subscription storage mandatory" | **Stephen PLAN / Khadim 1.18** | STALE vs the 2.11 cut. `.env.example` already has no VAPID. PLAN notes should drop VAPID/KV; remaining 1.18 work is WATSONX_* in Khadim's Vercel project (Tylin supplies the values) plus optional Blob. |
+
+### Freeze re-verify, 2026-08-26 later (Stephen, backup on 3.6/4.3)
+
+Parent grep, not a Tylin-tree edit. File set: `git ls-files --cached --others --exclude-standard`. PDF count: 0.
+
+| Claim | Evidence this pass | Verdict |
+|---|---|---|
+| vis-timeline / @tanstack/react-table in package.json | absent from dependencies and devDependencies | still CLOSED as deps |
+| vis-timeline leftover copy | `app/mission/page.tsx:9`, `app/judge/page.tsx:418` | still Khadim |
+| notices table | `docs/THIRD_PARTY_NOTICES.md` lines 14-15 still list both | still Tylin 3.8 |
+| web-push / VAPID / `app/api/push` / `deadline-check.yml` | none of those paths exist; `.env.example` has no VAPID | still CUT |
+| Playwright e2e | `@playwright/test` and `test:e2e` present; `tests/e2e` directory does not exist; `happy-dom` present, vitest env is `node` | still UNWIRED, Khadim |
+| shadcn | no `components.json`, no `components/ui/` | still NEVER INITIALISED |
+| Context Forge vs stdio MCP | `.bob/mcp.json` points at `eval.mcp_server` stdio; judge page step 5 still says Context Forge | still SPLIT, Khadim copy |
+| Orchestrator | `app/judge/page.tsx:356` | still STALE, Khadim |
+| inverted pending table | `app/judge/page.tsx:413-418` still lists eval, solar, citation, abstention, timeline as waiting | still STALE, Khadim |
+| watsonx credentials | `gh secret list` empty; live runtime extractive | still Tylin 0.13 |
+| pyatmos pin / NOAA skill path / gitleaks fingerprint | unchanged from the earlier freeze section | still CLOSED |
+| Git auto-deploy | Stephen's Vercel team has no `manifest-web` project (Khadim owns the production alias); production is live via manual `--prod` | still Khadim |
+| elkjs / orbdetpy / ORBITM import | absent / gitignored vendor / `decay.py` uses pyatmos | still ABSENT / CUT FROM CODE |

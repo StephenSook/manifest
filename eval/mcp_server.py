@@ -1,15 +1,14 @@
 """
 eval/mcp_server.py
 
-Task 3.2: the eval runner exposed as an MCP tool, registered through IBM
-Context Forge (mcp-contextforge-gateway) so Bob can invoke the regression
-suite during development.
+Task 3.2: the eval runner exposed as a stdio MCP tool so Bob can invoke
+the regression suite during development.
 
 Architecture:
-  This file is a plain stdio MCP server (FastMCP). Context Forge runs as a
-  local gateway on port 4444 with JWT auth and federates this server; Bob
-  bridges to the gateway via mcpgateway.wrapper using MCP_SERVER_URL and an
-  MCP_AUTH bearer token (see .bob/mcp.json, credentials never committed).
+  This file is a plain stdio FastMCP server. .bob/mcp.json points Bob at
+  it with an empty env. The Context Forge gateway (mcp-contextforge-gateway
+  on port 4444) was never registered; do not claim it. PLAN 3.2 is parked
+  at stdio.
 
 Run standalone (stdio):
   .venv-forge/bin/python -m eval.mcp_server

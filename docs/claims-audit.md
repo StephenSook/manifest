@@ -168,7 +168,7 @@ Re-measured the same day at 21:17 UTC (report `/tmp/manifest-eval-live.json`, th
 | `eval/mcp_server.py` module docstring described Context Forge as the running architecture | **Stephen** | FIXED this session: docstring now matches stdio-only. |
 | Video Beat 5 staged `docs/bob-evidence/lane-enforcement.md` and narrated it as inspectable | **Stephen** | FIXED this session: still skipped unless the file exists. |
 | `JUDGE.md` said TestFlight was "submitted 2026-08-24" while README said approved 2026-08-25 | **Stephen** | FIXED this session: JUDGE now matches the approved public link. |
-| PLAN 1.18 notes still name "the VAPID pair" and KV because 2.11 "declares durable subscription storage mandatory" | **Stephen PLAN / Khadim 1.18** | STALE vs the 2.11 cut. `.env.example` already has no VAPID. PLAN notes should drop VAPID/KV; remaining 1.18 work is WATSONX_* in Khadim's Vercel project (Tylin supplies the values) plus optional Blob. |
+| PLAN 1.18 notes still name "the VAPID pair" and KV because 2.11 "declares durable subscription storage mandatory" | **Stephen PLAN / Khadim 1.18** | FIXED this pass: PLAN notes drop VAPID/KV. Remaining 1.18 work is WATSONX_* in Khadim's Vercel project (Tylin supplies the values) plus optional Blob. |
 
 ### Freeze re-verify, 2026-08-26 later (Stephen, backup on 3.6/4.3)
 
@@ -189,3 +189,5 @@ Parent grep, not a Tylin-tree edit. File set: `git ls-files --cached --others --
 | pyatmos pin / NOAA skill path / gitleaks fingerprint | unchanged from the earlier freeze section | still CLOSED |
 | Git auto-deploy | Stephen's Vercel team has no `manifest-web` project (Khadim owns the production alias); production is live via manual `--prod` | still Khadim |
 | elkjs / orbdetpy / ORBITM import | absent / gitignored vendor / `decay.py` uses pyatmos | still ABSENT / CUT FROM CODE |
+| `docs/THIRD_PARTY_NOTICES.md` Scan section says `.gitleaksignore` is empty | file now has fingerprint `1a9c419...:phase0-plan.md:generic-api-key:96` | STALE (Tylin 3.8). Same file as the vis-timeline rows. |
+| PLAN 2.8 said Surya "narrows the near-term end of that envelope" | shipped FACTS and `/api/solar` disclose the index is not applied | FIXED this pass in PLAN.md. Judge-facing README/JUDGE already honest. |

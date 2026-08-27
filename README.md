@@ -117,7 +117,7 @@ flowchart TB
   end
 
   subgraph engine["Engine: pure TypeScript, no network"]
-    graph["engine/graph.ts\nnodes depend on pathway"]
+    graphTs["engine/graph.ts\nnodes depend on pathway"]
     cp["engine/critical-path.ts"]
     interlocks["engine/interlocks/\ndeorbit, 97.207(g), rework"]
   end
@@ -143,12 +143,12 @@ flowchart TB
   outlook -.-> solar
   corpus -.-> ask
   noaa --> solar
-  status --> graph
-  graph --> cp
-  interlocks --> graph
+  status --> graphTs
+  graphTs --> cp
+  interlocks --> graphTs
   mission --> store
   store --> depGraph
-  depGraph -.-> graph
+  depGraph -.-> graphTs
   mission --> panels
   panels --> ask
   judge --> status

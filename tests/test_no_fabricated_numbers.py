@@ -624,6 +624,45 @@ class TestEvalScoreIsPublishedAndConsistent:
             )
 
 
+class TestHeadlineClaimsMatchFacts:
+    """Time-varying headline claims must match the latest engine run."""
+
+    patterns = (
+        re.compile(r"\b(\d+)\s+days?\s+of\s+already-violated\b", re.IGNORECASE),
+        re.compile(r"\bheadline\s+(\d+)\b", re.IGNORECASE),
+    )
+
+    @classmethod
+    def claims(cls, text: str) -> list[int]:
+        return [
+            int(match.group(1))
+            for pattern in cls.patterns
+            for match in pattern.finditer(text)
+        ]
+
+    def test_real_submission_phrasings_are_detected(self):
+        assert self.claims("162 days of already-violated regulatory deadline") == [162]
+        assert self.claims("headline 162, 116+81 tests") == [162]
+
+    def test_judge_facing_headline_claims_match_facts(self):
+        measured = load_facts()["headline"]["deadline_violations_days"]
+        found: list[tuple[str, int]] = []
+        for surface in COUNT_CLAIM_SURFACES:
+            text = (REPO_ROOT / surface).read_text(encoding="utf-8")
+            found.extend((surface, value) for value in self.claims(text))
+
+        assert found, (
+            "No time-varying headline claim was detected on any judge-facing "
+            "surface. Update the guard when the published phrasing changes."
+        )
+        for surface, value in found:
+            assert value == measured, (
+                f"{surface} states a {value}-day headline where FACTS.json "
+                f"measured {measured}. Run scripts/facts.py, then update every "
+                "published headline claim before recording or submission."
+            )
+
+
 
 # ---------------------------------------------------------------------------
 # Test 7: the guard must catch the phrasings actually used, not phrasings

@@ -190,13 +190,25 @@ function getWatsonxConfig() {
   return { apiKey, projectId, url: `https://${region}.ml.cloud.ibm.com` };
 }
 
-async function embedQueryWatsonx(question: string): Promise<Float32Array> {
+// The SDK's authenticate() contract requires a real Authenticator instance;
+// a plain { apikey } object fails at request time with
+// "this.authenticator.authenticate is not a function".
+async function watsonxClient() {
   const { WatsonXAI } = await import('@ibm-cloud/watsonx-ai');
+  const { IamAuthenticator } = await import('ibm-cloud-sdk-core');
   const cfg = getWatsonxConfig();
-  const client = WatsonXAI.newInstance({
-    serviceUrl: cfg.url,
-    authenticator: { apikey: cfg.apiKey } as never,
-  });
+  return {
+    cfg,
+    client: WatsonXAI.newInstance({
+      serviceUrl: cfg.url,
+      version: '2024-03-14',
+      authenticator: new IamAuthenticator({ apikey: cfg.apiKey }),
+    }),
+  };
+}
+
+async function embedQueryWatsonx(question: string): Promise<Float32Array> {
+  const { cfg, client } = await watsonxClient();
   const resp = await client.embedText({
     projectId: cfg.projectId,
     modelId: 'ibm/granite-embedding-278m-multilingual',
@@ -215,12 +227,7 @@ async function generateAnswer(
   citations: Citation[];
   unresolvedRefs?: string[];
 }> {
-  const { WatsonXAI } = await import('@ibm-cloud/watsonx-ai');
-  const cfg = getWatsonxConfig();
-  const client = WatsonXAI.newInstance({
-    serviceUrl: cfg.url,
-    authenticator: { apikey: cfg.apiKey } as never,
-  });
+  const { cfg, client } = await watsonxClient();
 
   const context = contextChunks
     .map((c, i) => {
@@ -247,7 +254,10 @@ Answer (cite every claim with its CFR section and AMDDATE):`;
     input: prompt,
     parameters: { max_new_tokens: 512, temperature: 0 },
   });
-  const rawAnswer = resp.result.results[0].generated_text.trim();
+  // Chat-tuned Granite can prefix its role marker ("assistant") to the text.
+  const rawAnswer = resp.result.results[0].generated_text
+    .trim()
+    .replace(/^assistant\s*:?\s*/i, '');
 
   // Citation resolution (hard rule 1: cite or abstain). CFR references in
   // the answer are parsed canonically and resolved to retrieved chunks by
@@ -303,12 +313,7 @@ async function runGuardianAudit(
   answer: string,
   context: string,
 ): Promise<{ passed: boolean; reason?: string }> {
-  const { WatsonXAI } = await import('@ibm-cloud/watsonx-ai');
-  const cfg = getWatsonxConfig();
-  const client = WatsonXAI.newInstance({
-    serviceUrl: cfg.url,
-    authenticator: { apikey: cfg.apiKey } as never,
-  });
+  const { cfg, client } = await watsonxClient();
 
   const guardianPrompt = `You are a regulatory compliance auditor. Check whether the Answer is fully supported by the Context. Respond with exactly one word: PASS or FAIL.
 
@@ -327,7 +332,9 @@ Audit result (PASS or FAIL):`;
     parameters: { max_new_tokens: 8, temperature: 0 },
   });
   const result = resp.result.results[0].generated_text.trim().toUpperCase();
-  const passed = result.startsWith('PASS');
+  // Guardian can glue its chat-role marker to the verdict ("ASSISTANTPASS"),
+  // so parse by verdict token. FAIL anywhere wins, and neither fails closed.
+  const passed = !result.includes('FAIL') && result.includes('PASS');
   return { passed, reason: passed ? undefined : `Guardian audit: ${result}` };
 }
 

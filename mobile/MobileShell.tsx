@@ -23,9 +23,14 @@ import { App } from '@capacitor/app';
 import { Network } from '@capacitor/network';
 import type { PluginListenerHandle } from '@capacitor/core';
 import { loadMission } from '../lib/store';
+import { installNativeLayout } from './native-layout';
 import { syncDeadlineNotifications } from './notifications';
 
 const TAB_BAR_HEIGHT = '52px';
+const OFFLINE_STRIP_HEIGHT = '30px';
+const SAFE_BOTTOM = 'var(--manifest-safe-area-bottom, 0px)';
+const SAFE_LEFT = 'var(--manifest-safe-area-left, 0px)';
+const SAFE_RIGHT = 'var(--manifest-safe-area-right, 0px)';
 
 export function MobileShell() {
   const [native, setNative] = useState(false);
@@ -34,9 +39,20 @@ export function MobileShell() {
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
+    const uninstallNativeLayout = installNativeLayout(document);
     setNative(true);
 
     const handles: PluginListenerHandle[] = [];
+    let disposed = false;
+    const trackHandle = (promise: Promise<PluginListenerHandle>) => {
+      void promise.then((handle) => {
+        if (disposed) {
+          void handle.remove();
+        } else {
+          handles.push(handle);
+        }
+      });
+    };
 
     // Device-local instant: this adapter layer runs only at runtime on the
     // device, never during SSR or tests (schedule.ts takes now as input).
@@ -77,25 +93,31 @@ export function MobileShell() {
     const onMissionChange = () => void sync();
     window.addEventListener('manifest:mission-changed', onMissionChange);
 
-    void App.addListener('resume', () => void sync()).then((h) =>
-      handles.push(h),
-    );
+    trackHandle(App.addListener('resume', () => void sync()));
 
     // Android hardware back button. iOS ignores this listener.
-    void App.addListener('backButton', ({ canGoBack }) => {
-      if (canGoBack) {
-        window.history.back();
-      } else {
-        void App.minimizeApp();
-      }
-    }).then((h) => handles.push(h));
+    trackHandle(
+      App.addListener('backButton', ({ canGoBack }) => {
+        if (canGoBack) {
+          window.history.back();
+        } else {
+          void App.minimizeApp();
+        }
+      }),
+    );
 
-    void Network.getStatus().then((s) => setOffline(!s.connected));
-    void Network.addListener('networkStatusChange', (s) =>
-      setOffline(!s.connected),
-    ).then((h) => handles.push(h));
+    void Network.getStatus().then((s) => {
+      if (!disposed) setOffline(!s.connected);
+    });
+    trackHandle(
+      Network.addListener('networkStatusChange', (s) => {
+        if (!disposed) setOffline(!s.connected);
+      }),
+    );
 
     return () => {
+      disposed = true;
+      uninstallNativeLayout();
       window.removeEventListener('manifest:mission-changed', onMissionChange);
       for (const h of handles) void h.remove();
     };
@@ -116,11 +138,14 @@ export function MobileShell() {
           aria-live="polite"
           style={{
             position: 'fixed',
-            bottom: `calc(${TAB_BAR_HEIGHT} + env(safe-area-inset-bottom))`,
+            bottom: `calc(${TAB_BAR_HEIGHT} + ${SAFE_BOTTOM})`,
             left: 0,
             right: 0,
             zIndex: 40,
             padding: '0.4rem 1.25rem',
+            paddingLeft: `calc(1.25rem + ${SAFE_LEFT})`,
+            paddingRight: `calc(1.25rem + ${SAFE_RIGHT})`,
+            minHeight: OFFLINE_STRIP_HEIGHT,
             fontSize: '12px',
             color: 'var(--color-muted)',
             backgroundColor: 'var(--color-surface)',
@@ -131,11 +156,13 @@ export function MobileShell() {
         </div>
       )}
 
-      {/* Spacer so page content is never hidden behind the fixed tab bar */}
+      {/* Spacer so page content is never hidden behind fixed native chrome */}
       <div
         aria-hidden="true"
         style={{
-          height: `calc(${TAB_BAR_HEIGHT} + env(safe-area-inset-bottom))`,
+          height: `calc(${TAB_BAR_HEIGHT} + ${SAFE_BOTTOM}${
+            offline ? ` + ${OFFLINE_STRIP_HEIGHT}` : ''
+          })`,
         }}
       />
 
@@ -148,8 +175,10 @@ export function MobileShell() {
           right: 0,
           zIndex: 50,
           display: 'flex',
-          height: `calc(${TAB_BAR_HEIGHT} + env(safe-area-inset-bottom))`,
-          paddingBottom: 'env(safe-area-inset-bottom)',
+          height: `calc(${TAB_BAR_HEIGHT} + ${SAFE_BOTTOM})`,
+          paddingBottom: SAFE_BOTTOM,
+          paddingLeft: SAFE_LEFT,
+          paddingRight: SAFE_RIGHT,
           backgroundColor: 'var(--color-surface)',
           borderTop: '1px solid var(--color-border)',
         }}

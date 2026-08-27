@@ -114,7 +114,7 @@ function ItineraryItem({
               margin: '0.5rem 0 0',
             }}
           >
-            Source: citation pending corpus snapshot
+            Source: corpus snapshot date loads from /api/status
           </p>
         )}
       </div>
@@ -326,6 +326,7 @@ export default function JudgePage() {
               'read runtime.generation_backend. CI re-runs the eval against ' +
               'committed fixtures on every PR.'
             }
+            citation="Scored by eval/runner.py against eval/bank.jsonl; published in docs/FACTS.json (eval, eval_live)."
           />
           <ItineraryItem
             step={4}
@@ -343,6 +344,7 @@ export default function JudgePage() {
               'Cross-check f107_live against ' +
               'services.swpc.noaa.gov/products/summary/10cm-flux.json.'
             }
+            citation="NOAA SWPC 10.7 cm flux (services.swpc.noaa.gov), served by /api/solar with per-field source labels."
           />
           <ItineraryItem
             step={5}
@@ -366,6 +368,7 @@ export default function JudgePage() {
               'Read .bob/mcp.json. GET /api/status and compare models against ' +
               'runtime.generation_backend.'
             }
+            citation=".bob/custom_modes.yaml, .bob/skills/, .bob/mcp.json, and docs/bob-evidence/, all committed in the public repo."
           />
         </ol>
       </section>

@@ -147,6 +147,24 @@ jobs:
       - name: Run ask tests
         run: npm run test:ask
 
+  # NOAA parser unit tests in services/solar. LIVE_TESTS is unset so the
+  # live NOAA it.skipIf cases stay skipped. The unit cases (hyphenated
+  # time-tag, observed array shape) must run or a parser regression is a
+  # false green. Route tests already run under test:ask (app/api).
+  test-solar:
+    name: Solar service tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+      - name: Install dependencies
+        run: npm ci
+      - name: Run solar service tests
+        run: npx vitest run services/solar
+
   build:
     name: Next.js build
     runs-on: ubuntu-latest

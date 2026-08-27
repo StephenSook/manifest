@@ -207,7 +207,7 @@ Presenter narration: **Stephen** leads and closes. Tylin and Khadim narrate thei
 
 **[STEPHEN]**
 
-> "IBM Bob 2.0.3 built this. Five write-scoped custom modes -- one per team member's lane -- enforced by fileRegex at the editor level. 192 tests. An eval bank of 28 regulatory questions and 6 abstention traps, exposed to Bob as an MCP tool. A CI gate that blocks any pull request that regresses a citation.
+> "IBM Bob 2.0.3 built this. Five write-scoped custom modes -- one per team member's lane -- enforced by fileRegex at the editor level. 197 tests. An eval bank of 28 regulatory questions and 6 abstention traps, exposed to Bob as an MCP tool. A CI gate that blocks any pull request that regresses a citation.
 >
 > The repo is public. The `.bob/` directory is committed. Every mode and every skill is inspectable right now at github.com/StephenSook/manifest.
 >
@@ -218,7 +218,7 @@ Presenter narration: **Stephen** leads and closes. Tylin and Khadim narrate thei
 ---
 **Director's note (Beat 5):**
 - This beat is fast -- 25 seconds. Keep each screen cut snappy. This is the IBM Bob evidence montage, not a tutorial.
-- "192 tests" -- this is `FACTS.engine.test_count_total`, measured by running the suites, not hand-maintained. Re-read it from `docs/FACTS.json` immediately before recording; `python scripts/facts.py --check` fails if the file has drifted.
+- "197 tests" -- this is `FACTS.engine.test_count_total`, measured by running the suites, not hand-maintained. Re-read it from `docs/FACTS.json` immediately before recording; `python scripts/facts.py --check` fails if the file has drifted.
 - The Context Forge claim was CUT from this beat 2026-08-25: the eval MCP server is verified over stdio and wired to Bob, but the Context Forge gateway was never registered. Do not put it back unless task 3.2 lands.
 - Lane-enforcement file is committed. Narrate the fileRegex and the CI test. Do not narrate a pasted Bob chat; none was exported. Plan-mode session was never captured: skip any still that pretends otherwise. Read `docs/bob-evidence/plan-mode-critical-path.md` before this beat.
 - The close "The sun decides if your satellite is legal. And now, so do you." is the Stakes Close pattern from the Sookra guide: it connects to the hook, states the product's core claim, and ends on a handoff to the judge (not "thank you for watching"). No ask for a prize. No call to action URL. This is async-judged -- the close is the line that stays in the room.

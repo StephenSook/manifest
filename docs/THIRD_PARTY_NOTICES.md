@@ -11,8 +11,6 @@ requirement. Confirmed absent: elkjs (EPL/GPL), orbdetpy (GPL-3.0).
 | react, react-dom | MIT |
 | @xyflow/react | MIT |
 | @dagrejs/dagre | MIT |
-| vis-timeline | MIT AND Apache-2.0 |
-| @tanstack/react-table | MIT |
 | @serwist/next | MIT |
 | idb | ISC |
 | @ibm-cloud/watsonx-ai | Apache-2.0 |
@@ -54,7 +52,10 @@ No pinned commit to record until the vendor directory is committed.
 
 gitleaks over full history: see `.gitleaksignore`. Every ignore entry is
 hand-verified against its flagged commit before it is added. The file is
-empty: no fingerprints required ignore.
+not empty. It carries one fingerprint,
+`1a9c4198f7f1b070bbf537178b85cde6ed6884c9:phase0-plan.md:generic-api-key:96`,
+a verified false positive on the placeholder assignment
+`WATSONX_API_KEY=...` in phase0-plan.md (three dots, not a secret).
 
 Proven scan (not a local-only claim): GitHub Actions job `Gitleaks secret scan`
 on commit `33a1800b09fe4e3c17a9b182c2d890f2f8291309` concluded `success`

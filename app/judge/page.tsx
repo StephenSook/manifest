@@ -422,11 +422,15 @@ export default function JudgePage() {
           <tbody>
             {(
               [
+<<<<<<< HEAD
+                [
+                  'watsonx credentials on this deploy',
+                  'Task 0.13. Until they land, GET /api/status runtime.generation_backend is offline-extractive and Guardian is inactive.',
+                ],
+=======
                 ['Eval score panel (live)', 'Task 1.5 (eval runner), docs/FACTS.json'],
-                ['Solar panel (/api/solar)', 'Task 2.8 (solar route, Surya)'],
                 ['Citation panel with snapshot date', 'Task 1.3 (corpus freeze)'],
-                ['Abstention screen (Q&A)', 'Task 1.6 (Guardian wiring), 2.5'],
-                ['Timeline view', 'Task 2.3 (vis-timeline)'],
+>>>>>>> fc67989 (fix(a11y): contrast on status text, sr-only utility, stale pending rows)
               ] as const
             ).map(([surface, waiting]) => (
               <tr key={surface}>

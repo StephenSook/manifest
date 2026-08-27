@@ -11,6 +11,15 @@ const config: CapacitorConfig = {
   appId: 'com.stephensookra.manifest',
   appName: 'Manifest',
   webDir: 'out',
+  ios: {
+    contentInset: 'always',
+    backgroundColor: '#111318',
+  },
+  plugins: {
+    SystemBars: {
+      style: 'DARK',
+    },
+  },
 };
 
 export default config;

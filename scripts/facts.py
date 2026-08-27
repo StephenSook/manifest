@@ -336,9 +336,8 @@ def compute_facts(live_report: Path | None = None, live_url: str | None = None) 
     }
 
     # Headline from the real engine run (task 2.17 route, via scripts/run_status.ts).
-    # deadline_violations_days moves as `today` advances, so the staleness check
-    # (--check) deliberately excludes this block; it compares differentiator
-    # numbers only. Re-run facts.py before any surface quotes the headline.
+    # deadline_violations_days moves as `today` advances, so --check recomputes
+    # this block on every run. Published copy then compares against FACTS.json.
     status = run_status()
     headline = None
     if status is not None:
@@ -545,6 +544,26 @@ def check_not_stale() -> None:
             mismatches.append(
                 f"  {key}: FACTS.json={existing_diff.get(key)!r} vs computed={fresh_diff.get(key)!r}"
             )
+
+    # The headline changes with the calendar. Comparing prose to FACTS.json is
+    # only useful if this half first proves that FACTS.json matches a fresh
+    # engine run. Missing runtime output fails closed instead of preserving a
+    # stale day count behind a green guard.
+    existing_headline = existing.get("headline") or {}
+    fresh_headline = fresh.get("headline")
+    if fresh_headline is None:
+        mismatches.append(
+            "  headline could not be measured from scripts/run_status.ts; "
+            "the time-varying claim was not re-verified."
+        )
+    else:
+        for key in ("deadline_violations_days", "violated_node_count",
+                    "violated_nodes", "node_count"):
+            if existing_headline.get(key) != fresh_headline.get(key):
+                mismatches.append(
+                    f"  headline.{key}: FACTS.json={existing_headline.get(key)!r} "
+                    f"vs measured={fresh_headline.get(key)!r}"
+                )
 
     # Test counts drift the moment anyone adds a test, and a stale count is
     # exactly the kind of figure that reaches a video narration that cannot be

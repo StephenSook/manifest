@@ -1,8 +1,8 @@
 # AGENTS.md, Manifest
 
-Operating rules for any AI agent (Bob, Claude CLI, Codex, or other) working in this repository.
+Operating rules for any AI agent (Bob, Claude CLI, Codex, Cursor, or other) working in this repository.
 
-> The primary dev tool is IBM Bob 2.0.3. The constraints here are mirrored in `.bob/rules-*/AGENTS.md` and `.bob/skills/`. This file is the fallback for agents that do not load Bob config directly.
+> The primary dev tool is IBM Bob 2.0.3. The constraints here are mirrored in `.bob/rules-*/AGENTS.md` and `.bob/skills/`. This file is the fallback for agents that do not load Bob config directly. Support agents used alongside Bob during this build: Claude CLI and Cursor, both under these rules. Do not add AI co-author trailers to commits.
 
 ---
 

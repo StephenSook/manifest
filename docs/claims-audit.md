@@ -56,7 +56,7 @@ Do not treat this mid-phase pass as the 4.1 audit. After Stephen 3.7 fixes land,
 
 ## Post-3.7 partial re-run, 2026-08-25 (Claude, Stephen's lane)
 
-3.7 closed at ten rounds (fix commits `d75575b` through `eb7f2cb`). This is a partial re-grep of the post-fix tree, covering what that pass touched plus three exposures the PLAN status audit surfaced the same day. It does not replace Tylin's full 4.1 re-run.
+3.7 closed at ten rounds (fix commits `2712f97` through `13fb44b`). This is a partial re-grep of the post-fix tree, covering what that pass touched plus three exposures the PLAN status audit surfaced the same day. It does not replace Tylin's full 4.1 re-run.
 
 | Claim | Grep | Verdict |
 |---|---|---|
@@ -64,7 +64,7 @@ Do not treat this mid-phase pass as the 4.1 audit. After Stephen 3.7 fixes land,
 | shadcn/ui | no components.json, no components/ui/, no radix or cva dependencies | NEVER INITIALISED. Named in the private architecture doc only. No judge-facing document claims it, so nothing to cut publicly. Do not add it to any Built With list. |
 | Playwright e2e | `@playwright/test` installed, `test:e2e` script present, zero spec files, no workflow step | CLAIM CUT 2026-08-25. The README "Running Locally" block documented `npm run test:e2e` with nothing behind it; that block now documents `test:engine` and `test:ask`, which do run. Task 3.9 remains open. |
 | watsonx generation, Guardian audit, granite embedding | app/api/ask/route.ts | WIRED IN CODE, NOT CREDENTIALED. The route calls `granite-4-h-small` and `granite-guardian-3-8b` when `WATSONX_API_KEY` and `WATSONX_PROJECT_ID` are present. Neither is set anywhere: `gh secret list` is empty. `/api/status` now returns a `runtime` block naming the backend that actually answered, so configured-versus-running is one unauthenticated request to check. Submission copy states the credential condition explicitly. |
-| Corpus on the deployment | app/api/ask/route.ts loadCorpus, next.config.ts outputFileTracingIncludes, corpus/manifest.sqlite | SUPERSEDED THE SAME DAY by Tylin's `564dc22`. The frozen hashing-trick bundle is now COMMITTED (3.5 MB sqlite, 10.3 MB vectors), `loadCorpus` reads the local files first and treats Blob as an optional overlay, and `next.config.ts` names the three files in `outputFileTracingIncludes` for `/api/ask` because Next's file tracing cannot follow a `process.cwd()` join. The repo claim "the corpus ships with the app" is therefore TRUE again. **Production is a separate question and currently still fails**: at 2026-08-25 10:50 ET `POST /api/ask` returns 503 with `ENOENT ... /var/task/corpus/manifest.sqlite`, which is the pre-fix build still being served. Verify against the live URL after the next deploy before claiming it anywhere. |
+| Corpus on the deployment | app/api/ask/route.ts loadCorpus, next.config.ts outputFileTracingIncludes, corpus/manifest.sqlite | SUPERSEDED THE SAME DAY by Tylin's `84327ba`. The frozen hashing-trick bundle is now COMMITTED (3.5 MB sqlite, 10.3 MB vectors), `loadCorpus` reads the local files first and treats Blob as an optional overlay, and `next.config.ts` names the three files in `outputFileTracingIncludes` for `/api/ask` because Next's file tracing cannot follow a `process.cwd()` join. The repo claim "the corpus ships with the app" is therefore TRUE again. **Production is a separate question and currently still fails**: at 2026-08-25 10:50 ET `POST /api/ask` returns 503 with `ENOENT ... /var/task/corpus/manifest.sqlite`, which is the pre-fix build still being served. Verify against the live URL after the next deploy before claiming it anywhere. |
 | `corpus_amddate` | app/api/status/route.ts | FIXED 2026-08-25. The endpoint returned the literal `PENDING_CORPUS_FREEZE` on a judge-facing surface while hard rule 1 promises a pinned AMDDATE. It now reads `amddate_range` from the committed freeze at request time and returns the real span (`2017-08-01 to 2026-08-18`). If the corpus is ever absent it returns the NAMED absence `CORPUS_NOT_BUNDLED` rather than a date-shaped placeholder, so a missing corpus cannot read as a verified snapshot. |
 
 ## Post-rival-audit pass, 2026-08-25 (Claude, Stephen's lane)
@@ -80,10 +80,10 @@ between them.
 
 | Claim | Was | Verdict | Fix |
 |---|---|---|---|
-| `GET /api/solar` returns `f107_live`, `predicted_envelope`, `surya_outlook` | Printed on `app/judge/page.tsx` step 4 as a judge verify command | **REFUTED.** `git log --all -- 'app/api/solar*'` was EMPTY: the route had never existed in any commit on any branch, and returned 404 | Route BUILT (312060a) with exactly those field names, pinned by test. The claim is now true rather than the sentence edited |
+| `GET /api/solar` returns `f107_live`, `predicted_envelope`, `surya_outlook` | Printed on `app/judge/page.tsx` step 4 as a judge verify command | **REFUTED.** `git log --all -- 'app/api/solar*'` was EMPTY: the route had never existed in any commit on any branch, and returned 404 | Route BUILT (66c5d28) with exactly those field names, pinned by test. The claim is now true rather than the sentence edited |
 | Surya artifact "that the demo reads" | `README.md:78` | **REFUTED.** `data/surya-outlook.json` was read by no shipped code; its only TypeScript reference was a comment | Now genuinely read and served by `/api/solar` |
 | Verdict "computed from live NOAA solar flux" | `README.md` in three places | **REFUTED.** `services/solar/fetch.ts` had ZERO importers; the verdict imports a frozen table | README rewritten to describe both accurately: frozen NRLMSISE-00 integration across NOAA's published bounds, live reading served separately at `/api/solar` |
-| `services/solar/fetch.ts` parses NOAA correctly | Unit-tested, green | **REFUTED, and worse than dead.** The predicted product spells the month key `time-tag` with a HYPHEN. The parser read `time_tag`, so `undefined >= "2026-08"` was false for every row and it returned an EMPTY envelope for healthy live data. Its test passed because the fixture was written from the same assumption as the code | Fixed (4960688) with a fixture captured from the live endpoint. The observed product also returns a single-element ARRAY, not an object |
+| `services/solar/fetch.ts` parses NOAA correctly | Unit-tested, green | **REFUTED, and worse than dead.** The predicted product spells the month key `time-tag` with a HYPHEN. The parser read `time_tag`, so `undefined >= "2026-08"` was false for every row and it returned an EMPTY envelope for healthy live data. Its test passed because the fixture was written from the same assumption as the code | Fixed (f3b8628) with a fixture captured from the live endpoint. The observed product also returns a single-element ARRAY, not an object |
 | "CI asserts the self-report matches the README" | `docs/submission.md:51` and `app/api/status/route.ts` in three places | **REFUTED.** No workflow ran pytest at all. `tests/test_no_fabricated_numbers.py` had NEVER executed in CI | `fabricated-numbers` job added to `eval-gate.yml`, every step bare, presence asserted before a pass is trusted |
 | "79 engine and mobile tests" | `README.md` twice, `JUDGE.md` once | **REFUTED.** Measured 81. The README badge said 128 against a measured 144 | Corrected, and the guard now compares judge-facing surfaces to FACTS rather than only FACTS to the code. Proven by injecting 77 and watching it fail |
 | Eval score "is there" in `docs/FACTS.json` | `app/judge/page.tsx` step 3 | **REFUTED.** The file had no `eval`, `score`, `trap` or `abstention` key | `scripts/facts.py` now runs the bank and writes a real eval block. Claim made true rather than edited |
@@ -115,10 +115,10 @@ Post-3.7 tree, after Khadim's vis-timeline/tanstack removal and after production
 
 | Item | Was | Now |
 |---|---|---|
-| pyatmos / setuptools pin | Open, Tylin | CLOSED. `pipeline/pyproject.toml` declares `pyatmos==1.2.7` and `setuptools<81` (commit `60d2147`). |
-| gitleaks false positive | Open, Tylin | CLOSED. `.gitleaksignore` carries fingerprint `1a9c419...:phase0-plan.md:generic-api-key:96` (commit `ca261e0`). |
-| NOAA skill dead path | Open, Tylin | CLOSED. `.bob/skills/noaa-crsra/SKILL.md` points at `engine/graph.ts` and names the test file honestly (commit `d9b7865`). |
-| vis-timeline and `@tanstack/react-table` in package.json | Open, Khadim | CLOSED as dependencies. Both ABSENT from `package.json` (commit `2b46358`). Residual comments remain: `app/mission/page.tsx:9` and `app/judge/page.tsx:418` still name vis-timeline. Those files are Khadim's. |
+| pyatmos / setuptools pin | Open, Tylin | CLOSED. `pipeline/pyproject.toml` declares `pyatmos==1.2.7` and `setuptools<81` (commit `6b2d411`). |
+| gitleaks false positive | Open, Tylin | CLOSED. `.gitleaksignore` carries fingerprint `1a9c419...:phase0-plan.md:generic-api-key:96` (commit `75ebbc2`). |
+| NOAA skill dead path | Open, Tylin | CLOSED. `.bob/skills/noaa-crsra/SKILL.md` points at `engine/graph.ts` and names the test file honestly (commit `ee43534`). |
+| vis-timeline and `@tanstack/react-table` in package.json | Open, Khadim | CLOSED as dependencies. Both ABSENT from `package.json` (commit `3d18302`). Residual comments remain: `app/mission/page.tsx:9` and `app/judge/page.tsx:418` still name vis-timeline. Those files are Khadim's. |
 | Production `/api/ask` 503 / missing corpus / missing runtime | Open, Khadim | CLOSED as a content-check. 2026-08-26 live: `/api/status` 200 with `runtime` and AMDDATE span `2017-08-01 to 2026-08-18`, `/api/solar` 200, `POST /api/ask` 200 citing `97.207(g)(1)`. GitHub auto-deploy is still NOT connected. Manual `--prod` is what landed. |
 
 ### Still true
@@ -164,7 +164,7 @@ Re-measured the same day at 21:17 UTC (report `/tmp/manifest-eval-live.json`, th
 | Item | Owner | Status |
 |---|---|---|
 | `/judge` "What is not wired yet" table still lists eval, solar, corpus, abstention as pending, plus the cut timeline | **Stephen backup** | FIXED 2026-08-26. Table now names watsonx credentials, 1.13, and 2.22. |
-| `.bob/custom_modes.yaml` said vis-timeline "is installed with zero imports" | **Stephen** | FIXED this session: the dep was removed in `2b46358`. |
+| `.bob/custom_modes.yaml` said vis-timeline "is installed with zero imports" | **Stephen** | FIXED this session: the dep was removed in `3d18302`. |
 | `eval/mcp_server.py` module docstring described Context Forge as the running architecture | **Stephen** | FIXED this session: docstring now matches stdio-only. |
 | Video Beat 5 staged `docs/bob-evidence/lane-enforcement.md` and narrated it as inspectable | **Stephen** | FIXED this session: still skipped unless the file exists. |
 | `JUDGE.md` said TestFlight was "submitted 2026-08-24" while README said approved 2026-08-25 | **Stephen** | FIXED this session: JUDGE now matches the approved public link. |

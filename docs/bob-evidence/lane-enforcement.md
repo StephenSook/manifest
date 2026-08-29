@@ -57,8 +57,8 @@ If someone later widens `frontend` to include `docs/`, the test fails.
 `docs/architecture.svg` is in `docs/`, so only `evidence-writer` among
 the five modes may write it.
 
-- `aff9ed0` `docs: architecture diagram, wired paths only`
-- `1569a6c` `docs: architecture diagram, node count is conditional on pathway`
+- `e6788e5` `docs: architecture diagram, wired paths only`
+- `377a146` `docs: architecture diagram, node count is conditional on pathway`
 
 Both commits are under `docs/`. They are inside `evidence-writer`
 scope and outside `frontend` scope. That is the lane split firing in

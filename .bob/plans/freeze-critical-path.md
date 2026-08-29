@@ -416,7 +416,7 @@ Listed here so Khadim can raise the blockers if they have not moved.
 |---|---|---|
 | 3.1 eval gate in CI | `eval-gate.yml` EXISTS and is wired correctly (confirmed) | Nothing: this is done |
 | 3.6 full re-run | Partial pass done 2026-08-25. Freeze re-run still required after 3.7 | After Khadim's K3 changes land, ping Tylin to run the full re-grep |
-| 3.7 adversarial pass | 10 rounds closed (commits `d75575b` through `eb7f2cb`) | If any new code has landed since, run one more round |
+| 3.7 adversarial pass | 10 rounds closed (commits `2712f97` through `13fb44b`) | If any new code has landed since, run one more round |
 | 4.1 FACTS.json regeneration | Must run `scripts/facts.py` against the deployed HEAD before freezing | Stephen's action on freeze morning |
 | `THIRD_PARTY_NOTICES.md` | Remove `vis-timeline` and `@tanstack/react-table` after K3 removes them | Ping Stephen when K3 is done |
 | Vercel Git integration | Tylin owns `.github/workflows/`; if a deployment workflow is the chosen path it is Tylin's file | Khadim's choice of deploy path determines whether this is needed |

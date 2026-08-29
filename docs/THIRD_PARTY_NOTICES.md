@@ -58,7 +58,7 @@ a verified false positive on the placeholder assignment
 `WATSONX_API_KEY=...` in phase0-plan.md (three dots, not a secret).
 
 Proven scan (not a local-only claim): GitHub Actions job `Gitleaks secret scan`
-on commit `33a1800b09fe4e3c17a9b182c2d890f2f8291309` concluded `success`
+on commit `d94d80e2ed494e8fd3f12c35a6da1e62dbf27431` concluded `success`
 (check-run https://github.com/StephenSook/manifest/actions/runs/32752624880/job/97512867441,
 read via REST check-runs on 2026-08-24). CI also runs a living lockfile
 guard that fails if `elkjs` or `orbdetpy` appear in `package.json`,

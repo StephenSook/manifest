@@ -350,7 +350,6 @@ def compute_facts(live_report: Path | None = None, live_url: str | None = None) 
         "audit": "ibm/granite-guardian-3-8b",
         "embedding": "ibm/granite-embedding-278m-multilingual",
         "surya": "nasa-ibm-ai4science/Surya-1.0",
-        "local_fallback": "granite4.1:8b",
     }
 
     # Headline from the real engine run (task 2.17 route, via scripts/run_status.ts).

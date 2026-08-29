@@ -70,6 +70,13 @@ interface Runtime {
   guardian_audit: string;
   corpus_source: string;
   note: string;
+  /**
+   * What each value above is derived from. Writer and Guardian come from
+   * credential presence, which is not a health check; Embedding and Corpus
+   * are read from the loaded artifact. Rendering this is the difference
+   * between a table that reports and a table that asserts.
+   */
+  basis?: Record<string, string>;
 }
 
 interface StatusPayload {
@@ -342,11 +349,18 @@ function SwingRow({
 // ---------------------------------------------------------------------------
 
 function RuntimeCard({ runtime }: { runtime: Runtime }) {
-  const rows: [string, string][] = [
-    ['Writer', runtime.generation_backend],
-    ['Embedding', runtime.embedding_backend],
-    ['Guardian audit', runtime.guardian_audit],
-    ['Corpus', runtime.corpus_source],
+  // The third column is the point of this table. On 2026-08-29 the watsonx
+  // token quota was exhausted, every generation call returned 403, and this
+  // card kept printing "watsonx" and "active" under a header that read
+  // "Running now". Two of these four values are read from credential
+  // presence and cannot see an outage, so the card now says which is which
+  // rather than presenting all four as measured state.
+  const basis = runtime.basis ?? {};
+  const rows: [string, string, string][] = [
+    ['Writer', runtime.generation_backend, basis.generation_backend ?? 'configured'],
+    ['Embedding', runtime.embedding_backend, basis.embedding_backend ?? 'measured'],
+    ['Guardian audit', runtime.guardian_audit, basis.guardian_audit ?? 'configured'],
+    ['Corpus', runtime.corpus_source, basis.corpus_source ?? 'measured'],
   ];
   return (
     <div>
@@ -356,7 +370,7 @@ function RuntimeCard({ runtime }: { runtime: Runtime }) {
       >
         <thead>
           <tr>
-            {(['Role', 'Running now'] as const).map((h) => (
+            {(['Role', 'Reported', 'Basis'] as const).map((h) => (
               <th
                 key={h}
                 style={{
@@ -374,7 +388,7 @@ function RuntimeCard({ runtime }: { runtime: Runtime }) {
           </tr>
         </thead>
         <tbody>
-          {rows.map(([role, value]) => (
+          {rows.map(([role, value, why]) => (
             <tr key={role}>
               <td
                 style={{
@@ -390,6 +404,7 @@ function RuntimeCard({ runtime }: { runtime: Runtime }) {
               <td
                 style={{
                   paddingTop: '0.35rem',
+                  paddingRight: '1rem',
                   color: 'var(--color-fg)',
                   borderBottom: '1px solid var(--color-border)',
                   paddingBottom: '0.35rem',
@@ -398,6 +413,16 @@ function RuntimeCard({ runtime }: { runtime: Runtime }) {
                 }}
               >
                 {value}
+              </td>
+              <td
+                style={{
+                  paddingTop: '0.35rem',
+                  color: 'var(--color-muted)',
+                  borderBottom: '1px solid var(--color-border)',
+                  paddingBottom: '0.35rem',
+                }}
+              >
+                {why}
               </td>
             </tr>
           ))}

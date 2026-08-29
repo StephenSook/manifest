@@ -53,6 +53,7 @@ Five write-scoped modes restrict Bob's write access to each team member's lane, 
 | Lane enforcement (fileRegex, not a pasted chat) | [`docs/bob-evidence/lane-enforcement.md`](docs/bob-evidence/lane-enforcement.md) |
 | Plan-mode session (never captured; honesty log) | [`docs/bob-evidence/plan-mode-critical-path.md`](docs/bob-evidence/plan-mode-critical-path.md) |
 | Bobalytics screenshots (subscription usage) | [`docs/bob-evidence/`](docs/bob-evidence/) |
+| Measured Bob spend across 3 subscriptions: 60.24 Bobcoins (into paid overage), 40.39 (budget exhausted), 19.141 of 40 units | [`bobalytics-02.png`](docs/bob-evidence/bobalytics-02.png), [`bob-usage.png`](docs/bob-evidence/bob-usage.png), [`bobalytics-03.png`](docs/bob-evidence/bobalytics-03.png) |
 
 ---
 

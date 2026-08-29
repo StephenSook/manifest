@@ -70,7 +70,7 @@ The deorbit compliance verdict is computed by an NRLMSISE-00 orbital lifetime in
 <!-- This section describes only what /api/status self-reports.
      Do not add any model or tool that is not returning 200 in the running deployment. -->
 
-**Generation:** `ibm/granite-4-h-small` on watsonx.ai (Lite plan, us-south region), wired in `app/api/ask/route.ts` and invoked whenever `WATSONX_API_KEY` and `WATSONX_PROJECT_ID` are present. **Those credentials are not set on the current deployment**, so answers today come from the offline extractive path over the same corpus, with cite-or-abstain still enforced and the Guardian audit not running. `/api/status` reports which backend actually answered, so configured against running is one unauthenticated request to diff. Wired is not the same as running, and this README says which is which rather than leaving a reader to assume.
+**Generation:** `ibm/granite-4-h-small` on watsonx.ai (Lite plan, us-south region), wired in `app/api/ask/route.ts` and invoked whenever `WATSONX_API_KEY` and `WATSONX_PROJECT_ID` are present. **Those credentials are set on the production deployment, and `/api/status` self-reports it**: `generation_backend: watsonx`, `embedding_backend: watsonx`, `guardian_audit: active` (verified 2026-08-29 with a live audited answer carrying its exact citation, and a Part 100 trap abstaining with the regime line). Keyless environments, including CI and any fresh clone, fall back to the offline extractive path over the same corpus with cite-or-abstain still enforced. Configured against running is one unauthenticated request to diff, and this README says which is which rather than leaving a reader to assume.
 
 **Audit:** `ibm/granite-guardian-3-8b` reviews every citation-bearing answer for groundedness before display. An answer that fails the audit degrades to abstention with the retrieved source sections shown. Abstention is a designed state, not an error.
 
@@ -115,7 +115,7 @@ flowchart TB
   subgraph routes["Server routes: Vercel serverless, force-dynamic"]
     solar["GET /api/solar"]
     status["GET /api/status\nruntime.generation_backend self-report"]
-    ask["POST /api/ask\nextractive today; Granite plus Guardian wired, credentials absent"]
+    ask["POST /api/ask\nGranite plus Guardian live in production; keyless deploys fall back to extractive"]
   end
 
   subgraph engine["Engine: pure TypeScript, no network"]
@@ -172,7 +172,8 @@ IBM Bob 2.0.3 is the primary development tool (competition requirement). The `.b
 | Workspace skills | `.bob/skills/` |
 | Workspace MCP config | `.bob/mcp.json` |
 | Bobalytics screenshots (subscription usage) | `docs/bob-evidence/bobalytics-01.png`, `bobalytics-02.png`, `bobalytics-03.png` |
-| Plan-mode session | Never captured. Honesty log: [`docs/bob-evidence/plan-mode-critical-path.md`](docs/bob-evidence/plan-mode-critical-path.md) |
+| Plan-mode output (freeze critical path) | [`.bob/plans/freeze-critical-path.md`](.bob/plans/freeze-critical-path.md), genuine Bob Plan-mode output, provenance confirmed by its author 2026-08-29 |
+| Plan-mode session (build critical path) | Never captured. Honesty log: [`docs/bob-evidence/plan-mode-critical-path.md`](docs/bob-evidence/plan-mode-critical-path.md) |
 | Lane enforcement | [`docs/bob-evidence/lane-enforcement.md`](docs/bob-evidence/lane-enforcement.md) (shipped fileRegex, git event, CI test). Not a pasted Bob chat. |
 
 The Plan-mode row is an honesty log because the session was never exported. Inventing a transcript would be worse than the gap. Lane enforcement is a property of `.bob/custom_modes.yaml`: `frontend` cannot write `docs/architecture.svg`, `evidence-writer` can. `tests/test_bob_lane_enforcement.py` asserts that table on every CI run.
@@ -194,7 +195,7 @@ The Plan-mode row is an honesty log because the session was never exported. Inve
 - **2026-08-24, the eval bank became a Bob tool.** `eval/mcp_server.py` exposes `run_eval` and `eval_last_report` over stdio and `.bob/mcp.json` points Bob at it, so Bob can score its own edits against the 28-question bank plus 6 abstention traps during development (commit `82cecca`). The IBM Context Forge gateway registration is parked: the virtual-server create call returned an opaque error, so this README claims the stdio wiring only. Claiming the gateway before it answers would be an unwired claim.
 - **2026-08-25, the lane split fired on a real write.** Frontend mode refused `docs/architecture.svg` because the path does not match that mode's `fileRegex`; the author switched to `evidence-writer` and the diagram landed inside that scope (`git show e6788e5`, `git show 377a146`). The chat was not exported, so the durable record is the property itself: `tests/test_bob_lane_enforcement.py` asserts the allow/refuse table on every CI run, and widening `frontend` to include `docs/` fails the build.
 - **2026-08-26, Orchestrator mode does not exist, verified rather than assumed.** Bob 2.0.3 offers Agent, Plan and Ask plus the five workspace modes. A grep over the installed app bundle found `orchestrator` only inside TypeScript's own compiler files. The evidence above therefore claims lane enforcement, not an Orchestrator session.
-- **2026-08-26, the Plan-mode gap stayed a gap.** The build's critical-path Plan session was never exported. [`docs/bob-evidence/plan-mode-critical-path.md`](docs/bob-evidence/plan-mode-critical-path.md) is the dated refusal to reconstruct it, because an invented transcript would be worse than the missing one.
+- **2026-08-26, the Plan-mode gap stayed a gap.** The build's critical-path Plan session was never exported. [`docs/bob-evidence/plan-mode-critical-path.md`](docs/bob-evidence/plan-mode-critical-path.md) is the dated refusal to reconstruct it, because an invented transcript would be worse than the missing one. The freeze window is the exception that proves the discipline: [`.bob/plans/freeze-critical-path.md`](.bob/plans/freeze-critical-path.md) is genuine Plan-mode output, committed by its author and cited only after the author confirmed its provenance on 2026-08-29.
 
 ---
 
@@ -221,7 +222,7 @@ Every item here is a deliberate scope decision, not an unknown. Naming them is c
 
 | Limitation | Why it is this way |
 |---|---|
-| **watsonx credentials are not set on the live deployment.** Answers come from the offline extractive path, and the Guardian audit does not run. | The Lite tier is metered at 300,000 tokens per month and a cold-start reindex can consume that in a day. The models are wired and `/api/status` reports which backend actually answered, so the gap is visible rather than hidden. |
+| **The watsonx path went live on production on 2026-08-29; every published eval score predates that and was measured on the credential-free extractive path.** | The Lite tier is metered at 300,000 tokens per month, so live watsonx runs are deliberate, dated events. `/api/status` reports which backend actually answered on every request, so the reader never has to take this row's word for it. A watsonx-path eval score is published to `docs/FACTS.json`, dated, when that run happens. |
 | **The eval scores 53.6 percent**, not the 90 percent bar in our own spec. | That is the credential-free extractive ceiling, measured and published rather than rounded up. CI enforces a raise-only ratchet at the measured floor and fails if any abstention trap answers. The number is in `docs/FACTS.json` because the runner puts it there. |
 | **The deorbit verdict computes from a frozen NRLMSISE-00 table**, not a per-request physics run. | The table is a real integration with per-row provenance. Recomputing per request would move a judge-facing number without improving its accuracy. `/api/solar` serves the live inputs beside it. |
 | **NASA-STD-8719.14C is not ingested.** | It sits behind the NASA Technical Standards login wall. Questions that need it abstain with a pointer rather than answering from a summary. |

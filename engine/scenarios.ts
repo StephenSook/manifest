@@ -2,8 +2,8 @@
 //
 // Named scenario stories, computed at request time by the real engine.
 //
-// WHY THIS EXISTS. The strongest demo design in the rival field is not a
-// "demo mode" toggle, it is a set of NAMED stories a judge clicks, each
+// WHY THIS EXISTS. The strongest design for this is not a "demo mode"
+// toggle, it is a set of NAMED stories a judge clicks, each
 // ending somewhere different, so the range of the engine is visible in about
 // a minute without typing anything. It also makes an empty state impossible,
 // which is the single most common way a judge's first screen wastes itself.

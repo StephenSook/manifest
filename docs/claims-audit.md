@@ -67,7 +67,7 @@ Do not treat this mid-phase pass as the 4.1 audit. After Stephen 3.7 fixes land,
 | Corpus on the deployment | app/api/ask/route.ts loadCorpus, next.config.ts outputFileTracingIncludes, corpus/manifest.sqlite | SUPERSEDED THE SAME DAY by Tylin's `84327ba`. The frozen hashing-trick bundle is now COMMITTED (3.5 MB sqlite, 10.3 MB vectors), `loadCorpus` reads the local files first and treats Blob as an optional overlay, and `next.config.ts` names the three files in `outputFileTracingIncludes` for `/api/ask` because Next's file tracing cannot follow a `process.cwd()` join. The repo claim "the corpus ships with the app" is therefore TRUE again. **Production is a separate question and currently still fails**: at 2026-08-25 10:50 ET `POST /api/ask` returns 503 with `ENOENT ... /var/task/corpus/manifest.sqlite`, which is the pre-fix build still being served. Verify against the live URL after the next deploy before claiming it anywhere. |
 | `corpus_amddate` | app/api/status/route.ts | FIXED 2026-08-25. The endpoint returned the literal `PENDING_CORPUS_FREEZE` on a judge-facing surface while hard rule 1 promises a pinned AMDDATE. It now reads `amddate_range` from the committed freeze at request time and returns the real span (`2017-08-01 to 2026-08-18`). If the corpus is ever absent it returns the NAMED absence `CORPUS_NOT_BUNDLED` rather than a date-shaped placeholder, so a missing corpus cannot read as a verified snapshot. |
 
-## Post-rival-audit pass, 2026-08-25 (Claude, Stephen's lane)
+## Follow-up audit pass, 2026-08-25 (Claude, Stephen's lane)
 
 A whole-repo claims pass plus a forensic grading of the live gallery produced a
 checklist of failure modes drawn from other submissions, then ran each one back
@@ -195,7 +195,7 @@ Parent grep, not a Tylin-tree edit. File set: `git ls-files --cached --others --
 | `/judge` step 3: "Granite generation pipeline is scored" | step 3 now points at FACTS eval_live and `runtime.generation_backend` | FIXED 2026-08-26 (Stephen backup). |
 | `/judge` step 4 heading: "Solar verdict: live NOAA F10.7 plus Surya outlook" | heading is now "Solar inputs"; body says the verdict uses the NOAA envelope, not Surya | FIXED 2026-08-26 (Stephen backup). |
 
-### Steal 25, 2026-08-26 (Stephen backup on Khadim 1.13 / 2.22)
+### Bob evidence review, 2026-08-26 (Stephen backup on Khadim 1.13 / 2.22)
 
 Inventing the missing Plan-mode and lane-enforcement chats would have been the anti-pattern. What landed:
 

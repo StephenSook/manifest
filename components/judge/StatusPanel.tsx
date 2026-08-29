@@ -58,7 +58,6 @@ interface Models {
   audit: string;
   embedding: string;
   surya: string;
-  local_fallback: string;
 }
 
 // Runtime is who is actually answering THIS request. Models (below) are
@@ -441,7 +440,6 @@ function ModelsTable({ models }: { models: Models }) {
     ['Audit (Guardian)', models.audit],
     ['Embedding', models.embedding],
     ['Solar/Surya', models.surya],
-    ['Local fallback', models.local_fallback],
   ];
   return (
     <table

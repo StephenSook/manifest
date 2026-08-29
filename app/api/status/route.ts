@@ -61,7 +61,14 @@ const MODEL_INVENTORY = {
   audit: 'ibm/granite-guardian-3-8b',          // watsonx.ai, app/api/ask/route.ts (Tylin 2.6)
   embedding: 'ibm/granite-embedding-278m-multilingual', // watsonx.ai (Tylin 1.3)
   surya: 'nasa-ibm-ai4science/Surya-1.0',      // D7 cached artifact at data/surya-outlook.json
-  local_fallback: 'granite4.1:8b',              // Ollama -- rehearsal only, not production path
+  // NOTE: granite4.1:8b was listed here as an Ollama local_fallback until
+  // 2026-08-29. Nothing implemented it. A grep of this repository for
+  // `ollama` returns prose and nothing else: no client, no call, no code
+  // path. Publishing it in a MODEL INVENTORY told a judge the product could
+  // fall back to a local Granite model, which it cannot. The fallback that
+  // actually ships is the offline extractive path over the committed
+  // corpus, which uses no model at all and is reported in `runtime` below.
+  // Wired or cut (hard rule 4): cut.
 } as const;
 
 // Whether THIS deployment is CONFIGURED to reach watsonx (task 0.13

@@ -191,6 +191,7 @@ IBM Bob 2.0.3 is the primary development tool (competition requirement). The `.b
 | Plan-mode output (freeze critical path) | [`.bob/plans/freeze-critical-path.md`](.bob/plans/freeze-critical-path.md), genuine Bob Plan-mode output, provenance confirmed by its author 2026-08-29 |
 | Plan-mode session (build critical path) | Never captured. Honesty log: [`docs/bob-evidence/plan-mode-critical-path.md`](docs/bob-evidence/plan-mode-critical-path.md) |
 | Lane enforcement | [`docs/bob-evidence/lane-enforcement.md`](docs/bob-evidence/lane-enforcement.md) (shipped fileRegex, git event, CI test). Not a pasted Bob chat. |
+| Engineering log (what went wrong, and what caught it) | [`docs/ENGINEERING-LOG.md`](docs/ENGINEERING-LOG.md): 14 dated defects this project shipped, each citing a commit. Opens with the three the AI-assisted work introduced. |
 
 The Plan-mode row is an honesty log because the session was never exported. Inventing a transcript would be worse than the gap. Lane enforcement is a property of `.bob/custom_modes.yaml`: `frontend` cannot write `docs/architecture.svg`, `evidence-writer` can. `tests/test_bob_lane_enforcement.py` asserts that table on every CI run.
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildExtractiveResponse,
   extractiveAnswer,
   hashEmbed,
   hybridSelect,
@@ -88,5 +89,80 @@ describe('extractiveAnswer', () => {
     expect(citations[0].section).toBe('97.207');
     expect(citations[0].paragraphPath).toBe('(g)(1)');
     expect(citations[0].amddate).toBe('2026-08-13');
+  });
+});
+
+// Regression guard for 2026-08-29. The watsonx Lite token quota was exhausted,
+// every generation call returned 403, and /api/ask answered every question
+// with the raw SDK exception string as its reason while the keyless extractive
+// path over the same committed corpus sat there working. The route gated the
+// fallback on credential PRESENCE, so a configured-but-unreachable watsonx had
+// no path to it. These assert the degraded path, not the absent-key path.
+describe('buildExtractiveResponse', () => {
+  const upstream =
+    'Extractive path: watsonx generation was unreachable, so the generated answer did not ship (upstream error: Access is denied due to invalid credentials.).';
+
+  it('answers from the corpus when watsonx is unreachable, and says so', () => {
+    const body = buildExtractiveResponse('What is the 97.207(g) deadline?', [g1], upstream, true);
+    expect(body.abstained).toBe(false);
+    expect(body.answer).toContain('30 days');
+    expect(body.citations[0].section).toBe('97.207');
+    expect(body.degraded).toBe(true);
+    expect(body.audited).toBe(false);
+    expect(body.reason).toContain('quoted verbatim');
+    expect(body.reason).toContain('Guardian audit did not run');
+  });
+
+  it('reports the upstream error as upstream text, without restating its cause', () => {
+    const body = buildExtractiveResponse('What is the 97.207(g) deadline?', [g1], upstream, true);
+    expect(body.reason).toContain('upstream error:');
+    // The IBM SDK renders a 403 token_quota_reached as an invalid-credentials
+    // message, so the route must not adopt that wording as its own diagnosis.
+    expect(body.reason).not.toMatch(/^Generation failed/);
+  });
+
+  it('abstains rather than shipping an uncited quote (hard rule 1)', () => {
+    const body = buildExtractiveResponse('What is the 97.207(g) deadline?', [], upstream, true);
+    expect(body.abstained).toBe(true);
+    expect(body.answer).toBeNull();
+    expect(body.citations).toHaveLength(0);
+    expect(body.reason).toContain('no citable section');
+  });
+
+  it('marks the absent-key path as not degraded, so the two are distinguishable', () => {
+    const body = buildExtractiveResponse(
+      'What is the 97.207(g) deadline?',
+      [g1],
+      'Extractive path: WATSONX_API_KEY is not configured on this deployment.',
+      false,
+    );
+    expect(body.abstained).toBe(false);
+    expect(body.degraded).toBe(false);
+  });
+
+  // Measured 2026-08-29 on the running server: "Who won the 2026 FIFA World
+  // Cup?" came back abstained:false citing 47 CFR 25.103(2)(2)(3) with the body
+  // text "Hawaii;". Retrieval returns its top k for any input, so a citation
+  // existing was never evidence the corpus addressed the question.
+  it('abstains on an off-corpus question instead of citing an unrelated section', () => {
+    const body = buildExtractiveResponse('Who won the 2026 FIFA World Cup?', [g1], upstream, true);
+    expect(body.abstained).toBe(true);
+    expect(body.answer).toBeNull();
+    expect(body.reason).toContain('do not address this question');
+  });
+
+  it('still lists the retrieved sections when it abstains for lack of anchor', () => {
+    const body = buildExtractiveResponse('How do I bake sourdough bread?', [g1], upstream, true);
+    expect(body.abstained).toBe(true);
+    expect(body.citations.length).toBeGreaterThan(0);
+    expect(body.citations[0].section).toBe('97.207');
+  });
+
+  it('keeps degraded machine-readable so a degraded run is never published as a watsonx score', () => {
+    const degradedRun = buildExtractiveResponse('q', [g1], upstream, true);
+    const keylessRun = buildExtractiveResponse('q', [g1], 'Extractive path: no key.', false);
+    // The eval runner can separate a watsonx measurement from an extractive
+    // one on this field alone, without parsing prose.
+    expect(degradedRun.degraded).not.toBe(keylessRun.degraded);
   });
 });

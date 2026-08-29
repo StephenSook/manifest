@@ -21,8 +21,8 @@ import type { Citation } from '../../../engine/types';
 import { corsPreflight, withCors } from '@/lib/cors';
 import {
   type ChunkRow,
+  buildExtractiveResponse,
   cosineSimilarity,
-  extractiveAnswer,
   hashEmbed,
   hybridSelect,
   matchAbstention,
@@ -47,6 +47,14 @@ interface AskResponse {
   audited: boolean;
   abstained: boolean;
   reason?: string;
+  /**
+   * True when watsonx was configured for this deployment but could not be
+   * reached, so the answer came from the offline extractive path instead.
+   * Machine-readable on purpose: a score measured across degraded responses
+   * is a measurement of the extractive path and must never be published as a
+   * watsonx measurement.
+   */
+  degraded?: boolean;
 }
 
 interface CorpusCache {
@@ -367,6 +375,18 @@ function retrieveTop(
   return hybridSelect(question, cosineTop, corpus.chunks, k);
 }
 
+/** Wraps the pure body builder in lib.ts. Logic is tested there. */
+function extractiveResponse(
+  question: string,
+  topChunks: ChunkRow[],
+  degradation: string,
+  degraded: boolean,
+): NextResponse<AskResponse> {
+  return NextResponse.json(
+    buildExtractiveResponse(question, topChunks, degradation, degraded),
+  );
+}
+
 export function OPTIONS(): NextResponse {
   return corsPreflight();
 }
@@ -434,14 +454,12 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
   const hasWatsonx = !!(process.env.WATSONX_API_KEY && process.env.WATSONX_PROJECT_ID);
 
   if (!hasWatsonx) {
-    const { answer, citations } = extractiveAnswer(question, topChunks);
-    return NextResponse.json({
-      answer,
-      citations,
-      audited: false,
-      abstained: false,
-      reason: 'Extractive fallback: WATSONX_API_KEY not configured. Quoted from retrieved corpus text.',
-    });
+    return extractiveResponse(
+      question,
+      topChunks,
+      'Extractive path: WATSONX_API_KEY is not configured on this deployment.',
+      false,
+    );
   }
 
   let rawAnswer: string;
@@ -450,9 +468,16 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
   try {
     ({ rawAnswer, citations, unresolvedRefs } = await generateAnswer(question, topChunks));
   } catch (err) {
+    // watsonx is configured but did not answer. Note that the IBM SDK renders
+    // a 403 token_quota_reached as "Access is denied due to invalid
+    // credentials", so the upstream text is reported as upstream text and is
+    // never restated as our own diagnosis of the cause.
     const msg = err instanceof Error ? err.message : String(err);
-    return NextResponse.json(
-      { answer: null, citations: [], audited: false, abstained: true, reason: `Generation failed: ${msg}` },
+    return extractiveResponse(
+      question,
+      topChunks,
+      `Extractive path: watsonx generation was unreachable, so the generated answer did not ship (upstream error: ${msg}).`,
+      true,
     );
   }
 
@@ -499,9 +524,18 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
     auditPassed = audit.passed;
     auditReason = audit.reason;
   } catch (err) {
+    // Guardian never returned a verdict, so the GENERATED answer cannot be
+    // certified and does not ship: that half is unchanged and fails closed.
+    // What ships instead is the extractive quote, which is corpus text by
+    // construction and needs no groundedness audit. A Guardian FAIL verdict
+    // is a different thing entirely and still abstains, below.
     const msg = err instanceof Error ? err.message : String(err);
-    auditPassed = false;
-    auditReason = `Guardian unavailable: ${msg}`;
+    return extractiveResponse(
+      question,
+      topChunks,
+      `Extractive path: the Guardian audit was unreachable, so the generated answer could not be certified and did not ship (upstream error: ${msg}).`,
+      true,
+    );
   }
 
   if (!auditPassed) {

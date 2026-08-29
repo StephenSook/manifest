@@ -417,6 +417,151 @@ export function extractiveAnswer(question: string, chunks: ChunkRow[]): {
   return { answer, citations };
 }
 
+// Terms too common to anchor a regulatory question to a regulatory section.
+// Deliberately short: the gate below is a floor, not a search engine.
+const ANCHOR_STOPWORDS = new Set(
+  ('what when where which who why how does do is are the a an of for to in on at by with and or not '
+    + 'must may can shall will would could should from under within after before that this these those it its as be been '
+    + 'have has had any all each per your you i me my we our their there here about into out over more most such than then '
+    + 'many much long time use used using make makes made get gets got new old also only same other another very').split(/\s+/),
+);
+
+/** Content terms of length >= 4, stripped of citation punctuation. */
+function anchorTerms(text: string): Set<string> {
+  const raw = text.toLowerCase().match(/[a-z0-9.()]+/g) ?? [];
+  return new Set(
+    raw
+      .map((t) => t.replace(/^[.()]+|[.()]+$/g, ''))
+      .filter((t) => t.length >= 4 && !ANCHOR_STOPWORDS.has(t)),
+  );
+}
+
+/**
+ * Minimum content terms a cited chunk must share with the question before the
+ * extractive path is allowed to answer.
+ *
+ * Measured 2026-08-29 against the 28 real questions in eval/bank.jsonl and 12
+ * adversarial off-corpus questions, scoring the best overlap across exactly the
+ * set extractiveAnswer cites:
+ *
+ *   real questions   min 1, median 5, max 10
+ *   off-corpus junk  min 0, max 1
+ *
+ * At 2, all 12 off-corpus questions abstain and 27 of 28 real questions still
+ * answer. The one real question it blocks (q24) already fails the eval, so this
+ * costs no passing row. Cosine similarity was tried first and CANNOT do this
+ * job: the hashing-trick embedder scored junk as high as 0.3113 against a real
+ * minimum of 0.2243, so the distributions overlap and no threshold separates
+ * them. The junk sample is small and adversarial, so treat 2 as a calibrated
+ * floor rather than a proven constant, and note the gate errs toward abstaining,
+ * which is the safe direction for a cite-or-abstain product.
+ */
+const ANCHOR_MIN_TERMS = 2;
+
+/**
+ * Whether the retrieval is actually about the question.
+ *
+ * Retrieval always returns top-k chunks, with no notion of "nothing relevant
+ * here", so without this every question produced an answer. Measured on
+ * 2026-08-29: "Who won the 2026 FIFA World Cup?" was answered `abstained:
+ * false` citing 47 CFR 25.103(2)(2)(3) with the body text "Hawaii;". That is a
+ * cite-or-abstain violation (hard rule 1) reachable on the keyless path since
+ * it shipped, and the watsonx-unreachable fallback made it reachable in
+ * production too.
+ */
+export function extractiveIsAnchored(question: string, chunks: ChunkRow[]): boolean {
+  const cfrChunks = chunks.filter((c) => c.cfr_title > 0);
+  const docChunks = chunks.filter((c) => c.cfr_title === 0);
+  // Exactly the set extractiveAnswer cites, so the gate judges what ships.
+  const cited = [...cfrChunks.slice(0, 3), ...docChunks.slice(0, 2)];
+  if (cited.length === 0) return false;
+
+  // A question that names a section is anchored to a chunk of that section.
+  // Term overlap alone cannot see this: "97.207(g)" tokenises differently from
+  // the chunk's "97.207(g)(1)", so the strongest possible signal, the citation
+  // the user typed, scored zero. Section equality is the right comparison
+  // because a paragraph of a named section is what the user asked for.
+  const asked = parseCfrReferences(question);
+  if (asked.some((r) => cited.some((c) => c.section === r.section))) return true;
+
+  const qTerms = anchorTerms(question);
+  for (const c of cited) {
+    const cTerms = anchorTerms(
+      `${c.text} ${c.section}${c.paragraph_path} ${c.source_doc ?? ''}`,
+    );
+    let shared = 0;
+    for (const t of qTerms) if (cTerms.has(t)) shared++;
+    if (shared >= ANCHOR_MIN_TERMS) return true;
+  }
+  return false;
+}
+
+export interface ExtractiveResponseBody {
+  answer: string | null;
+  citations: Citation[];
+  audited: boolean;
+  abstained: boolean;
+  reason: string;
+  degraded: boolean;
+}
+
+/**
+ * The response body for the offline extractive path, used both when watsonx is
+ * not configured and when it is configured but unreachable.
+ *
+ * The second case is why this exists. watsonx is a metered third-party
+ * dependency: a quota ceiling, an outage, a rate limit or a timeout all raise
+ * from the SDK, and the route used to surface that exception as the user's
+ * entire answer. The product already carries a keyless path over the same
+ * committed corpus, so an upstream failure degrades to it rather than taking
+ * the product down. Health, not the presence of two env var names.
+ *
+ * Cite or abstain (hard rule 1) still binds: quoted corpus text needs a
+ * citation like anything else, so a retrieval that resolved none abstains
+ * rather than shipping an uncited quote. That case was previously reachable
+ * and unhandled on the no-credentials path.
+ */
+export function buildExtractiveResponse(
+  question: string,
+  chunks: ChunkRow[],
+  degradation: string,
+  degraded: boolean,
+): ExtractiveResponseBody {
+  const { answer, citations } = extractiveAnswer(question, chunks);
+  if (citations.length === 0) {
+    return {
+      answer: null,
+      citations: [],
+      audited: false,
+      abstained: true,
+      reason: `${degradation} The extractive path resolved no citable section, so no answer ships.`,
+      degraded,
+    };
+  }
+  if (!extractiveIsAnchored(question, chunks)) {
+    // Retrieval returns its top k for any input, so a citation existing is not
+    // evidence the corpus addresses the question. Abstain and show what was
+    // retrieved, the same shape the generated path uses when it cannot ground
+    // an answer.
+    return {
+      answer: null,
+      citations: chunks.filter((c) => c.cfr_title > 0).map(chunkToCitation),
+      audited: false,
+      abstained: true,
+      reason: `${degradation} The retrieved sections do not address this question, so no answer ships. Retrieved sections are listed.`,
+      degraded,
+    };
+  }
+  return {
+    answer,
+    citations,
+    audited: false,
+    abstained: false,
+    reason: `${degradation} Answer quoted verbatim from the retrieved corpus text, not generated. The Guardian audit did not run on it.`,
+    degraded,
+  };
+}
+
 export type GuardianVerdict = 'pass' | 'fail' | 'no-verdict';
 
 // granite-guardian-3-8b glues chat-role markers to the verdict

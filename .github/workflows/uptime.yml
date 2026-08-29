@@ -97,3 +97,35 @@ jobs:
               sys.exit(1)
           print("ok citations", cites)
           PY
+
+      # Added 2026-08-29. Before this, /api/ask returned the raw watsonx
+      # exception when watsonx was unreachable, so the step above caught a
+      # generative outage as a side effect of the answer vanishing. It now
+      # degrades to the extractive path and still answers with citations,
+      # which is the right product behaviour and would have left this
+      # watchdog GREEN over a completely dead Granite path. Availability and
+      # degradation are different questions, so they are asserted separately.
+      - name: Assert the answer came from watsonx, not the degraded fallback
+        run: |
+          python3 - << 'PY'
+          import json, sys
+          with open("/tmp/ask.json") as f:
+              data = json.load(f)
+          if data.get("degraded") is True:
+              print("::error::watsonx is configured but unreachable. The product is "
+                    "SERVING, degraded to the offline extractive path, and answering "
+                    "with citations. Generation and the Guardian audit are NOT running. "
+                    "Upstream reason:", data.get("reason"))
+              sys.exit(1)
+          # degraded=false alone is not proof watsonx answered: the KEYLESS
+          # extractive path also reports degraded=false, by design, because
+          # nothing degraded. Only a Guardian-audited answer proves the
+          # generative pipeline ran, so assert that too or a deployment that
+          # simply lost its credentials would print "watsonx answered".
+          if data.get("audited") is not True:
+              print("::error::answer was not Guardian-audited, so the watsonx pipeline "
+                    "did not produce it. Most likely WATSONX_API_KEY and "
+                    "WATSONX_PROJECT_ID are missing from this deployment. Body:", data)
+              sys.exit(1)
+          print("not degraded and Guardian-audited. watsonx answered.")
+          PY

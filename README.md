@@ -84,6 +84,8 @@ The deorbit compliance verdict is computed by an NRLMSISE-00 orbital lifetime in
 
 **Local fallback (disclosed):** Ollama `granite4.1:8b` and `granite-embedding:278m`. Rehearsed on Ollama; watsonx tokens reserved for the live demo and judging week.
 
+**Token budget, engineered rather than hoped:** watsonx Lite meters 300,000 tokens per month at 2 requests per second. Manifest is built so no accident can spend that ceiling: the corpus is embedded offline into a frozen committed index, so production never pays a cold-start reindex; the CI eval runs against committed fixtures with no key at all; rehearsal happens on Ollama; and each live watsonx run is a deliberate, dated event recorded in `docs/FACTS.json` (`eval_live`).
+
 **Corpus:** Title 47 Parts 5, 25, 97 and Title 15 Part 960 from eCFR bulk XML (govinfo.gov), plus FCC-26-47A1.pdf, FCC-22-74A1.pdf, the NASA DAS 3.2 User Guide (cited as authority, not a DAS run), and NASA CubeSat 101 (2017, age flagged). NASA-STD-8719.14C sits behind the NASA Technical Standards login wall and is deliberately not ingested; questions about it abstain with a pointer. Every chunk carries its snapshot AMDDATE. Part 100 (FCC 26-47, adopted July 22, 2026) is ingested separately and tagged PENDING regime: the effective date has not been announced, and Part 25 remains binding today.
 
 **Eval:** 28-question bank plus 6 abstention traps with exact-citation scoring (`eval/runner.py`). Runs in CI on every push against committed fixtures (no network, no key), with a raise-only regression floor and a hard requirement that every abstention trap abstains. Current honest baseline on the credential-free extractive path: 53.6 percent with 6/6 traps abstaining (2026-08-26). The 90 percent submission bar applies to the full watsonx pipeline (Granite generation plus Guardian audit) and is published to `docs/FACTS.json`, dated, when that run happens.
@@ -186,6 +188,13 @@ The Plan-mode row is an honesty log because the session was never exported. Inve
 | `evidence-writer` | Docs, README | `docs/`, `README.md` |
 
 **Human/AI boundary:** Bob authored code within these scoped sessions. The team made all architectural and product decisions: the deorbit-compliance-as-legal-verdict framing, the cite-or-abstain policy, the decision to serve Surya as a frozen artifact beside the NOAA envelope rather than apply it to the verdict, and all citations and numbers. Bob does not decide whether a regulatory claim is correct; humans do, backed by primary sources.
+
+**Engineering incident log.** Four dated events from the Bob workflow, each checkable in this repo without opening Bob:
+
+- **2026-08-24, the eval bank became a Bob tool.** `eval/mcp_server.py` exposes `run_eval` and `eval_last_report` over stdio and `.bob/mcp.json` points Bob at it, so Bob can score its own edits against the 28-question bank plus 6 abstention traps during development (commit `82cecca`). The IBM Context Forge gateway registration is parked: the virtual-server create call returned an opaque error, so this README claims the stdio wiring only. Claiming the gateway before it answers would be an unwired claim.
+- **2026-08-25, the lane split fired on a real write.** Frontend mode refused `docs/architecture.svg` because the path does not match that mode's `fileRegex`; the author switched to `evidence-writer` and the diagram landed inside that scope (`git show e6788e5`, `git show 377a146`). The chat was not exported, so the durable record is the property itself: `tests/test_bob_lane_enforcement.py` asserts the allow/refuse table on every CI run, and widening `frontend` to include `docs/` fails the build.
+- **2026-08-26, Orchestrator mode does not exist, verified rather than assumed.** Bob 2.0.3 offers Agent, Plan and Ask plus the five workspace modes. A grep over the installed app bundle found `orchestrator` only inside TypeScript's own compiler files. The evidence above therefore claims lane enforcement, not an Orchestrator session.
+- **2026-08-26, the Plan-mode gap stayed a gap.** The build's critical-path Plan session was never exported. [`docs/bob-evidence/plan-mode-critical-path.md`](docs/bob-evidence/plan-mode-critical-path.md) is the dated refusal to reconstruct it, because an invented transcript would be worse than the missing one.
 
 ---
 

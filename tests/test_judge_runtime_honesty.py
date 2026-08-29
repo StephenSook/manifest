@@ -198,3 +198,29 @@ def test_video_script_parks_one_tap_and_prior_rules() -> None:
     assert "YouTube ID" in text
     assert "audio stream" in lower
     assert "pre-warm" in lower
+
+
+def test_persistent_scope_notice_is_on_every_page() -> None:
+    """
+    Guard: the scope notice lives in the shared layout, so it cannot be
+    present on the judge page and missing on the planner.
+
+    Added 2026-08-29 from a competitor review. A rival shipped a persistent
+    "DEMO DATA - NOT FOR OPERATIONAL USE" footer on every page, which was the
+    single most honest thing in that submission, and we had no in-product
+    disclaimer anywhere. A licensing planner that reads as authoritative is
+    dangerous in a way most demos are not: a user who treats a computed date
+    as the legal deadline can miss a real one.
+
+    The assertion checks the MECHANISM sentence, not just a disclaimer. A bare
+    "not legal advice" line tells a reader nothing about whether to trust the
+    number in front of them.
+    """
+    layout = (REPO / "app" / "layout.tsx").read_text(encoding="utf-8")
+    assert "Planning aid, not legal authority" in layout
+    assert "contentinfo" in layout, "the notice must be a real footer landmark"
+    # The two hard rules the notice rests on must both be named.
+    assert "abstains" in layout, "cite-or-abstain (hard rule 1) must be stated"
+    assert "DOCUMENTED" in layout and "ESTIMATED" in layout, (
+        "documented-vs-estimated lead times (hard rule 3) must be stated"
+    )

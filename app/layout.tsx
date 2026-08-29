@@ -110,6 +110,49 @@ export default function RootLayout({
           {children}
         </main>
 
+        {/*
+          Persistent scope notice, on every page including the native shell.
+
+          A licensing planner that reads as authoritative is dangerous in a way
+          a weather app is not: a user who treats a computed date as the legal
+          deadline can miss a real one. The disclaimer is deliberately not a
+          bare "not legal advice" line, which tells a reader nothing about
+          whether to trust the number in front of them. It names the mechanism
+          instead, because the mechanism is the reason the number is worth
+          anything: every regulatory statement is pinned to a section-level
+          citation in a dated snapshot or the product abstains, and every
+          duration is labelled DOCUMENTED with a source or ESTIMATED with a
+          basis (hard rules 1 and 3).
+        */}
+        <footer
+          role="contentinfo"
+          style={{
+            borderTop: '1px solid var(--color-border)',
+            backgroundColor: 'var(--color-surface)',
+            marginTop: '2rem',
+          }}
+        >
+          <div
+            style={{
+              maxWidth: '1200px',
+              margin: '0 auto',
+              padding: '0.7rem 1.25rem',
+              fontSize: '11px',
+              lineHeight: 1.5,
+              color: 'var(--color-muted)',
+            }}
+          >
+            <strong style={{ color: 'var(--color-fg)', fontWeight: 600 }}>
+              Planning aid, not legal authority.
+            </strong>{' '}
+            Manifest computes a critical path from a dated corpus snapshot. Every
+            regulatory statement carries a section-level citation or the product
+            abstains, and every lead time is labelled DOCUMENTED with a source or
+            ESTIMATED with a basis. Verify against the cited text before you file,
+            and confirm current requirements with the issuing agency.
+          </div>
+        </footer>
+
         {/* Native-only shell (tasks 2.13, 2.14): renders nothing on the web */}
         <MobileShell />
       </body>

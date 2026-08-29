@@ -240,6 +240,13 @@ def main() -> int:
         results.append({
             "id": rid, "pass": ok, "trap": bool(row.get("abstain")),
             "abstained": bool(resp.get("abstained")), "detail": detail,
+            # Provenance, carried per row so a score can never be attributed to
+            # a pipeline that did not produce it. `degraded` is true when
+            # /api/ask fell back to the offline extractive path because watsonx
+            # was unreachable, and `audited` is true only when the Guardian
+            # audit actually ran on a generated answer.
+            "degraded": bool(resp.get("degraded")),
+            "audited": bool(resp.get("audited")),
         })
         print(f"{'PASS' if ok else 'FAIL'} {rid}: {detail}")
 
@@ -249,6 +256,21 @@ def main() -> int:
     t_correct = sum(1 for r in t_results if r["pass"])
     score_pct = (100.0 * q_correct / len(q_results)) if q_results else 0.0
     traps_ok = t_correct == len(t_results) and len(t_results) > 0
+
+    # Which pipeline actually produced this score. A run where any row came
+    # back degraded measured the offline extractive path, whatever /api/status
+    # reported about credentials at the time, and publishing it as a watsonx
+    # measurement would be a fabricated attribution. Recorded here so the
+    # decision is made from the run's own data and not from a separate
+    # credential-derived snapshot taken before or after it.
+    degraded_rows = [r["id"] for r in results if r.get("degraded")]
+    audited_rows = [r for r in q_results if r.get("audited")]
+    answered_rows = [r for r in q_results if not r.get("abstained")]
+    pipeline = "watsonx"
+    if degraded_rows:
+        pipeline = "offline-extractive (degraded: watsonx was unreachable)"
+    elif answered_rows and not audited_rows:
+        pipeline = "offline-extractive (no answer was Guardian-audited)"
 
     summary = {
         "mode": args.mode,
@@ -260,6 +282,8 @@ def main() -> int:
         "traps_abstained": t_correct,
         "bar": {"min_score_pct": args.min_score, "all_traps_must_abstain": True},
         "passed": score_pct >= args.min_score and traps_ok,
+        "pipeline": pipeline,
+        "degraded_rows": degraded_rows,
         "results": results,
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
@@ -267,6 +291,13 @@ def main() -> int:
 
     print(f"\nscore: {q_correct}/{len(q_results)} questions ({score_pct:.1f}%), "
           f"traps abstaining: {t_correct}/{len(t_results)}")
+    print(f"pipeline: {pipeline}")
+    if degraded_rows:
+        print("WARNING: this run is NOT a watsonx measurement. "
+              f"{len(degraded_rows)} row(s) degraded to the extractive path: "
+              f"{', '.join(degraded_rows[:8])}"
+              f"{' ...' if len(degraded_rows) > 8 else ''}. "
+              "Do not publish this score as the watsonx pipeline.")
     print(f"bar: >= {args.min_score}% and all traps abstain -> "
           f"{'PASSED' if summary['passed'] else 'FAILED'}")
     return 0 if summary["passed"] else 1

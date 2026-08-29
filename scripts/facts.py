@@ -188,6 +188,22 @@ def load_eval_live(report_path: Path, url: str) -> dict | None:
         print(f"WARNING: live eval scored {len(results)} of {bank_rows} "
               "bank rows; eval_live omitted", file=sys.stderr)
         return None
+    # A run where any row degraded measured the OFFLINE EXTRACTIVE path,
+    # because /api/ask fell back when watsonx was unreachable. The runtime
+    # block below is fetched from /api/status in a SEPARATE request and is
+    # derived from credential presence, so it would happily stamp
+    # generation_backend=watsonx onto a score that watsonx did not produce.
+    # Refuse rather than publish that attribution. Added 2026-08-29 with the
+    # degrade-on-unreachable fallback that made this reachable.
+    degraded_rows = [r["id"] for r in results if r.get("degraded")]
+    if degraded_rows:
+        print(f"WARNING: live eval had {len(degraded_rows)} degraded row(s) "
+              f"({', '.join(degraded_rows[:8])}"
+              f"{' ...' if len(degraded_rows) > 8 else ''}): watsonx was "
+              "unreachable and the answers came from the extractive path. "
+              "This is not a watsonx measurement; eval_live omitted.",
+              file=sys.stderr)
+        return None
     passing = [r["id"] for r in results if r.get("pass")]
     failing = [r["id"] for r in results if not r.get("pass")]
     runtime = None
@@ -211,6 +227,8 @@ def load_eval_live(report_path: Path, url: str) -> dict | None:
         "passing_ids": passing,
         "failing_ids": failing,
         "runtime": runtime,
+        # From the run's own rows, not from the /api/status snapshot above.
+        "pipeline": report.get("pipeline"),
         "measured_at": report.get("generatedAt"),
     }
 

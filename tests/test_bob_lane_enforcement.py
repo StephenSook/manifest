@@ -6,7 +6,7 @@ isolate lanes. Frontend cannot write docs/architecture.svg.
 Evidence-writer can. That is task 2.22 as a CI assertion, not as a
 composed chat log.
 
-Triggered by steal 25 (2026-08-26): a rival Bob log that names what Bob
+Triggered by a 2026-08-26 review: a Bob log that names what Bob
 did not do. Inventing the missing Plan-mode or lane-enforcement chats
 would be the anti-pattern. The yaml is the source of truth.
 

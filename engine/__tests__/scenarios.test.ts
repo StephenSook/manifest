@@ -1,7 +1,6 @@
 // engine/__tests__/scenarios.test.ts
 //
-// Named scenario stories, taken from the strongest demo design in the rival
-// field: a set of NAMED stories a judge clicks, each ending somewhere
+// Named scenario stories: a set of NAMED stories a judge clicks, each ending somewhere
 // different, so the engine's range is visible without typing anything.
 //
 // The property that makes it work is DISTINCTNESS. Eight buttons that all

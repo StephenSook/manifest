@@ -128,7 +128,7 @@ describe('buildSolarPayload when Surya is absent', () => {
 });
 
 describe('buildSolarPayload when NOAA is unreachable', () => {
-  // This is the defect the whole rival field kept making: a surface that
+  // This is a common defect in this class of product: a surface that
   // manufactures a plausible number when its upstream is down. A named
   // absence is the only honest answer, and cite-or-abstain applies to a
   // measurement exactly as it applies to a regulatory citation.

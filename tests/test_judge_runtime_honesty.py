@@ -5,10 +5,10 @@ Guard: /judge and AskPanel print who is actually answering, and the
 itinerary does not present Granite, Orchestrator, or Context Forge as
 running when they are not.
 
-Triggered by the 2026-08-26 Sky to Porch grade: their payload was honest
-(explanationStatus.mode=deterministic) and the README/video still said
-Granite wrote every explanation. Our /api/status.runtime was already
-honest. The itinerary was not.
+Triggered by a 2026-08-26 review of how this failure mode shows up in
+practice: a payload can be honest about its own mode while the README and
+video still say a model wrote every explanation. Our /api/status.runtime
+was already honest. The itinerary was not.
 
 A source-text guard, not a render test. CI runs `pytest tests/` in
 eval-gate.yml (fabricated-numbers job). File set is the working tree

@@ -64,8 +64,15 @@ const MODEL_INVENTORY = {
   local_fallback: 'granite4.1:8b',              // Ollama -- rehearsal only, not production path
 } as const;
 
-// Whether THIS deployment can actually reach watsonx. The model inventory above
-// says what is configured; this says what can run (task 0.13 credentials).
+// Whether THIS deployment is CONFIGURED to reach watsonx (task 0.13
+// credentials). Read the name precisely: it tests that two environment
+// variables are non-empty, which is not a health check and cannot be one
+// without spending tokens on every status request. A key can be present and
+// the model still refuse: on 2026-08-29 the watsonx Lite token quota was
+// exhausted and every generation call returned 403 while this flag stayed
+// true, so the endpoint reported a generative path that was answering
+// nothing. The runtime block below now says which claims rest on presence
+// and points at the one request that settles it.
 const hasWatsonxCredentials = Boolean(
   process.env.WATSONX_API_KEY && process.env.WATSONX_PROJECT_ID,
 );
@@ -87,6 +94,39 @@ function readCorpusSnapshot(): string {
 }
 
 const corpusSnapshot = readCorpusSnapshot();
+
+/**
+ * Which embedder actually vectorises a query, read from the committed corpus
+ * rather than from credentials.
+ *
+ * This was previously reported as `watsonx` whenever a key was present, and
+ * that was wrong in EVERY deployment, keyed or not. app/api/ask/route.ts
+ * selects the embedder from the corpus itself:
+ *
+ *   const useHash = corpus.model.startsWith('hashing-trick') || ...
+ *
+ * The committed freeze is `hashing-trick-768` (task 1.3, so /api/ask loads on
+ * Vercel without Blob), so that branch is always taken and the watsonx embed
+ * call is unreachable in production. granite-embedding-278m stays in the model
+ * inventory as what the pipeline is wired for, and this field says what ran.
+ * Same failure shape readCorpusSource() was fixed for below: a claim derived
+ * from configuration where the code derives behaviour from the artifact.
+ */
+function readEmbeddingBackend(): string {
+  try {
+    const schema = require('../../../corpus/schema.json') as { model?: string };
+    const model = schema.model;
+    if (!model) return 'CORPUS_SCHEMA_MISSING_MODEL';
+    // Mirrors the useHash predicate in app/api/ask/route.ts exactly. If those
+    // two ever diverge, this field starts lying again.
+    if (model.startsWith('hashing-trick') || model === 'mock') return model;
+    return 'watsonx';
+  } catch {
+    return 'CORPUS_NOT_BUNDLED';
+  }
+}
+
+const embeddingBackend = readEmbeddingBackend();
 
 /**
  * Where the corpus this deployment serves actually came from.
@@ -239,19 +279,36 @@ async function handleStatus(): Promise<NextResponse> {
     // CI asserts this matches the README (test_no_fabricated_numbers.py, task 2.18)
     models: MODEL_INVENTORY,
 
-    // Runtime self-report: which path actually answers right now, as opposed to
-    // which models are configured above. A judge can diff the two in one
-    // request, so a claim that is not running cannot hide behind an inventory.
+    // Runtime self-report: which path answers, as opposed to which models are
+    // configured above. A judge can diff the two in one request, so a claim
+    // that is not running cannot hide behind an inventory.
+    //
+    // Each field below states what it is derived from, because the three are
+    // not equally knowable from inside this handler. corpus_source and
+    // embedding_backend are read from the committed artifact and are facts.
+    // generation_backend and guardian_audit are read from credential presence
+    // and are therefore claims about CONFIGURATION, not about model health:
+    // proving those would mean spending watsonx tokens on every status
+    // request, which is both expensive and the exact thing that exhausted the
+    // Lite quota on 2026-08-29. So they are labelled rather than overstated,
+    // and the note names the single request that settles the question.
     runtime: {
       generation_backend: hasWatsonxCredentials
         ? 'watsonx'
         : 'offline-extractive',
-      embedding_backend: hasWatsonxCredentials ? 'watsonx' : 'hashing-trick-768',
+      embedding_backend: embeddingBackend,
       guardian_audit: hasWatsonxCredentials ? 'active' : 'inactive',
       corpus_source: readCorpusSource(),
+      // Which of the fields above are measured and which are inferred.
+      basis: {
+        generation_backend: 'credentials-present (not a health check)',
+        guardian_audit: 'credentials-present (not a health check)',
+        embedding_backend: 'read from corpus/schema.json model',
+        corpus_source: 'read from the loaded corpus',
+      },
       note: hasWatsonxCredentials
-        ? 'watsonx credentials present: generation, embedding and Guardian audit run on the models named above.'
-        : 'watsonx credentials absent: answers come from the offline extractive path over the same corpus, cite-or-abstain still enforced, Guardian audit does not run.',
+        ? `watsonx credentials are present, so /api/ask attempts the watsonx path. This is credential presence, not model health: a token quota, an outage or a rate limit is not visible from here. When watsonx is unreachable /api/ask degrades to the offline extractive path over the same corpus, sets degraded: true and names the upstream error in its reason, so POST /api/ask and read that reason for the path that actually answered. Query embedding runs on ${embeddingBackend} in every case, because the committed corpus freeze determines the embedder.`
+        : `watsonx credentials absent: answers come from the offline extractive path over the same corpus, cite-or-abstain still enforced, Guardian audit does not run. Query embedding runs on ${embeddingBackend}.`,
     },
 
     // Corpus snapshot AMDDATE, read from the committed freeze rather than

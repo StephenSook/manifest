@@ -150,6 +150,7 @@ function VerdictBadge({ verdict }: { verdict: Verdict }) {
         padding: '2px 6px',
         borderRadius: '2px',
         display: 'inline-block',
+        whiteSpace: 'nowrap',
       }}
     >
       {cfg.label}

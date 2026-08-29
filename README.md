@@ -74,6 +74,13 @@ The deorbit compliance verdict is computed by an NRLMSISE-00 orbital lifetime in
 
 **Audit:** `ibm/granite-guardian-3-8b` reviews every citation-bearing answer for groundedness before display. An answer that fails the audit degrades to abstention with the retrieved source sections shown. Abstention is a designed state, not an error.
 
+**The honesty rule, quoted verbatim from the shipped prompt** (`app/api/ask/route.ts`), so it is inspectable without opening code:
+
+> You are a regulatory assistant for US CubeSat licensing. Answer only from the provided context.
+> Every claim must cite the exact CFR section and paragraph (e.g., 47 CFR 97.207(g)(1)). If the context does not support an answer, say "I cannot answer from the provided regulatory text."
+
+Any generated answer whose CFR references fail to resolve against the retrieved sections by exact section-plus-path match is converted to abstention before it ships.
+
 **Retrieval:** `ibm/granite-embedding-278m-multilingual` over a precomputed brute-force cosine index. The corpus ships as a frozen SQLite bundle plus Float32 vectors, built by `pipeline/embed_and_store.py`, **committed to this repository and traced into the deployed function** by `outputFileTracingIncludes`. It is not fetched from a service at runtime. Vercel Blob is an optional overlay for a later Granite re-embed whose bundle would be too large to commit, and `/api/status` reports which source actually loaded. Until watsonx credentials land, the freeze uses IDF-weighted hashing-trick vectors with the identical transform on both corpus and query side.
 
 **Solar outlook:** `nasa-ibm-ai4science/Surya-1.0` (IBM and NASA heliophysics foundation model, Apache-2.0, checkpoint `surya.366m.v1.pt`), run locally with a real forward pass over NASA SDO benchmark frames. Its activity index is a scalar proxy for near-term flare-associated EUV activity. Output is a frozen artifact at `data/surya-outlook.json`, served by `GET /api/solar` alongside the live NOAA reading and labelled ESTIMATED (D7). If it is absent the endpoint returns `surya_absent: true` rather than substituting a value. **It is reported for context and is not applied to the envelope or to the verdict**: no code adjusts a NOAA number using it, and saying otherwise would be a claim the shipped code does not support.

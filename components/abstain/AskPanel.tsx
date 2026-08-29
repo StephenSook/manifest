@@ -16,6 +16,7 @@
 // No em-dashes. No regulatory text typed into JSX: all copy from payload.
 
 import { useState, useId, useRef, useEffect } from 'react';
+import { apiBase } from '@/lib/api-base';
 import type { Citation } from '@/engine/types';
 
 // ---------------------------------------------------------------------------
@@ -431,7 +432,7 @@ export function AskPanel() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch('/api/status')
+    fetch(`${apiBase()}/api/status`)
       .then((res) => {
         if (!res.ok) throw new Error(`/api/status returned HTTP ${res.status}`);
         return res.json() as Promise<{ runtime?: RuntimeInfo }>;
@@ -455,7 +456,7 @@ export function AskPanel() {
     setResponse(null);
     setFetchError(null);
     try {
-      const res = await fetch('/api/ask', {
+      const res = await fetch(`${apiBase()}/api/ask`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: trimmed }),

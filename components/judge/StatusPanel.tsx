@@ -18,6 +18,7 @@
 //   - No em-dashes and no double-hyphens in copy or comments.
 
 import { useState, useEffect } from 'react';
+import { apiBase } from '@/lib/api-base';
 
 // ---------------------------------------------------------------------------
 // Response shape (mirrors app/api/status/route.ts)
@@ -545,7 +546,7 @@ export function StatusPanel({ onLoad }: StatusPanelProps) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch('/api/status')
+    fetch(`${apiBase()}/api/status`)
       .then((res) => {
         if (!res.ok) throw new Error(`/api/status returned HTTP ${res.status}`);
         return res.json() as Promise<StatusPayload>;

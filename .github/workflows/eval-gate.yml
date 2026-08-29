@@ -134,7 +134,15 @@ jobs:
     name: Every judge-facing number traces to FACTS.json
     runs-on: ubuntu-latest
     steps:
+      # fetch-depth: 0 because tests/test_engineering_log.py resolves every
+      # commit SHA the engineering log cites, and the default shallow
+      # checkout contains exactly one commit. Without full history the
+      # guard reports every real citation as dead, which is a true failure
+      # for a false reason. The guard tells the two apart and names this
+      # line when the history is the problem.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: astral-sh/setup-uv@v5
         with:

@@ -41,7 +41,21 @@ cross-checking the live API instead of trusting the watcher's own output. The ru
 came out of it: any gate that counts must assert a minimum count before reading zero
 failures as success. Zero of zero is not green, it is not yet.
 
-A fourth, smaller: a `strings | grep` scan was cited as evidence that an image
+**4. The guard written for this very document failed on the CI machine, for a
+reason that had nothing to do with what it was checking.**
+`tests/test_engineering_log.py` resolves every commit SHA cited below, so a dead
+citation cannot survive. It passed locally and failed on the first CI run, reporting all
+ten citations as unresolvable. The citations were fine. GitHub Actions checks out
+shallow by default, one commit deep, so `git cat-file` could not see any of them. A true
+failure for a false reason. Fixed on both halves rather than one: the job now checks out
+with `fetch-depth: 0`, and the guard asserts the history is deep enough *first*, failing
+with that diagnosis instead of blaming the citations. Skipping when the precondition is
+absent was the tempting fix and is the wrong one, because a check that cannot run is not
+a check that passed. The general form, which this project keeps relearning: for every
+guard, ask what it does on the CI machine specifically, since the machine where it was
+written is the one place its precondition always holds.
+
+A fifth, smaller: a `strings | grep` scan was cited as evidence that an image
 redaction had worked. Running the same scan against the *unredacted* original returned
 the same zero, because PNG pixel data is compressed and text never appears as literal
 bytes either way. The check was worthless in both directions. The real evidence is a

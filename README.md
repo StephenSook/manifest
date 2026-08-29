@@ -183,11 +183,24 @@ IBM Bob 2.0.3 is the primary development tool (competition requirement). The `.b
 | Workspace skills | `.bob/skills/` |
 | Workspace MCP config | `.bob/mcp.json` |
 | Bobalytics screenshots (subscription usage) | `docs/bob-evidence/bobalytics-01.png`, `bobalytics-02.png`, `bobalytics-03.png` |
+| Bob settings, in-editor usage meter | `docs/bob-evidence/bob-usage.png` (Bob 2.0.3, third team member, budget exhausted) |
 | Plan-mode output (freeze critical path) | [`.bob/plans/freeze-critical-path.md`](.bob/plans/freeze-critical-path.md), genuine Bob Plan-mode output, provenance confirmed by its author 2026-08-29 |
 | Plan-mode session (build critical path) | Never captured. Honesty log: [`docs/bob-evidence/plan-mode-critical-path.md`](docs/bob-evidence/plan-mode-critical-path.md) |
 | Lane enforcement | [`docs/bob-evidence/lane-enforcement.md`](docs/bob-evidence/lane-enforcement.md) (shipped fileRegex, git event, CI test). Not a pasted Bob chat. |
 
 The Plan-mode row is an honesty log because the session was never exported. Inventing a transcript would be worse than the gap. Lane enforcement is a property of `.bob/custom_modes.yaml`: `frontend` cannot write `docs/architecture.svg`, `evidence-writer` can. `tests/test_bob_lane_enforcement.py` asserts that table on every CI run.
+
+**Measured Bob spend, three separate subscriptions.** Each figure is legible in the screenshot named beside it, so none of this rests on our word:
+
+| Subscription | Measured | Source |
+|---|---|---|
+| Member 1, upgraded from Trial to Pro | **60.24** Bobcoins spent against a 40.00 budget, 20.24 of it billable overage; budget renews 2026-09-12 | `bobalytics-02.png` (earlier state, 40.13 on Trial, in `bobalytics-01.png`) |
+| Member 2, Trial | **40.39** Bobcoins against a 40.00 budget, reported as -1 percent remaining, 6 days left on the trial | `bob-usage.png` |
+| Member 3, Trial | **19.141 of 40 units, 48 percent**, contract period 2026-08-05 to 2026-09-04 | `bobalytics-03.png` |
+
+Two of the three budgets are exhausted and one crossed into paid overage. Note the two consoles label the meter differently: Bobalytics reports Bobcoins, the IBM SaaS console reports units, and this README does not assert they are the same unit, so the three figures are listed separately rather than summed into a single team number.
+
+Account identifiers are redacted from these screenshots. The usage figures, plan tiers, dates and the Bob version string are untouched, because those are the evidence.
 
 **Five write-scoped custom modes** restrict Bob's write access to each team member's lane:
 

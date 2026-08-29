@@ -416,3 +416,21 @@ export function extractiveAnswer(question: string, chunks: ChunkRow[]): {
   ].map(chunkToCitation);
   return { answer, citations };
 }
+
+export type GuardianVerdict = 'pass' | 'fail' | 'no-verdict';
+
+// granite-guardian-3-8b glues chat-role markers to the verdict
+// ("assistantPASS") and can open with its own safety-template preamble
+// ("Our safety risk definition is defined...") before any verdict token, so
+// the whole output is scanned, not the first word. FAIL anywhere wins over
+// PASS. The model's native Yes/No space is deliberately NOT mapped: a bare
+// No is ambiguous between "no, not supported" and "no risk found", which
+// point in opposite directions, so it is no-verdict and the caller retries
+// once, then fails closed. Measured live 2026-08-29: 3 preamble truncations,
+// 2 bare NO, 2 genuine FAIL across one 34-question run.
+export function parseGuardianVerdict(raw: string): GuardianVerdict {
+  const text = raw.toUpperCase();
+  if (text.includes('FAIL')) return 'fail';
+  if (text.includes('PASS')) return 'pass';
+  return 'no-verdict';
+}

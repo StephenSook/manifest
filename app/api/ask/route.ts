@@ -29,6 +29,7 @@ import {
   chunkToCitation,
   resolveCfrCitations,
   formatCfrReference,
+  parseGuardianVerdict,
 } from './lib';
 
 export const runtime = 'nodejs';
@@ -325,17 +326,33 @@ Answer: ${answer}
 
 Audit result (PASS or FAIL):`;
 
-  const resp = await client.generateText({
-    projectId: cfg.projectId,
-    modelId: 'ibm/granite-guardian-3-8b',
-    input: guardianPrompt,
-    parameters: { max_new_tokens: 8, temperature: 0 },
-  });
-  const result = resp.result.results[0].generated_text.trim().toUpperCase();
-  // Guardian can glue its chat-role marker to the verdict ("ASSISTANTPASS"),
-  // so parse by verdict token. FAIL anywhere wins, and neither fails closed.
-  const passed = !result.includes('FAIL') && result.includes('PASS');
-  return { passed, reason: passed ? undefined : `Guardian audit: ${result}` };
+  // max_new_tokens 40, not 8: the model can open with its own safety-template
+  // preamble, and at 8 tokens the verdict was cut off before it arrived
+  // (measured live 2026-08-29, three of seven audit abstentions were exactly
+  // this truncation). One retry with a reinforced one-word instruction covers
+  // the responses that carry no verdict token at all; after that, fail closed.
+  const reinforcedPrompt =
+    guardianPrompt +
+    ' Reply with the single word PASS or the single word FAIL. Do not restate any definition.';
+  let lastResult = '';
+  for (const input of [guardianPrompt, reinforcedPrompt]) {
+    const resp = await client.generateText({
+      projectId: cfg.projectId,
+      modelId: 'ibm/granite-guardian-3-8b',
+      input,
+      parameters: { max_new_tokens: 40, temperature: 0 },
+    });
+    lastResult = resp.result.results[0].generated_text.trim().toUpperCase();
+    const verdict = parseGuardianVerdict(lastResult);
+    if (verdict === 'pass') return { passed: true };
+    if (verdict === 'fail') {
+      return { passed: false, reason: `Guardian audit: ${lastResult}` };
+    }
+  }
+  return {
+    passed: false,
+    reason: `Guardian audit returned no verdict: ${lastResult.slice(0, 80)}`,
+  };
 }
 
 function retrieveTop(

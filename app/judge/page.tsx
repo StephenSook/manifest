@@ -314,10 +314,13 @@ export default function JudgePage() {
             heading="Eval score: citations correct, abstention traps refused"
             description={
               'The 28 regulatory questions and 6 abstention traps are scored ' +
-              'by eval/runner.py. The published score in docs/FACTS.json is ' +
-              'the credential-free extractive path (eval_live on the deployed ' +
-              'URL, eval on committed fixtures). The 90 percent bar applies ' +
-              'only when watsonx generation and Guardian actually run. Diff ' +
+              'by eval/runner.py. docs/FACTS.json publishes both measured ' +
+              'scores: eval is the credential-free extractive path on ' +
+              'committed fixtures (53.6 percent), and eval_live is the full ' +
+              'watsonx pipeline measured against this deployment on ' +
+              '2026-08-29 (7.1 percent, 6/6 traps abstaining, zero ' +
+              'fabricated citations: the Guardian audit rejects most ' +
+              'generated answers rather than ship an ungrounded one). Diff ' +
               'runtime.generation_backend on /api/status against the score ' +
               'you are reading. CI re-runs fixtures on every PR.'
             }

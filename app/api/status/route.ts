@@ -34,6 +34,7 @@ import type { MissionInput } from '../../../engine/types';
 // ---------------------------------------------------------------------------
 
 import gt1Seed from '../../../data/missions/gt-1.json';
+import { corsPreflight, withCors } from '@/lib/cors';
 
 const GT1_MISSION: MissionInput = {
   launchDate: gt1Seed.launchDate,
@@ -117,7 +118,15 @@ function readCorpusSource(): string {
 // GET /api/status
 // ---------------------------------------------------------------------------
 
+export function OPTIONS(): NextResponse {
+  return corsPreflight();
+}
+
 export async function GET(): Promise<NextResponse> {
+  return withCors(await handleStatus());
+}
+
+async function handleStatus(): Promise<NextResponse> {
   const t0 = Date.now();
 
   // 1. Build the graph for the GT-1 seed mission

@@ -36,6 +36,7 @@ import {
 // The committed Surya artifact (D7). Frozen, not a live inference path, and
 // the response says so rather than implying a model ran this request.
 import suryaOutlook from '../../../data/surya-outlook.json';
+import { corsPreflight, withCors } from '@/lib/cors';
 
 // Always run this on the server at request time. The whole point is that the
 // reading is live, so a cached response would be a quieter version of the
@@ -57,7 +58,15 @@ async function fetchJson(url: string): Promise<unknown> {
   return res.json();
 }
 
+export function OPTIONS(): NextResponse {
+  return corsPreflight();
+}
+
 export async function GET() {
+  return withCors(await handleSolar());
+}
+
+async function handleSolar() {
   const surya = suryaOutlook as SuryaOutlook;
 
   try {

@@ -18,6 +18,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import type { Citation } from '../../../engine/types';
+import { corsPreflight, withCors } from '@/lib/cors';
 import {
   type ChunkRow,
   cosineSimilarity,
@@ -366,7 +367,15 @@ function retrieveTop(
   return hybridSelect(question, cosineTop, corpus.chunks, k);
 }
 
+export function OPTIONS(): NextResponse {
+  return corsPreflight();
+}
+
 export async function POST(req: NextRequest): Promise<NextResponse<AskResponse>> {
+  return withCors(await handleAsk(req));
+}
+
+async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
   let body: AskRequest;
   try {
     body = await req.json();

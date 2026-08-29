@@ -29,6 +29,14 @@ interface AskResponse {
   audited: boolean;
   abstained: boolean;
   reason?: string;
+  /**
+   * True when watsonx was configured but unreachable, so THIS response came
+   * from the offline extractive path. Provenance has to travel with the
+   * response: /api/status reports credential presence, not model health, so
+   * during an outage it still says watsonx while this answer did not come
+   * from watsonx.
+   */
+  degraded?: boolean;
 }
 
 // Who is answering. Fetched from GET /api/status.runtime, not inferred
@@ -325,7 +333,33 @@ function CitationRow({ c }: { c: Citation }) {
 // ResponseRegion: renders the four states
 // ---------------------------------------------------------------------------
 
-function WriterLine({ runtime }: { runtime: RuntimeInfo | null }) {
+/**
+ * Who wrote THIS answer.
+ *
+ * Previously this read every field from /api/status, which derives the writer
+ * from credential presence. On 2026-08-29 the watsonx token quota was
+ * exhausted, /api/status still said watsonx and active, and this line would
+ * have printed "Writer: watsonx. Guardian: active." directly above a reason
+ * saying the answer came from the offline extractive path. The response knows
+ * what produced it, so the response wins over the deployment snapshot.
+ */
+function WriterLine({
+  runtime,
+  data,
+}: {
+  runtime: RuntimeInfo | null;
+  data?: AskResponse;
+}) {
+  if (data?.degraded) {
+    return (
+      <p style={S.writerLine}>
+        Writer: offline extractive path, quoted from the corpus. Guardian: did
+        not run. Embedding: {runtime?.embedding_backend ?? 'hashing-trick-768'}.
+        watsonx is configured on this deployment but was unreachable for this
+        request.
+      </p>
+    );
+  }
   if (!runtime) return null;
   return (
     <p style={S.writerLine}>
@@ -349,7 +383,7 @@ function ResponseRegion({
     return (
       <div style={S.abstainBlock}>
         <p style={S.abstainLabel}>Abstained</p>
-        <WriterLine runtime={runtime} />
+        <WriterLine runtime={runtime} data={data} />
         <p style={S.abstainReason}>{reason}</p>
       </div>
     );
@@ -360,7 +394,7 @@ function ResponseRegion({
     return (
       <div style={S.abstainBlock}>
         <p style={S.abstainLabel}>Abstained</p>
-        <WriterLine runtime={runtime} />
+        <WriterLine runtime={runtime} data={data} />
         <p style={S.abstainReason}>{reason}</p>
         <p style={S.citationsHeading}>Retrieved sections</p>
         <ul style={S.citationList} aria-label="Retrieved sections">
@@ -377,7 +411,7 @@ function ResponseRegion({
     return (
       <div style={S.answerBlock}>
         <p style={S.answerLabel}>Grounded answer</p>
-        <WriterLine runtime={runtime} />
+        <WriterLine runtime={runtime} data={data} />
         <p style={S.answerText}>{answer}</p>
         {citations.length > 0 && (
           <>
@@ -397,7 +431,7 @@ function ResponseRegion({
   return (
     <div style={S.unauditedBlock}>
       <p style={S.unauditedLabel}>Answer - not audited</p>
-      <WriterLine runtime={runtime} />
+      <WriterLine runtime={runtime} data={data} />
       <p style={S.unauditedNotice}>
         {reason ?? 'This answer was not verified by an audit model.'}
       </p>
@@ -498,12 +532,23 @@ export function AskPanel() {
         abstains when the corpus cannot support an answer.
       </p>
 
+      {/*
+        Shown before any request exists, so it can only report what this
+        deployment is CONFIGURED for. generation_backend and guardian_audit
+        come from credential presence, which is not a health check, so the
+        kicker says configured and the answer below carries what actually
+        ran. Embedding is read from the corpus and is a fact either way.
+      */}
       {runtime && (
         <div style={S.writerBanner} aria-label="Who is answering">
-          <p style={S.writerKicker}>Who is answering</p>
+          <p style={S.writerKicker}>Who is answering, as configured</p>
           <p style={{ margin: 0 }}>
             Writer: {runtime.generation_backend}. Guardian:{' '}
             {runtime.guardian_audit}. Embedding: {runtime.embedding_backend}.
+          </p>
+          <p style={{ ...S.hint, margin: '0.35rem 0 0' }}>
+            Writer and Guardian above are read from credential presence, not
+            from model health. Each answer states what actually produced it.
           </p>
           {runtime.note && (
             <p style={{ ...S.hint, margin: '0.35rem 0 0' }}>{runtime.note}</p>

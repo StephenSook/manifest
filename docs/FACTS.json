@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-08-29T04:16:46.517235+00:00",
+    "generated_at": "2026-08-29T04:47:26.761906+00:00",
     "generated_by": "scripts/facts.py",
     "source_files": [
       "data/decay-table.json",
@@ -63,7 +63,7 @@
     "node_count": 10,
     "compute_ms": 0,
     "seed_note": "GT-1 mission profile from data/missions/gt-1.json (task 2.16), re-based onto a live delivery date (2026-12-01). The planner's question is 'standing at today, licensing not started, which deadlines are already dead.' All dates ESTIMATED per D5.",
-    "measured_at": "2026-08-29T04:16:43.951670+00:00"
+    "measured_at": "2026-08-29T04:47:23.894791+00:00"
   },
   "beneficiary_sizing": {
     "missions_per_year_approx": "40",
@@ -76,10 +76,10 @@
     "licensing_runway_source": "NASA CubeSat 101 (CSLI, 2017), Section 2.8 'Regulatory Licensing (4-6 months)'; same document: FCC requires a minimum of 90 days from application receipt, and IARU coordination starts immediately at manifest. Age flagged per D5."
   },
   "engine": {
-    "test_count": 116,
+    "test_count": 120,
     "ask_route_test_count": 88,
-    "test_count_total": 204,
-    "test_count_note": "Counted by running the suites (vitest --reporter=json) at 2026-08-29T04:16:46.517235+00:00. engine_and_mobile = npm run test:engine, ask_route = npm run test:ask.",
+    "test_count_total": 208,
+    "test_count_note": "Counted by running the suites (vitest --reporter=json) at 2026-08-29T04:47:26.761906+00:00. engine_and_mobile = npm run test:engine, ask_route = npm run test:ask.",
     "decay_table_entries": 21,
     "decay_table_generated_at": "2026-08-16T20:38:16.649836+00:00"
   },
@@ -91,12 +91,12 @@
     "traps_abstained": 6,
     "rows_scored": 34,
     "mode": "fixtures",
-    "measured_at": "2026-08-29T04:16:46.510934+00:00"
+    "measured_at": "2026-08-29T04:47:26.477773+00:00"
   },
-  "eval_note": "Measured by running `python3 eval/runner.py --mode fixtures` at 2026-08-29T04:16:46.517235+00:00: offline, no network, no API key, against the committed fixtures, so anyone who clones the repo reproduces it. The score is the credential-free extractive path. The aspirational bar in CLAUDE.md section 5 is 90 percent; CI enforces a raise-only ratchet at today's measured floor instead, and eval-gate.yml fails on any regression or on any trap answering.",
+  "eval_note": "Measured by running `python3 eval/runner.py --mode fixtures` at 2026-08-29T04:47:26.761906+00:00: offline, no network, no API key, against the committed fixtures, so anyone who clones the repo reproduces it. The score is the credential-free extractive path. The aspirational bar in CLAUDE.md section 5 is 90 percent; CI enforces a raise-only ratchet at today's measured floor instead, and eval-gate.yml fails on any regression or on any trap answering.",
   "eval_live": {
-    "score_pct": 53.6,
-    "questions_correct": 15,
+    "score_pct": 7.1,
+    "questions_correct": 2,
     "questions_total": 28,
     "traps_total": 6,
     "traps_abstained": 6,
@@ -104,21 +104,8 @@
     "mode": "url",
     "url": "https://manifest-web-roan.vercel.app",
     "passing_ids": [
-      "q01",
       "q02",
       "q03",
-      "q04",
-      "q05",
-      "q10",
-      "q12",
-      "q13",
-      "q16",
-      "q18",
-      "q19",
-      "q20",
-      "q21",
-      "q25",
-      "q26",
       "a01",
       "a02",
       "a03",
@@ -127,28 +114,41 @@
       "a06"
     ],
     "failing_ids": [
+      "q01",
+      "q04",
+      "q05",
       "q06",
       "q07",
       "q08",
       "q09",
+      "q10",
       "q11",
+      "q12",
+      "q13",
       "q14",
       "q15",
+      "q16",
       "q17",
+      "q18",
+      "q19",
+      "q20",
+      "q21",
       "q22",
       "q23",
       "q24",
+      "q25",
+      "q26",
       "q27",
       "q28"
     ],
     "runtime": {
-      "generation_backend": "offline-extractive",
-      "embedding_backend": "hashing-trick-768",
-      "guardian_audit": "inactive",
+      "generation_backend": "watsonx",
+      "embedding_backend": "watsonx",
+      "guardian_audit": "active",
       "corpus_source": "committed-freeze",
-      "note": "watsonx credentials absent: answers come from the offline extractive path over the same corpus, cite-or-abstain still enforced, Guardian audit does not run."
+      "note": "watsonx credentials present: generation, embedding and Guardian audit run on the models named above."
     },
-    "measured_at": "2026-08-26T21:17:27.813747+00:00"
+    "measured_at": "2026-08-29T04:46:16.908174+00:00"
   },
   "eval_live_note": "Production URL run of the same bank, recorded separately so the clone-reproducible fixtures score cannot be overwritten by a network measurement. Re-run with --live-report after `python3 eval/runner.py --mode url --url <deploy> --min-score 0`. --check does not re-hit the network."
 }

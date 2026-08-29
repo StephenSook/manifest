@@ -611,15 +611,23 @@ class TestEvalScoreIsPublishedAndConsistent:
         files in the root: the submission copy and the video script quote
         numbers too, and the video's are the ones that become permanent.
         """
-        measured = load_facts()["eval"]["score_pct"]
+        facts = load_facts()
+        allowed = [facts["eval"]["score_pct"]]
+        live = facts.get("eval_live") or {}
+        # eval_live is the OTHER named, FACTS-sourced score: the same suite
+        # measured against the deployed URL (2026-08-29: the watsonx path).
+        # A surface may quote either measured number; anything else is still
+        # a fabrication.
+        if isinstance(live.get("score_pct"), (int, float)):
+            allowed.append(float(live["score_pct"]))
         path = REPO_ROOT / surface
         if not path.exists():
             pytest.skip(f"{surface} is not present")
         text = path.read_text(encoding="utf-8")
         for value in eval_score_claims(text):
-            assert abs(value - measured) < 0.05, (
+            assert any(abs(value - m) < 0.05 for m in allowed), (
                 f"{surface} states {value} percent as the measured eval score "
-                f"where FACTS.json measured {measured}. If this is a different "
+                f"where FACTS.json measured {allowed}. If this is a different "
                 f"quantity it needs its own name and its own source."
             )
 
@@ -769,12 +777,16 @@ class TestSubmissionBarCannotLaunderAFalseScore:
         )
 
     def test_the_shipped_docs_are_clean_under_this_rule(self):
-        measured = load_facts()["eval"]["score_pct"]
+        facts = load_facts()
+        allowed = [facts["eval"]["score_pct"]]
+        live = facts.get("eval_live") or {}
+        if isinstance(live.get("score_pct"), (int, float)):
+            allowed.append(float(live["score_pct"]))
         for surface, text in (("README.md", readme_text()), ("JUDGE.md", judge_md_text())):
             for v in eval_score_claims(text):
-                assert abs(v - measured) < 0.05, (
+                assert any(abs(v - m) < 0.05 for m in allowed), (
                     f"{surface} states {v} percent as a measured eval score; "
-                    f"FACTS.json measured {measured}."
+                    f"FACTS.json measured {allowed}."
                 )
 
 

@@ -26,7 +26,7 @@ Regenerate it yourself: `pipeline/.venv/bin/python3 pipeline/decay.py` (no keys,
 npm install && npm run test:engine
 ```
 
-Expected: **116 tests passing**, 0 failures. These cover:
+Expected: **120 tests passing**, 0 failures. These cover:
 - Critical-path backward pass (diamond fixture hand-computed)
 - 97.207(g) dual clock (30 days after LV det + 90 days before integration, binding = earlier)
 - NOAA CRSRA prerequisite injection (imaging missions only)
@@ -70,6 +70,6 @@ If the network is down: `npm install && npm run test:engine` is the one-command 
 ## What this project is NOT claiming
 
 - Surya runs as a real forward pass whose output is a frozen artifact (`data/surya-outlook.json`), served by `GET /api/solar` (decision D7). If the artifact is absent the endpoint returns `surya_absent: true`. The activity index is reported for context and is NOT applied to the envelope or to the verdict: no code adjusts a NOAA number using it. We do not claim live Surya inference in the request path.
-- The eval score today is 53.6 percent with all 6 abstention traps abstaining, measured on the credential-free extractive path and enforced in CI as a raise-only floor. The 90 percent bar applies to the full watsonx pipeline and will be published to `docs/FACTS.json`, dated, when that run happens. We do not claim 90 today.
+- The eval score today is 53.6 percent with all 6 abstention traps abstaining, measured on the credential-free extractive path and enforced in CI as a raise-only floor. The full watsonx pipeline was measured against production on 2026-08-29: 7.1 percent, all 6 traps abstaining, zero fabricated citations. Guardian rejects most generated answers rather than ship an ungrounded citation, so the pipeline fails closed instead of scoring points. Both numbers are in `docs/FACTS.json`. We do not claim 90.
 - `/api/ask` reads the corpus committed in this repository, which is traced into the deployed function; Vercel Blob is an optional overlay and is not required. Without watsonx credentials the route answers from the offline extractive path over that same corpus rather than abstaining, and `/api/status` reports which backend answered. It abstains when the corpus genuinely cannot load or the question is not supported by the corpus, always with a stated reason, and it never fabricates.
 - Every number in `docs/FACTS.json` comes from a real engine run, and the no-fabricated-numbers test enforces that README figures match it.

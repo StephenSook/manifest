@@ -6,7 +6,7 @@
 
 [![CI](https://github.com/StephenSook/manifest/actions/workflows/ci.yml/badge.svg)](https://github.com/StephenSook/manifest/actions/workflows/ci.yml)
 [![Eval](https://github.com/StephenSook/manifest/actions/workflows/eval-gate.yml/badge.svg)](https://github.com/StephenSook/manifest/actions/workflows/eval-gate.yml)
-[![Tests](https://img.shields.io/badge/tests-204%20passing-3fb950.svg)](engine/)
+[![Tests](https://img.shields.io/badge/tests-208%20passing-3fb950.svg)](engine/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![IBM AI Builders Challenge August 2026](https://img.shields.io/badge/IBM%20AI%20Builders-August%202026-054ada.svg)](https://aibuilderschallenge-bobhub.bemyapp.com/)
 
@@ -23,7 +23,7 @@ No account. No keys. Every claim below is either a live link or a `grep` command
 | **Try it, zero setup** | [manifest-web-roan.vercel.app/judge](https://manifest-web-roan.vercel.app/judge): numbered walkthrough. [/mission](https://manifest-web-roan.vercel.app/mission): the planner |
 | **The headline, recomputed live** | [manifest-web-roan.vercel.app/api/status](https://manifest-web-roan.vercel.app/api/status): unauthenticated, recomputes the violated-days number on every request and self-reports the wired models |
 | **The differentiator** | [`engine/interlocks/deorbit-compliance.ts`](engine/interlocks/deorbit-compliance.ts) + [`data/decay-table.json`](data/decay-table.json) -- same orbit, opposite verdict, solar cycle decides |
-| **116 engine and mobile tests passing** | `npm install && npm run test:engine` |
+| **120 engine and mobile tests passing** | `npm install && npm run test:engine` |
 | **The eval suite, offline** | `python3 eval/runner.py --mode fixtures` -- 28 questions + 6 abstention traps, no network, no key |
 | **Claims are wired, not aspirational** | `grep -r "ibm/granite" app/ pipeline/` -- every named model has an import or call |
 | **IBM Bob is committed and inspectable** | [`.bob/custom_modes.yaml`](.bob/custom_modes.yaml), [`.bob/mcp.json`](.bob/mcp.json), [`docs/bob-evidence/`](docs/bob-evidence/) |
@@ -88,7 +88,7 @@ The deorbit compliance verdict is computed by an NRLMSISE-00 orbital lifetime in
 
 **Corpus:** Title 47 Parts 5, 25, 97 and Title 15 Part 960 from eCFR bulk XML (govinfo.gov), plus FCC-26-47A1.pdf, FCC-22-74A1.pdf, the NASA DAS 3.2 User Guide (cited as authority, not a DAS run), and NASA CubeSat 101 (2017, age flagged). NASA-STD-8719.14C sits behind the NASA Technical Standards login wall and is deliberately not ingested; questions about it abstain with a pointer. Every chunk carries its snapshot AMDDATE. Part 100 (FCC 26-47, adopted July 22, 2026) is ingested separately and tagged PENDING regime: the effective date has not been announced, and Part 25 remains binding today.
 
-**Eval:** 28-question bank plus 6 abstention traps with exact-citation scoring (`eval/runner.py`). Runs in CI on every push against committed fixtures (no network, no key), with a raise-only regression floor and a hard requirement that every abstention trap abstains. Current honest baseline on the credential-free extractive path: 53.6 percent with 6/6 traps abstaining (2026-08-26). The 90 percent submission bar applies to the full watsonx pipeline (Granite generation plus Guardian audit) and is published to `docs/FACTS.json`, dated, when that run happens.
+**Eval:** 28-question bank plus 6 abstention traps with exact-citation scoring (`eval/runner.py`). Runs in CI on every push against committed fixtures (no network, no key), with a raise-only regression floor and a hard requirement that every abstention trap abstains. Current honest baseline on the credential-free extractive path: 53.6 percent with 6/6 traps abstaining (2026-08-26). The full watsonx pipeline (Granite generation plus Guardian audit) was measured against production on 2026-08-29: the full suite scored 7.1 percent, with all 6 traps abstaining and zero fabricated citations. The Guardian audit rejects most generated answers rather than ship an ungrounded citation, so the pipeline fails closed instead of scoring points, and the measured number is published in `docs/FACTS.json` (`eval_live`) beside the runtime that answered. The 90 percent bar from our own spec was not met, and this paragraph says so rather than hiding the run.
 
 **Eval as an MCP tool:** `eval/mcp_server.py` exposes `run_eval` and `eval_last_report` over MCP, wired into `.bob/mcp.json` so IBM Bob invokes the regression suite during development.
 
@@ -222,7 +222,7 @@ Every item here is a deliberate scope decision, not an unknown. Naming them is c
 
 | Limitation | Why it is this way |
 |---|---|
-| **The watsonx path went live on production on 2026-08-29; every published eval score predates that and was measured on the credential-free extractive path.** | The Lite tier is metered at 300,000 tokens per month, so live watsonx runs are deliberate, dated events. `/api/status` reports which backend actually answered on every request, so the reader never has to take this row's word for it. A watsonx-path eval score is published to `docs/FACTS.json`, dated, when that run happens. |
+| **The watsonx path went live on production on 2026-08-29; every published eval score predates that and was measured on the credential-free extractive path.** | The Lite tier is metered at 300,000 tokens per month, so live watsonx runs are deliberate, dated events. `/api/status` reports which backend actually answered on every request, so the reader never has to take this row's word for it. The watsonx-path eval was run on 2026-08-29 and measured 7.1 percent, published in `docs/FACTS.json` (`eval_live`): the Guardian audit fails closed on most generated answers rather than ship an ungrounded citation. |
 | **The eval scores 53.6 percent**, not the 90 percent bar in our own spec. | That is the credential-free extractive ceiling, measured and published rather than rounded up. CI enforces a raise-only ratchet at the measured floor and fails if any abstention trap answers. The number is in `docs/FACTS.json` because the runner puts it there. |
 | **The deorbit verdict computes from a frozen NRLMSISE-00 table**, not a per-request physics run. | The table is a real integration with per-row provenance. Recomputing per request would move a judge-facing number without improving its accuracy. `/api/solar` serves the live inputs beside it. |
 | **NASA-STD-8719.14C is not ingested.** | It sits behind the NASA Technical Standards login wall. Questions that need it abstain with a pointer rather than answering from a summary. |
@@ -236,7 +236,7 @@ Every item here is a deliberate scope decision, not an unknown. Naming them is c
 
 | Criterion | How Manifest earns it |
 |---|---|
-| **Technical Execution** | 116 engine and mobile tests passing (`npm run test:engine`). NRLMSISE-00 orbital lifetime integrator (pyatmos 1.2.7) producing real numbers committed to `data/decay-table.json`. Six regulatory interlocks wired against 47 CFR and 15 CFR with citation paths. Granite generation + Guardian audit + Granite embeddings, self-reported by `/api/status`. |
+| **Technical Execution** | 120 engine and mobile tests passing (`npm run test:engine`). NRLMSISE-00 orbital lifetime integrator (pyatmos 1.2.7) producing real numbers committed to `data/decay-table.json`. Six regulatory interlocks wired against 47 CFR and 15 CFR with citation paths. Granite generation + Guardian audit + Granite embeddings, self-reported by `/api/status`. |
 | **Innovation** | The only project in this field where space weather changes a legal outcome. At 550 km with Bc=180 kg/m^2: solar max lifetime 2.57 yr (FCC-compliant), solar min lifetime 15.0 yr (VIOLATED). Same orbit, opposite verdict -- the solar cycle decides. No planning tool has connected F10.7 to a regulatory determination before this. |
 | **Challenge Fit** | Live NOAA SWPC F10.7 ingest. IBM/NASA Surya heliophysics model (`surya.366m.v1.pt` checkpoint, Apache-2.0) contributes a real forward pass, reported beside the envelope and labelled ESTIMATED. Solar activity is the regulatory input, not a dashboard: NOAA's own flux bounds decide the verdict, and the IBMxNASA model is reported beside them. |
 | **Feasibility** | One-command reproduction: `npm install && npm run test:engine`. No credentials on the deterministic path. CI green. `data/decay-table.json` regeneratable in under 3 minutes from `pipeline/decay.py`. |

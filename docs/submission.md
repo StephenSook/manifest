@@ -88,9 +88,9 @@ Feasibility is one command from a fresh clone:
 npm ci && npm run test:engine
 ```
 
-116 engine and mobile tests (`npm run test:engine`). 88 ask-route tests (`npm run test:ask`). No network, no keys. The regulatory interlocks are unit-tested individually: the 97.207(g) dual clock, the NOAA-before-FCC ordering, IARU before Part 97, ITU publication lead time, and delivery as the hard wall.
+120 engine and mobile tests (`npm run test:engine`). 88 ask-route tests (`npm run test:ask`). No network, no keys. The regulatory interlocks are unit-tested individually: the 97.207(g) dual clock, the NOAA-before-FCC ordering, IARU before Part 97, ITU publication lead time, and delivery as the hard wall.
 
-The correctness bar is a committed eval bank of 28 regulatory questions and 6 abstention traps, run in CI on every push against committed fixtures with no network and no key, with a ratchet that fails the build on any regression and a per-question baseline that fails if a previously passing question stops passing. Today that suite scores 53.6 percent on the offline extractive path with all 6 abstention traps holding. The same score was measured against the live URL on 2026-08-26. The eval runner is also exposed to IBM Bob as an MCP tool over stdio, so the agent that wrote the engine can score it.
+The correctness bar is a committed eval bank of 28 regulatory questions and 6 abstention traps, run in CI on every push against committed fixtures with no network and no key, with a ratchet that fails the build on any regression and a per-question baseline that fails if a previously passing question stops passing. Today that suite scores 53.6 percent on the offline extractive path with all 6 abstention traps holding. On the live watsonx pipeline, measured against production on 2026-08-29, the full suite scored 7.1 percent with zero fabricated citations: the Guardian audit fails closed on most generated answers rather than ship an ungrounded one, and we publish that number instead of hiding it. The eval runner is also exposed to IBM Bob as an MCP tool over stdio, so the agent that wrote the engine can score it.
 
 Honesty is part of the engineering, not a disclaimer at the end. Durations are labeled DOCUMENTED with a source or ESTIMATED with a basis, never presented as fact when they are folklore. When the corpus cannot support an answer, the product abstains and names exactly what is missing, and six traps in the eval bank fail the build if it ever answers one of them instead. A regulatory tool that guesses confidently is worse than no tool, so this one is built to refuse.
 
@@ -130,7 +130,7 @@ The eval bank, 28 regulatory questions with exact expected citations plus 6 abst
 
 ## Fill-at-freeze checklist
 
-- [x] Replace every `[FACTS: ...]` from the 2026-08-29 `scripts/facts.py` run (headline 164, 116+88 tests, eval 53.6 percent / 6 of 6 traps). Never by hand.
+- [x] Replace every `[FACTS: ...]` from the 2026-08-29 `scripts/facts.py` run (headline 164, 120+88 tests, eval 53.6 percent / 6 of 6 traps). Never by hand.
 - [x] Beneficiary figures resolved to primary sources 2026-08-16 (Swartwout and Jayne SmallSat 2016; CubeSat 101 2017). The "full year for licensing" research-pack claim was cut: the primary says 4 to 6 months.
 - [x] Restructured against the four binding criteria 2026-08-25, and the two IBM Bob prize sections added.
 - [x] Claim audit against shipped code 2026-08-25: the Granite generation, Guardian audit and embedding claims now state the credential condition and point at the runtime self-report; the Context Forge claim is reduced to the stdio MCP server that is actually verified; the engine test count and headline number are `[FACTS: ...]` placeholders rather than stale literals.

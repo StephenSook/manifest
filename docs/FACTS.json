@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-08-28T00:02:10.915122+00:00",
+    "generated_at": "2026-08-29T00:11:06.479939+00:00",
     "generated_by": "scripts/facts.py",
     "source_files": [
       "data/decay-table.json",
@@ -46,7 +46,7 @@
     "bc_kg_m2": 180.0
   },
   "headline": {
-    "deadline_violations_days": 163,
+    "deadline_violations_days": 164,
     "violated_node_count": 10,
     "violated_nodes": [
       "iaru-request",
@@ -63,7 +63,7 @@
     "node_count": 10,
     "compute_ms": 0,
     "seed_note": "GT-1 mission profile from data/missions/gt-1.json (task 2.16), re-based onto a live delivery date (2026-12-01). The planner's question is 'standing at today, licensing not started, which deadlines are already dead.' All dates ESTIMATED per D5.",
-    "measured_at": "2026-08-28T00:02:08.085306+00:00"
+    "measured_at": "2026-08-29T00:11:03.834971+00:00"
   },
   "beneficiary_sizing": {
     "missions_per_year_approx": "40",
@@ -79,7 +79,7 @@
     "test_count": 116,
     "ask_route_test_count": 81,
     "test_count_total": 197,
-    "test_count_note": "Counted by running the suites (vitest --reporter=json) at 2026-08-28T00:02:10.915122+00:00. engine_and_mobile = npm run test:engine, ask_route = npm run test:ask.",
+    "test_count_note": "Counted by running the suites (vitest --reporter=json) at 2026-08-29T00:11:06.479939+00:00. engine_and_mobile = npm run test:engine, ask_route = npm run test:ask.",
     "decay_table_entries": 21,
     "decay_table_generated_at": "2026-08-16T20:38:16.649836+00:00"
   },
@@ -91,9 +91,9 @@
     "traps_abstained": 6,
     "rows_scored": 34,
     "mode": "fixtures",
-    "measured_at": "2026-08-28T00:02:10.910015+00:00"
+    "measured_at": "2026-08-29T00:11:06.473170+00:00"
   },
-  "eval_note": "Measured by running `python3 eval/runner.py --mode fixtures` at 2026-08-28T00:02:10.915122+00:00: offline, no network, no API key, against the committed fixtures, so anyone who clones the repo reproduces it. The score is the credential-free extractive path. The aspirational bar in CLAUDE.md section 5 is 90 percent; CI enforces a raise-only ratchet at today's measured floor instead, and eval-gate.yml fails on any regression or on any trap answering.",
+  "eval_note": "Measured by running `python3 eval/runner.py --mode fixtures` at 2026-08-29T00:11:06.479939+00:00: offline, no network, no API key, against the committed fixtures, so anyone who clones the repo reproduces it. The score is the credential-free extractive path. The aspirational bar in CLAUDE.md section 5 is 90 percent; CI enforces a raise-only ratchet at today's measured floor instead, and eval-gate.yml fails on any regression or on any trap answering.",
   "eval_live": {
     "score_pct": 53.6,
     "questions_correct": 15,

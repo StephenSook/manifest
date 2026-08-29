@@ -44,6 +44,28 @@ def test_log_exists_and_is_linked_from_the_readme() -> None:
     assert LOG.exists()
 
 
+def test_history_is_deep_enough_to_check_citations() -> None:
+    """
+    Fail loudly when the checkout cannot answer the question, rather than
+    letting the citation test report every real SHA as dead.
+
+    This fired for real on 2026-08-29. The job that runs pytest used a bare
+    actions/checkout, which is shallow (one commit), so `git cat-file` could
+    not see any cited commit and the guard reported all ten as unresolvable.
+    A true failure for a false reason is its own kind of lie, and skipping
+    instead would have been worse: a guard that cannot run must fail, not
+    pass quietly.
+    """
+    shallow = (REPO / ".git" / "shallow").exists()
+    assert not shallow, (
+        "this clone is shallow, so commit citations cannot be verified. "
+        "The CI job needs `fetch-depth: 0` on actions/checkout "
+        "(.github/workflows/eval-gate.yml, the fabricated-numbers job). "
+        "This guard fails rather than skips, because a check that cannot "
+        "run is not a check that passed."
+    )
+
+
 def test_every_cited_commit_sha_still_resolves() -> None:
     """A citation a reader cannot open is worse than no citation."""
     text = _log_text()

@@ -159,6 +159,67 @@ def run_test_counts() -> dict | None:
     return counts
 
 
+def corpus_embedding_backend() -> str:
+    """Which embedder actually vectorises a query, read from the committed corpus.
+
+    Mirrors readEmbeddingBackend() in app/api/status/route.ts and the useHash
+    predicate in app/api/ask/route.ts. If those diverge from this, the recorded
+    attribution starts lying again, which is the exact defect this closes.
+    """
+    try:
+        model = json.loads((REPO_ROOT / "corpus" / "schema.json").read_text()).get("model")
+    except (OSError, json.JSONDecodeError):
+        return "CORPUS_NOT_BUNDLED"
+    if not model:
+        return "CORPUS_SCHEMA_MISSING_MODEL"
+    if model.startswith("hashing-trick") or model == "mock":
+        return model
+    return "watsonx"
+
+
+def correct_eval_live_attribution(eval_live: dict | None) -> dict | None:
+    """Overwrite the recorded embedding attribution with the corpus-derived truth.
+
+    The runtime block inside eval_live is a snapshot of /api/status taken at
+    measurement time. Until 2026-08-30 that route derived embedding_backend from
+    CREDENTIAL PRESENCE, so the 2026-08-29 live run recorded
+    `embedding_backend: watsonx` and a note asserting the Granite embedding model
+    ran. It did not, and it could not: the committed freeze is hashing-trick-768,
+    so app/api/ask/route.ts takes the hash branch and the watsonx embed call is
+    unreachable. The recorded value was the bug's output, faithfully preserved.
+
+    facts.py CARRIES eval_live forward on every regen when no fresh --live-report
+    is passed, so a stale attribution here can never self-correct. Recomputing it
+    from the artifact makes the record more accurate about what happened on the
+    measured date, not less: the corpus was already frozen then.
+    """
+    if not eval_live:
+        return eval_live
+    runtime = eval_live.get("runtime")
+    if not isinstance(runtime, dict):
+        return eval_live
+    actual = corpus_embedding_backend()
+    recorded = runtime.get("embedding_backend")
+    runtime["embedding_backend"] = actual
+    runtime["embedding_backend_basis"] = (
+        "read from corpus/schema.json, not from credential presence"
+    )
+    if recorded is not None and recorded != actual:
+        runtime["embedding_backend_correction"] = (
+            f"recorded as {recorded!r} by the pre-2026-08-30 /api/status, which "
+            f"derived it from credential presence. The committed freeze forces "
+            f"{actual!r}, so the watsonx embed call was never reached."
+        )
+    # The note shipped with the old snapshot claims embedding ran on watsonx.
+    runtime["note"] = (
+        "watsonx credentials present: generation and the Guardian audit run on "
+        "the models named in `models`. Embedding does NOT: the committed corpus "
+        f"freeze is {actual}, so /api/ask uses the hashing-trick embedder and "
+        "granite-embedding-278m is wired but unreachable in this deployment."
+    )
+    return eval_live
+
+
 def load_eval_live(report_path: Path, url: str) -> dict | None:
     """Load a URL-mode eval report produced by eval/runner.py --mode url.
 
@@ -412,6 +473,8 @@ def compute_facts(live_report: Path | None = None, live_url: str | None = None) 
             eval_live = json.loads(FACTS_OUT.read_text()).get("eval_live")
         except (OSError, json.JSONDecodeError):
             eval_live = None
+    # Applies to BOTH paths: a fresh capture and a carried-forward block.
+    eval_live = correct_eval_live_attribution(eval_live)
     generated_at = datetime.now(timezone.utc).isoformat()
 
     return {

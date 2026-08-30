@@ -270,3 +270,61 @@ def test_the_one_tap_refusal_demo_points_at_a_question_that_actually_ships() -> 
     assert "Part 25 remains binding today" in lib, (
         "the verbatim regime line (hard rule 2) must be the reason returned"
     )
+
+
+def test_uptime_probe_is_a_question_the_eval_already_scores() -> None:
+    """
+    Guard: the uptime watchdog's probe must be VERBATIM an eval bank question
+    that appears in baseline_passing.json.
+
+    Why this exists. On 2026-08-30 the probe was changed, because the previous
+    question returned `Guardian audit: ASSISTANTFAIL` on four consecutive runs
+    and the watchdog was asserting a failure that was not one. That change is
+    legitimate, and it is also exactly the shape of a change that is NOT: swap
+    the question until the light goes green.
+
+    This makes the difference structural instead of a matter of intent. The
+    probe cannot be quietly replaced with something easier, because it has to
+    be a question the eval bank already contains AND already scores as passing.
+    If someone wants a different probe, they have to change the bank, which is
+    scored in CI and ratcheted.
+    """
+    import json
+
+    workflow = (REPO / ".github" / "workflows" / "uptime.yml").read_text(encoding="utf-8")
+
+    bank_path = REPO / "eval" / "bank.jsonl"
+    rows = [json.loads(line) for line in bank_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    passing = set(json.loads((REPO / "eval" / "baseline_passing.json").read_text(encoding="utf-8"))["passing"])
+
+    # Find which bank question the workflow actually asks.
+    asked = [r for r in rows if r.get("question") and r["question"] in workflow]
+    assert asked, (
+        "the uptime probe question is not verbatim any eval bank question. "
+        "A watchdog should ask something the eval already scores, so the probe "
+        "cannot be tuned until it passes."
+    )
+    assert len(asked) == 1, f"probe matched multiple bank rows: {[r['id'] for r in asked]}"
+
+    row = asked[0]
+    assert not row.get("abstain"), (
+        f"the probe is {row['id']}, an ABSTENTION TRAP. The watchdog requires "
+        "abstained=false, so probing a trap can never pass."
+    )
+    assert row["id"] in passing, (
+        f"the probe is {row['id']}, which is not in eval/baseline_passing.json. "
+        "The watchdog must ask a question this product is already scored as "
+        "able to answer, or a red light means nothing."
+    )
+
+
+def test_uptime_still_demands_a_guardian_audited_answer() -> None:
+    """
+    The probe changed; the bar must not have. If a future edit relaxes these,
+    the watchdog goes green on a dead generative path.
+    """
+    workflow = (REPO / ".github" / "workflows" / "uptime.yml").read_text(encoding="utf-8")
+    assert 'data.get("audited") is not True' in workflow
+    assert 'data.get("degraded") is True' in workflow
+    assert '"97.207" in combined' in workflow
+    assert 'data.get("abstained") is not False' in workflow

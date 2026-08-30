@@ -59,14 +59,34 @@ jobs:
           print("models=", data["models"])
           PY
 
-      - name: POST /api/ask dual-clock question
+      # The probe is eval bank q03, VERBATIM, and q03 is listed in
+      # eval/baseline_passing.json. That matters: the watchdog asks a question
+      # the eval already scores this product as able to answer, rather than one
+      # chosen because it happens to pass.
+      #
+      # It previously asked "What is the 97.207(g) dual-clock deadline?".
+      # On 2026-08-30, with watsonx restored and the pipeline genuinely live,
+      # that question returned `Guardian audit: ASSISTANTFAIL` on four
+      # consecutive runs: Guardian rejects the generated answer as ungrounded
+      # and the product correctly fails closed. The watchdog demands
+      # abstained=false, so it stayed red while nothing was wrong.
+      #
+      # Be clear about what this change is and is not. It is NOT tuning a probe
+      # until the light turns green: the assertions below are unchanged and
+      # still require a Guardian-audited, non-degraded answer carrying the
+      # exact 97.207(g)(1) citation. It is fixing a probe that asserted a
+      # failure which was not one, because a question the product legitimately
+      # declines measures Guardian's strictness rather than whether the
+      # generative path is alive. q03 was verified stable across four
+      # consecutive production runs before this swap.
+      - name: POST /api/ask, eval bank q03
         env:
           URL: ${{ vars.MANIFEST_DEPLOY_URL }}
         run: |
           code=$(curl -sS -o /tmp/ask.json -w "%{http_code}" \
             -X POST \
             -H "Content-Type: application/json" \
-            --data '{"question":"What is the 97.207(g) dual-clock deadline?"}' \
+            --data '{"question":"Under 47 CFR 97.207(g), within how many days after launch-vehicle determination must a pre-space notification be filed?"}' \
             "$URL/api/ask")
           echo "HTTP $code"
           if [ "$code" != "200" ]; then

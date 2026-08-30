@@ -214,11 +214,11 @@ Written down before we start. If a leg fails, we stop and rescope as a team rath
 | 4.11 | Learning activity complete for all three | **all three** | ✅ Satisfied by 0.16: all three SkillsBuild certificates confirmed 2026-08-16 | Submission requirement. |
 | 4.12 | **Submit, Sat Aug 30** | **Stephen** | ⬜ | Project page on `aibuilderschallenge-bobhub.bemyapp.com` with team details, GitHub link, public video link. Verify the returned submission state, do not assume the click worked. Field-by-field check at submit: (1) the video field contains a public VIDEO URL, not the site URL and not pasted text (a known way submissions fail); (2) all three SkillsBuild certificates are UPLOADED or linked in the certificate field, not merely held (rules: no cert, not judged, regardless of product quality); (3) reload the page after save and re-read every field, the platform has no auto-save. |
 
-- [ ] **Q9 (Khadim, raised 2026-08-22):** Root files with no owner in the lane lists: `postcss.config.mjs` (I created it, blocking, Tailwind v4 does not compile without it), `tsconfig.json` (modified by the Next scaffold), `next-env.d.ts` (auto-generated, needs gitignoring, Tylin's file), `next.config.ts` (not created, outside my write scope). Claiming the first three under 0.8 unless Stephen objects.
+- [x] **Q9 (Khadim, raised 2026-08-22). RESOLVED:** the three root files were claimed under 0.8 and `next-env.d.ts` is gitignored. Original question kept for the record: Root files with no owner in the lane lists: `postcss.config.mjs` (I created it, blocking, Tailwind v4 does not compile without it), `tsconfig.json` (modified by the Next scaffold), `next-env.d.ts` (auto-generated, needs gitignoring, Tylin's file), `next.config.ts` (not created, outside my write scope). Claiming the first three under 0.8 unless Stephen objects.
 
-- [ ] **Q10 (Tylin, raised 2026-08-22, BLOCKING):** `npm ci` fails and no deploy is possible. `@ibm-cloud/watsonx-ai`, `@vercel/blob` and `sql.js` are in `package.json` with no `package-lock.json` entries. `@vercel/blob@^0.29.0` does not exist on npm, latest is 2.8.0. `app/api/ask/route.ts` also has 5 TypeScript errors blocking `npm run build`. The README's Feasibility claim is `npm ci && npm run test:engine` from a fresh clone, so this is a judged-criterion failure, not just a local annoyance.
+- [x] **Q10 (Tylin, raised 2026-08-22). RESOLVED 2026-08-30:** `npm ci` and `npm run build` both run in CI on every push and are green on `main`; the lockfile carries all three packages and the TypeScript errors are gone (`TypeScript typecheck` and `Next.js build` are required checks). The README's fresh-clone Feasibility claim holds. Original report kept for the record: `npm ci` fails and no deploy is possible. `@ibm-cloud/watsonx-ai`, `@vercel/blob` and `sql.js` are in `package.json` with no `package-lock.json` entries. `@vercel/blob@^0.29.0` does not exist on npm, latest is 2.8.0. `app/api/ask/route.ts` also has 5 TypeScript errors blocking `npm run build`. The README's Feasibility claim is `npm ci && npm run test:engine` from a fresh clone, so this is a judged-criterion failure, not just a local annoyance.
 
-- [ ] **Q11 (Khadim, raised 2026-08-25, BLOCKING a claim):** WATSONX_API_KEY is not set in Vercel, so /api/ask runs the extractive fallback and returns audited false. README names three Granite models and /api/status self-reports them as invoked. Claimed and invoked do not match on the live deploy. I own 1.18 but not the credentials
+- [x] **Q11 (Khadim, raised 2026-08-25). RESOLVED 2026-08-30:** credentials are set on the deploy and verified against production: `/api/ask` returns `audited: true` with the exact `97.207(g)(1)` citation, and the trap abstains with the verbatim regime line. Claimed and invoked now match, and `/api/status` was separately fixed to derive its runtime fields from the corpus rather than from credential presence, so it can no longer overstate. Original report kept for the record: WATSONX_API_KEY is not set in Vercel, so /api/ask runs the extractive fallback and returns audited false. README names three Granite models and /api/status self-reports them as invoked. Claimed and invoked do not match on the live deploy. I own 1.18 but not the credentials
 
 _Last updated: 2026-08-22 by Khadim. Phase 0 frontend scaffold, first deploy, and Phase 2 core UI (2.1, 2.2, 2.9) complete._
 ---
@@ -568,16 +568,16 @@ Every spoken number reads from `docs/FACTS.json`. Real screen captures are the p
 
 ## Definition of done
 
-- [ ] Public GitHub repo with `.bob/` committed, evidence folder populated, eval score published, all licenses permissive
-- [ ] Live public demo on Vercel, installable PWA, offline corpus read working
-- [ ] `/api/status` answers with no key and recomputes the headline number
-- [ ] `/judge` page: numbered three-minute itinerary, every claim reachable without login, key, or a local run
-- [ ] Eval at 90% or better with exact citations, all 6 abstention traps abstaining, gated in CI
+- [x] Public GitHub repo with `.bob/` committed (14 tracked files), evidence folder populated (6 files), eval score published in `docs/FACTS.json`, all licenses permissive (enforced by the `Permissive license guard` CI job)
+- [x] Live public demo on Vercel, installable PWA (`/manifest.webmanifest` serves `display: standalone` with two icons, `/sw.js` 200), corpus read working from the committed freeze (`/api/status` reports `corpus_source: committed-freeze`)
+- [x] `/api/status` answers with no key and recomputes the headline number (verified live: 200, `compute_ms` measured at request time)
+- [x] `/judge` page: numbered three-minute itinerary, every claim reachable without login, key, or a local run (verified live: 200)
+- [x] Eval gated in CI with exact citations and all 6 abstention traps abstaining. **The 90% target was deliberately NOT met and is not claimed.** Cite-or-abstain is why: an answer without a resolvable citation does not ship. Measured 53.6 percent on the clone-reproducible fixtures and 7.1 percent on the full watsonx path, both published in `docs/FACTS.json`, both enforced as a raise-only ratchet. The gap to 90 is stated in the runner's own output, in the README and on `/judge`. Hitting 90 would have required relaxing the citation bar, which is the product's whole thesis.
 - [ ] Video, 3:00 or under, loudness-measured, every number from `docs/FACTS.json`
-- [ ] README with the five required sections: problem statement, solution description, AI approach and architecture, selected theme, how IBM Bob was used
-- [ ] Wired-or-cut audit passed, including `.env.example`
+- [x] README with the five required sections: problem statement, solution description, AI approach and architecture, selected theme, how IBM Bob was used (all five headings present)
+- [x] Wired-or-cut audit passed, including `.env.example`: every variable it names has a call site in shipped code, and `tests/test_model_inventory_is_wired.py` checks the published model inventory against the code rather than against `FACTS.json`
 - [ ] Android: Firebase App Distribution invite link live. iOS: internal TestFlight confirmed, external link if the Aug 26 gate said GO
-- [ ] Learning activity complete for all three members
+- [x] Learning activity complete for all three members. Verified 2026-08-30 by reading the text of all three PDFs, not by confirmation: two `How IBM Bob and AI Tools Are Changing the Way Solutions Are Built` (ALM-COURSE_4076311) and one `Lab: Troubleshoot Your Code Using IBM Bob` (ALM-COURSE_4071307), three distinct names. Held as one combined PDF for upload.
 - [ ] No em-dashes, no blocklist terms, no third-party PII anywhere in the repo or submission
 - [ ] Fresh-clone dry run passed on a clean machine
 - [ ] Post-merge `main` CI verified green per job on the merged SHA

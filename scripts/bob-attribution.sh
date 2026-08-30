@@ -32,7 +32,13 @@ EVIDENCE=$(git ls-files docs/bob-evidence | wc -l | tr -d ' ')
 # Deliberately NOT recording the total commit count. Committing this document
 # changes it, so the document would invalidate itself on its own commit and
 # --check would fail forever. The meaningful number is the trailer count.
-TRAILERS=$(git log --grep='Tool: IBM-Bob' --oneline | wc -l | tr -d ' ')
+# Count real git TRAILERS, not messages that mention one. `git log --grep`
+# matches any commit whose body contains the string, which includes the very
+# commits that document the absence of the trailer: the first version of this
+# script counted its own fix commit as a trailer and CI went red. A trailer is
+# a Key: Value line in the trailer block, and %(trailers:key=...) reads exactly
+# that.
+TRAILERS=$(git log --format='%(trailers:key=Tool,valueonly)' | grep -c 'IBM-Bob' || true)
 MCP_TOOLS=$(python3 -c "import json;print(len(json.load(open('.bob/mcp.json'))['mcpServers']['manifest-eval']['alwaysAllow']))")
 
 # A shallow clone cannot resolve the lane SHAs, and would silently emit

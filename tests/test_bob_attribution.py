@@ -84,3 +84,24 @@ def test_document_does_not_embed_a_self_invalidating_total() -> None:
         "generated document changes that number, so --check will fail on the "
         "next commit forever."
     )
+
+def test_trailer_count_reads_trailers_not_prose() -> None:
+    """Count real git trailers, never a grep of the commit message.
+
+    Second regression guard, from the same self-reference class as the total
+    commit count. `git log --grep='Tool: IBM-Bob'` matches any commit whose
+    body merely MENTIONS the trailer, which includes every commit documenting
+    that no commit carries one. The fix commit for the first bug matched its
+    own grep and CI went red a second time.
+
+    `%(trailers:key=Tool)` reads the trailer block, so prose about a trailer
+    can never be counted as one.
+    """
+    body = SCRIPT.read_text()
+    assert "trailers:key=Tool" in body, (
+        "the trailer count must read the git trailer block"
+    )
+    assert "--grep='Tool: IBM-Bob'" not in body, (
+        "counting by --grep matches commit messages that merely discuss the "
+        "trailer, including this document's own commits"
+    )

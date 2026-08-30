@@ -64,6 +64,20 @@ Five write-scoped modes restrict Bob's write access to each team member's lane, 
 - **Status API:** [manifest-web-roan.vercel.app/api/status](https://manifest-web-roan.vercel.app/api/status): unauthenticated, recomputes violated-deadline days live, self-reports which models are actually running
 - **iOS:** build 1.0 (1), approved by Apple in external Beta App Review on 2026-08-25. Public link: https://testflight.apple.com/join/huQrZpek
 
+**Watch it refuse, one tap, no typing.** On [/mission](https://manifest-web-roan.vercel.app/mission), tap the suggested question **"When does Part 100 take effect?"**. It is a deliberate trap: Part 100 was adopted but has no announced effective date, so there is no answer to give. The product declines and returns the regime line verbatim rather than guessing:
+
+> Part 100 was adopted July 22, 2026 (FCC 26-47). The effective date has not been announced. Part 25 remains binding today.
+
+Same thing from a terminal, no key:
+
+```
+curl -s -X POST https://manifest-web-roan.vercel.app/api/ask \
+  -H 'Content-Type: application/json' \
+  -d '{"question":"When does Part 100 take effect?"}'
+```
+
+That refusal is the product working, not failing. Six such traps are scored in the eval, and cite-or-abstain is the reason the score is 53.6 and not higher: an answer without a resolvable citation does not ship.
+
 If the network is down: `npm install && npm run test:engine` is the one-command deterministic proof.
 
 ---

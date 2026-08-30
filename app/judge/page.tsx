@@ -325,9 +325,14 @@ export default function JudgePage() {
               'you are reading. CI re-runs fixtures on every PR.'
             }
             verifyInstruction={
-              'Read docs/FACTS.json eval and eval_live. GET /api/status and ' +
-              'read runtime.generation_backend. CI re-runs the eval against ' +
-              'committed fixtures on every PR.'
+              'Watch it refuse, one tap, no typing: on /mission tap the ' +
+              'suggested question "When does Part 100 take effect?". Part 100 ' +
+              'was adopted but has no announced effective date, so there is ' +
+              'no answer to give, and the product declines and returns the ' +
+              'regime line verbatim rather than guessing. That refusal is the ' +
+              'product working. Then read docs/FACTS.json eval and eval_live, ' +
+              'and GET /api/status for runtime.generation_backend. CI re-runs ' +
+              'the eval against committed fixtures on every PR.'
             }
             citation="Scored by eval/runner.py against eval/bank.jsonl; published in docs/FACTS.json (eval, eval_live)."
           />

@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-08-30T04:49:28.686709+00:00",
+    "generated_at": "2026-08-30T21:24:38.636975+00:00",
     "generated_by": "scripts/facts.py",
     "source_files": [
       "data/decay-table.json",
@@ -60,9 +60,9 @@
       "delivery"
     ],
     "node_count": 10,
-    "compute_ms": 0,
+    "compute_ms": 1,
     "seed_note": "GT-1 mission profile from data/missions/gt-1.json (task 2.16), re-based onto a live delivery date (2026-12-01). The planner's question is 'standing at today, licensing not started, which deadlines are already dead.' All dates ESTIMATED per D5.",
-    "measured_at": "2026-08-30T04:49:23.721297+00:00"
+    "measured_at": "2026-08-30T21:24:33.495114+00:00"
   },
   "beneficiary_sizing": {
     "missions_per_year_approx": "40",
@@ -78,7 +78,7 @@
     "test_count": 120,
     "ask_route_test_count": 95,
     "test_count_total": 215,
-    "test_count_note": "Counted by running the suites (vitest --reporter=json) at 2026-08-30T04:49:28.686709+00:00. engine_and_mobile = npm run test:engine, ask_route = npm run test:ask.",
+    "test_count_note": "Counted by running the suites (vitest --reporter=json) at 2026-08-30T21:24:38.636975+00:00. engine_and_mobile = npm run test:engine, ask_route = npm run test:ask.",
     "decay_table_entries": 21,
     "decay_table_generated_at": "2026-08-16T20:38:16.649836+00:00"
   },
@@ -90,9 +90,9 @@
     "traps_abstained": 6,
     "rows_scored": 34,
     "mode": "fixtures",
-    "measured_at": "2026-08-30T04:49:28.680143+00:00"
+    "measured_at": "2026-08-30T21:24:38.628659+00:00"
   },
-  "eval_note": "Measured by running `python3 eval/runner.py --mode fixtures` at 2026-08-30T04:49:28.686709+00:00: offline, no network, no API key, against the committed fixtures, so anyone who clones the repo reproduces it. The score is the credential-free extractive path. The aspirational bar in CLAUDE.md section 5 is 90 percent; CI enforces a raise-only ratchet at today's measured floor instead, and eval-gate.yml fails on any regression or on any trap answering.",
+  "eval_note": "Measured by running `python3 eval/runner.py --mode fixtures` at 2026-08-30T21:24:38.636975+00:00: offline, no network, no API key, against the committed fixtures, so anyone who clones the repo reproduces it. The score is the credential-free extractive path. The aspirational bar in CLAUDE.md section 5 is 90 percent; CI enforces a raise-only ratchet at today's measured floor instead, and eval-gate.yml fails on any regression or on any trap answering.",
   "eval_live": {
     "score_pct": 7.1,
     "questions_correct": 2,
@@ -142,10 +142,12 @@
     ],
     "runtime": {
       "generation_backend": "watsonx",
-      "embedding_backend": "watsonx",
+      "embedding_backend": "hashing-trick-768",
       "guardian_audit": "active",
       "corpus_source": "committed-freeze",
-      "note": "watsonx credentials present: generation, embedding and Guardian audit run on the models named above."
+      "note": "watsonx credentials present: generation and the Guardian audit run on the models named in `models`. Embedding does NOT: the committed corpus freeze is hashing-trick-768, so /api/ask uses the hashing-trick embedder and granite-embedding-278m is wired but unreachable in this deployment.",
+      "embedding_backend_basis": "read from corpus/schema.json, not from credential presence",
+      "embedding_backend_correction": "recorded as 'watsonx' by the pre-2026-08-30 /api/status, which derived it from credential presence. The committed freeze forces 'hashing-trick-768', so the watsonx embed call was never reached."
     },
     "measured_at": "2026-08-29T04:46:16.908174+00:00"
   },

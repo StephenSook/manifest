@@ -224,3 +224,49 @@ def test_persistent_scope_notice_is_on_every_page() -> None:
     assert "DOCUMENTED" in layout and "ESTIMATED" in layout, (
         "documented-vs-estimated lead times (hard rule 3) must be stated"
     )
+
+
+def test_the_one_tap_refusal_demo_points_at_a_question_that_actually_ships() -> None:
+    """
+    Guard: the exact question the judge surfaces tell a reader to tap must be
+    one AskPanel actually offers, and must really be an abstention trap.
+
+    Added 2026-08-30 from a competitor review. The strongest rival ships a
+    link that makes a judge WATCH a guard fail (a tampered receipt), which
+    converts a claim into a thing seen. We already had the mechanism, a
+    one-tap suggested question that returns the verbatim regime line, but no
+    judge surface named it, so it was a statistic a reader had to trust
+    rather than a refusal they could watch.
+
+    The drift this prevents is specific: someone edits the suggested
+    questions, and the judge instruction silently points at a tap that no
+    longer exists. That is worse than not having the instruction, because it
+    sends a judge to look for something and fails them.
+    """
+    demo_question = "When does Part 100 take effect?"
+
+    ask_panel = _read(ASK_PANEL)
+    assert demo_question in ask_panel, (
+        f"{demo_question!r} is no longer a suggested question in AskPanel, so "
+        "the judge instructions now point at a tap that does not exist"
+    )
+
+    judge_md = (REPO / "JUDGE.md").read_text(encoding="utf-8")
+    assert demo_question in judge_md
+    assert "Watch it refuse" in judge_md
+
+    judge_page = _read(JUDGE_PAGE)
+    assert demo_question in judge_page
+    assert "Watch it refuse" in judge_page
+
+    # And it must genuinely be trapped before generation, not merely answered
+    # briefly. The pattern lives in the ask route's abstention table.
+    lib = (REPO / "app" / "api" / "ask" / "lib.ts").read_text(encoding="utf-8")
+    assert "part 100 take effect" in lib.lower(), (
+        "the demo question must match an ABSTENTION_PATTERNS entry, or it is "
+        "not a trap and the judge surfaces are describing behaviour we do not "
+        "have"
+    )
+    assert "Part 25 remains binding today" in lib, (
+        "the verbatim regime line (hard rule 2) must be the reason returned"
+    )

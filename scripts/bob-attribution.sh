@@ -29,7 +29,9 @@ SCOPES=$(grep -cE '^\s+- fileRegex:' .bob/custom_modes.yaml)
 SKILLS=$(git ls-files '.bob/skills/*/SKILL.md' | wc -l | tr -d ' ')
 RULES=$(git ls-files '.bob/rules-*/AGENTS.md' | wc -l | tr -d ' ')
 EVIDENCE=$(git ls-files docs/bob-evidence | wc -l | tr -d ' ')
-COMMITS=$(git rev-list --count HEAD)
+# Deliberately NOT recording the total commit count. Committing this document
+# changes it, so the document would invalidate itself on its own commit and
+# --check would fail forever. The meaningful number is the trailer count.
 TRAILERS=$(git log --grep='Tool: IBM-Bob' --oneline | wc -l | tr -d ' ')
 MCP_TOOLS=$(python3 -c "import json;print(len(json.load(open('.bob/mcp.json'))['mcpServers']['manifest-eval']['alwaysAllow']))")
 
@@ -93,11 +95,11 @@ TMP=$(mktemp)
   echo "Stated plainly, because a table that only reports the flattering half is"
   echo "marketing rather than evidence."
   echo
-  echo "1. **No per-commit Bob authorship trailer exists.** $TRAILERS of $COMMITS commits"
-  echo "   carry a \`Tool: IBM-Bob\` trailer, because the team did not record one while"
-  echo "   building. Nothing here proves which lines Bob wrote, and no such trailer"
-  echo "   will be added after the fact: back-stamping $COMMITS commits would"
-  echo "   manufacture the evidence rather than report it."
+  echo "1. **No per-commit Bob authorship trailer exists.** Commits carrying a"
+  echo "   \`Tool: IBM-Bob\` trailer: **$TRAILERS**. The team did not record one while"
+  echo "   building, so nothing here proves which lines Bob wrote, and no such trailer"
+  echo "   will be added after the fact: back-stamping the history would manufacture"
+  echo "   the evidence rather than report it."
   echo "2. **A committed mode proves the constraint, not the usage.** \`.bob/\` shows the"
   echo "   write scopes a session ran under. It does not measure how much work Bob did."
   echo "3. **The Bobalytics screenshots are the spend record**, and they are subscription"
@@ -118,4 +120,4 @@ fi
 mv "$TMP" "$OUT"
 echo "Wrote $OUT"
 echo "  .bob files=$BOB_FILES modes=$MODES scopes=$SCOPES skills=$SKILLS rules=$RULES"
-echo "  commits=$COMMITS  Tool: IBM-Bob trailers=$TRAILERS (reported, not manufactured)"
+echo "  Tool: IBM-Bob trailers=$TRAILERS (reported, not manufactured)"

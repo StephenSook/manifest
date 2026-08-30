@@ -13,7 +13,7 @@ Do not hand-edit. Re-run the script instead, and CI asserts it is current.
 | Regime skills | 4 | `.bob/skills/*/SKILL.md` |
 | Mode rule files | 3 | `.bob/rules-*/AGENTS.md` |
 | Eval tools exposed to Bob over MCP | 2 | `.bob/mcp.json` |
-| Files in the evidence folder | 6 | `docs/bob-evidence/` |
+| Files in the evidence folder | 7 | `docs/bob-evidence/` |
 
 ## The write scopes, verbatim from the shipped yaml
 
@@ -43,11 +43,11 @@ regex table rather than a pasted transcript.
 Stated plainly, because a table that only reports the flattering half is
 marketing rather than evidence.
 
-1. **No per-commit Bob authorship trailer exists.** 0 of 240 commits
-   carry a `Tool: IBM-Bob` trailer, because the team did not record one while
-   building. Nothing here proves which lines Bob wrote, and no such trailer
-   will be added after the fact: back-stamping 240 commits would
-   manufacture the evidence rather than report it.
+1. **No per-commit Bob authorship trailer exists.** Commits carrying a
+   `Tool: IBM-Bob` trailer: **0**. The team did not record one while
+   building, so nothing here proves which lines Bob wrote, and no such trailer
+   will be added after the fact: back-stamping the history would manufacture
+   the evidence rather than report it.
 2. **A committed mode proves the constraint, not the usage.** `.bob/` shows the
    write scopes a session ran under. It does not measure how much work Bob did.
 3. **The Bobalytics screenshots are the spend record**, and they are subscription

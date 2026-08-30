@@ -62,5 +62,25 @@ def test_limitations_section_survives() -> None:
 def test_counts_are_not_hardcoded_in_the_script() -> None:
     """Every number must be computed. A literal count here is a future lie."""
     body = SCRIPT.read_text()
-    for computed in ("git ls-files .bob", "rev-list --count", "grep -cE"):
+    for computed in ("git ls-files .bob", "git log --grep", "grep -cE"):
         assert computed in body, f"expected {computed!r} to compute a count"
+
+
+def test_document_does_not_embed_a_self_invalidating_total() -> None:
+    """The document must not record the repository's total commit count.
+
+    Regression guard for a real defect this suite caught in CI on 2026-08-30.
+    The first version of the generator wrote "0 of 240 commits carry a trailer".
+    Committing the document increments that total, so the document invalidated
+    itself on its own commit and --check failed on the very PR that added it.
+
+    A generated artifact must not contain a value that the act of committing it
+    changes. The trailer count is stable (it only moves when someone adds a
+    trailer, which is the thing being measured); the denominator is not.
+    """
+    body = SCRIPT.read_text()
+    assert "rev-list --count" not in body, (
+        "the generator records a total commit count again. Committing the "
+        "generated document changes that number, so --check will fail on the "
+        "next commit forever."
+    )

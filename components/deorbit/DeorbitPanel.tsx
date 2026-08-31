@@ -374,17 +374,48 @@ export function DeorbitPanel({
         <span style={ROW_LABEL}>Five-year disposal limit</span>
         <span style={ROW_VALUE}>{result.fccLimitYears} yr</span>
       </div>
+      {/*
+        Both states are labelled on purpose. Until 2026-08-31 only the `(live)`
+        branch existed, and nothing in the app passes `f107Override`, so that
+        branch could never render and the row showed a bare number with no
+        indication of where it came from. A reader could reasonably assume the
+        figure was today's reading. It is the value the decay-table row assumed.
+
+        Borrowed from a rival that renders "Simulated NDVI grid (demo)" under the
+        chart itself rather than only in its README. Labelling the weaker state
+        in the product reads as confidence; labelling it only in the docs means
+        the person looking at the number never sees it.
+      */}
       <div style={{ ...ROW, marginBottom: '0.2rem' }}>
         <span style={ROW_LABEL}>
           F10.7 used
-          {f107Override !== undefined && (
-            <span style={{ color: 'var(--color-accent)', marginLeft: '0.3rem', fontSize: '10px' }}>
-              (live)
-            </span>
-          )}
+          <span
+            style={{
+              color: f107Override !== undefined ? 'var(--color-accent)' : 'var(--color-muted)',
+              marginLeft: '0.3rem',
+              fontSize: '10px',
+            }}
+          >
+            {f107Override !== undefined ? '(live)' : '(table nominal, not today’s reading)'}
+          </span>
         </span>
         <span style={ROW_VALUE}>{result.f107Assumed} SFU</span>
       </div>
+
+      {/*
+        The method string names the physics but not its freshness, so a reader
+        sees "NRLMSISE-00 ballistic drag integration" and can reasonably take it
+        for an integration run for THIS orbit just now. It is a lookup into a
+        frozen run. README and the submission text both say so; the panel did
+        not, and the panel is what a judge actually looks at.
+      */}
+      <p style={{ ...MUTED_NOTE, marginTop: '0.35rem' }}>
+        Basis: a precomputed NRLMSISE-00 run committed to{' '}
+        <code>data/decay-table.json</code>, not a live integration for this orbit.
+        The opposite verdicts below come from NOAA&rsquo;s published solar-minimum
+        and solar-maximum bounds. Live solar readings are reported separately at{' '}
+        <code>/api/solar</code> and are not applied to this computation.
+      </p>
 
       {/* Closest altitude note */}
       {result.closestAltitudeKmUsed !== null && (

@@ -609,3 +609,53 @@ def test_corpus_shape_states_what_it_did_not_prove() -> None:
         "the failure branch no longer names the absence, so a missing corpus "
         "could render as chunk_count 0 and read like a real empty index"
     )
+
+
+def test_pipeline_counterfactual_describes_paths_that_exist() -> None:
+    """
+    The pipeline block must name real stages and must state the counterfactual.
+
+    Borrowed from a rival that renders its pipeline as four side-by-side panels
+    plus an "AI off" counterfactual, so the model's value is a visible delta
+    rather than an assertion. It is the clearest legibility device in its batch,
+    and it is worth having because this panel reads pages and does not probe
+    runtimes.
+
+    Ours inverts theirs and the inversion is the whole claim: their
+    counterfactual shows what is LOST without the model, ours shows the deorbit
+    verdict is UNCHANGED. So the guard requires the block to keep saying that,
+    and to keep pointing at the test that proves it, because a counterfactual
+    nobody can check is just a nicer assertion.
+    """
+    text = _read(STATUS_ROUTE)
+    start = text.index("const PIPELINE = {")
+    block = text[start : text.index("} as const;", start)]
+
+    # Every stage must state what it does with the model off. That column is
+    # the entire point of the device; a stage without it is decoration.
+    # Count the KEY, not the string: the prose above also names the column, and
+    # counting bare occurrences made this assertion fail on its own first run.
+    keys = block.count("with_model_off:")
+    assert keys == 4, f"expected 4 stages each declaring with_model_off, found {keys}"
+    for stage in ("Retrieval", "Generation", "Citation gate", "Guardian audit"):
+        assert stage in block, f"pipeline lost the {stage} stage"
+
+    # The two subtractive guarantees. If either stage ever becomes able to ADD
+    # an answer rather than only withhold one, these sentences become false and
+    # this test is where that surfaces.
+    assert "never invent one" in block, "the citation gate no longer states it is subtractive"
+    assert "fails CLOSED" in block, "the Guardian audit no longer states it fails closed"
+
+    # The counterfactual must name the test that proves it, not just claim it.
+    assert "engine/__tests__/isolation.test.ts" in block, (
+        "the verdict counterfactual no longer cites the test that proves the "
+        "engine cannot reach a model. An uncheckable counterfactual is just an "
+        "assertion with better formatting."
+    )
+    assert "ZERO non-relative imports" in block
+
+    # And that test must actually exist, or the citation above is a dead pointer.
+    assert (REPO / "engine" / "__tests__" / "isolation.test.ts").exists(), (
+        "the pipeline block cites engine/__tests__/isolation.test.ts and that "
+        "file is gone"
+    )

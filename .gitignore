@@ -101,3 +101,13 @@ public/swe-worker*.js
 # Context Forge gateway local database (task 3.2, never committed)
 mcp.db*
 .venv-forge/
+
+# Remotion agent skills installed for the demo film build (not project evidence)
+.agents/
+skills-lock.json
+.claude/
+DEMO VIDEO
+
+# Local rival recon and grading material. Confidential, never published.
+# Untracked is not protection: gitignore it the moment it exists.
+grading rival projects*

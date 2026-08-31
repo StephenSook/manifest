@@ -54,4 +54,23 @@ describe('parseGuardianVerdict', () => {
     expect(parseGuardianVerdict('')).toBe('no-verdict');
     expect(parseGuardianVerdict('   ')).toBe('no-verdict');
   });
+
+  // Regression, 2026-08-31. PASS was a substring test, so every string below
+  // returned 'pass' and released an unaudited answer. This is a fail-OPEN on
+  // the gate the product rests on, so each case is pinned. The last one is the
+  // dangerous one: it is an ordinary English sentence meaning the opposite.
+  it('a word merely CONTAINING pass is never a pass', () => {
+    expect(parseGuardianVerdict('BYPASS')).toBe('no-verdict');
+    expect(parseGuardianVerdict('The model attempted to bypass the guardrail')).toBe('no-verdict');
+    expect(parseGuardianVerdict('This shows compassion for the operator')).toBe('no-verdict');
+    expect(parseGuardianVerdict('The answer surpasses the evidence provided')).toBe('no-verdict');
+    expect(parseGuardianVerdict('A passage of the regulation was cited')).toBe('no-verdict');
+    expect(parseGuardianVerdict('The answer does not pass muster')).toBe('no-verdict');
+  });
+
+  it('still reads a standalone PASS in ordinary punctuation', () => {
+    expect(parseGuardianVerdict('Verdict: PASS.')).toBe('pass');
+    expect(parseGuardianVerdict('(PASS)')).toBe('pass');
+    expect(parseGuardianVerdict('PASS\n')).toBe('pass');
+  });
 });

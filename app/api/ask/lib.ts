@@ -573,9 +573,39 @@ export type GuardianVerdict = 'pass' | 'fail' | 'no-verdict';
 // point in opposite directions, so it is no-verdict and the caller retries
 // once, then fails closed. Measured live 2026-08-29: 3 preamble truncations,
 // 2 bare NO, 2 genuine FAIL across one 34-question run.
+// FAIL stays a substring test on purpose: over-triggering FAIL only abstains
+// more, which is the safe direction on a cite-or-abstain gate.
+//
+// PASS must NOT be a substring test, and this was shipped wrong until
+// 2026-08-31. "PASS" is contained in BYPASS, COMPASSION, SURPASSES, PASSAGE,
+// and, worst of all, in the ordinary sentence "the answer does not pass
+// muster". Every one of those read as a PASS and let an ungrounded answer
+// through, which fails OPEN on the one guard this product rests on. Found by
+// running a rival's own defect class back against us.
+//
+// So PASS must be a STANDALONE token, which rules out BYPASS/COMPASSION/
+// SURPASSES/PASSAGE, plus the role-glued ASSISTANTPASS form the model
+// measurably emits (there is no word boundary between the role marker and the
+// verdict, so it needs its own alternative).
+//
+// A standalone token is still not sufficient. In "the answer does not pass
+// muster" the word is standalone and means the OPPOSITE, so a preceding
+// negator disqualifies it. Two tokens of lookbehind covers "does not pass" and
+// "cannot pass". Anything disqualified becomes no-verdict, the caller retries
+// once, and then fails closed, so the failure mode of this rule is an extra
+// abstention rather than an unaudited answer.
+const NEGATORS = new Set(['NOT', "DOESN'T", "DIDN'T", "CAN'T", 'CANNOT', 'NEVER', 'FAILS', 'NO']);
+
 export function parseGuardianVerdict(raw: string): GuardianVerdict {
   const text = raw.toUpperCase();
   if (text.includes('FAIL')) return 'fail';
-  if (text.includes('PASS')) return 'pass';
+  if (/ASSISTANTPASS/.test(text)) return 'pass';
+
+  const tokens = text.split(/[^A-Z']+/).filter(Boolean);
+  for (let i = 0; i < tokens.length; i++) {
+    if (tokens[i] !== 'PASS') continue;
+    const negated = tokens.slice(Math.max(0, i - 2), i).some((t) => NEGATORS.has(t));
+    if (!negated) return 'pass';
+  }
   return 'no-verdict';
 }

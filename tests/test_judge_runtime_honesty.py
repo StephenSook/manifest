@@ -659,3 +659,57 @@ def test_pipeline_counterfactual_describes_paths_that_exist() -> None:
         "the pipeline block cites engine/__tests__/isolation.test.ts and that "
         "file is gone"
     )
+
+
+class TestTheUiNeverNamesABackendItDidNotMeasure:
+    """A component may render a measured backend. It may not hardcode one.
+
+    The embedder is a property of the committed corpus artifact, so a literal
+    in a component is a copy that no rebuild updates. It would keep printing
+    the old name after a corpus swap while /api/status reported the new one,
+    and the wrong one is the one a judge reads. Same defect class as a figure
+    with no source: a name asserted by nothing that measured it.
+    """
+
+    BACKEND_LITERALS = (
+        "hashing-trick",
+        "granite-embedding",
+        "granite-4-h-small",
+        "granite-guardian",
+        "slate-",
+    )
+
+    def _components(self):
+        root = REPO / "components"
+        files = [
+            p
+            for p in root.rglob("*.tsx")
+            if "__tests__" not in p.parts and "node_modules" not in p.parts
+        ]
+        assert len(files) >= 5, (
+            f"Only {len(files)} components found under {root}. The guard walks "
+            "an empty or wrong set, so it would pass without checking "
+            "anything. A guard that finds no inputs must fail, not pass."
+        )
+        return files
+
+    def test_no_component_hardcodes_a_model_or_embedder_name(self):
+        offenders = []
+        for path in self._components():
+            for lineno, line in enumerate(
+                path.read_text(encoding="utf-8").splitlines(), start=1
+            ):
+                stripped = line.strip()
+                # A comment may name a backend: explaining WHY the literal is
+                # absent is the point of this rule, not a violation of it.
+                if stripped.startswith("//") or stripped.startswith("*"):
+                    continue
+                for literal in self.BACKEND_LITERALS:
+                    if literal in line:
+                        rel = path.relative_to(REPO)
+                        offenders.append(f"{rel}:{lineno}: {stripped[:90]}")
+        assert offenders == [], (
+            "A component names a model or embedder as a literal. Read it from "
+            "/api/status, or say the client did not read it. Offenders:\n  "
+            + "\n  ".join(offenders)
+        )

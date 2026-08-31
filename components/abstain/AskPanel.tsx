@@ -351,12 +351,18 @@ function WriterLine({
   data?: AskResponse;
 }) {
   if (data?.degraded) {
+    // The embedder name is NOT defaulted to a literal here. The client learns
+    // it from /api/status or it does not learn it at all, and a hardcoded
+    // 'hashing-trick-768' would keep printing that name unchanged after a
+    // corpus rebuild swapped the embedder, while /api/status told the truth.
+    // A UI that states a backend nothing measured is the same defect as a
+    // number with no source behind it.
     return (
       <p style={S.writerLine}>
         Writer: offline extractive path, quoted from the corpus. Guardian: did
-        not run. Embedding: {runtime?.embedding_backend ?? 'hashing-trick-768'}.
-        watsonx is configured on this deployment but was unreachable for this
-        request.
+        not run. Embedding:{' '}
+        {runtime?.embedding_backend ?? 'not read for this request'}. watsonx is
+        configured on this deployment but was unreachable for this request.
       </p>
     );
   }

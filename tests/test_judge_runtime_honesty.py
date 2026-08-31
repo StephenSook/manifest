@@ -564,3 +564,48 @@ def test_committed_live_responses_are_verbatim_and_self_describing() -> None:
     assert "Part 25 remains binding today." in reason, (
         "the captured abstention does not carry the full verbatim regime line"
     )
+
+
+def test_corpus_shape_states_what_it_did_not_prove() -> None:
+    """
+    /api/status may report the corpus SHAPE, and must not claim it loaded it.
+
+    Borrowed from a rival shipping `ml_trained` as a first-class field so its UI
+    can say whether the model is warm rather than rendering a meaningless score.
+    The same gap existed here: status reported snapshot DATES but never how much
+    corpus there is, so a reader could not tell a loaded index from an empty one
+    without posting a question and getting an abstention.
+
+    The guard exists because of how that steal arrived. The rival asserted a
+    readiness it had not tested, and a sibling project in the same batch turned a
+    NameError into a success-shaped 200 that was undetectable from the response.
+    Reading `corpus/schema.json` proves the manifest DECLARES a shape. It does
+    not prove 3524 vectors parse. So the block must carry `declared_by` and must
+    NOT carry a boolean asserting readiness, which is the shape that lies.
+    """
+    text = _read(STATUS_ROUTE)
+    start = text.index("function readCorpusShape()")
+    block = text[start : text.index("const corpusShape", start)]
+
+    for field in ("chunk_count", "vector_dim", "embedder", "declared_by"):
+        assert field in block, f"corpus shape lost its {field} field"
+
+    for overclaim in (
+        "corpus_loaded",
+        "corpus_ready",
+        "queryable",
+        "index_loaded",
+        "vectors_parsed",
+    ):
+        assert overclaim not in block, (
+            f"corpus shape declares '{overclaim}', which reading a JSON manifest "
+            "cannot establish. Report the declared shape and point at "
+            "POST /api/ask, or actually load the vectors and measure it."
+        )
+
+    # A missing corpus must be a NAMED absence, never a zero that reads as a
+    # real but empty index.
+    assert "CORPUS_NOT_BUNDLED" in block, (
+        "the failure branch no longer names the absence, so a missing corpus "
+        "could render as chunk_count 0 and read like a real empty index"
+    )

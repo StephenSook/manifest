@@ -264,11 +264,26 @@ async function handleStatus(): Promise<NextResponse> {
     response_ms: responseMs,
 
     // Deorbit compliance -- the differentiator
+    //
+    // `closest_altitude_km_used` is the disclosure that matters here. The decay
+    // table is a 7 x 3 grid: 400 to 700 km in 50 km steps, ballistic
+    // coefficients 120 / 180 / 250. The lookup takes the NEAREST row on both
+    // axes, and /mission accepts any positive perigee, so an orbit outside that
+    // grid still returns a lifetime and a legal verdict. The engine has always
+    // recorded which row it actually used; until now that stayed inside the
+    // engine while `method` said "NRLMSISE-00 ballistic drag integration",
+    // which reads as though the number was integrated for THIS orbit.
+    //
+    // Null means the requested orbit was an exact grid point. A number means
+    // the verdict was computed from that altitude instead, and a reader can
+    // see how far the substitution reached.
     deorbit_compliance: {
       verdict: deorbitResult.verdict,
       lifetime_years: deorbitResult.lifetimeYears,
       fcc_limit_years: deorbitResult.fccLimitYears,
       method: deorbitResult.method,
+      closest_altitude_km_used: deorbitResult.closestAltitudeKmUsed,
+      table_entry_not_found: deorbitResult.tableEntryNotFound,
       citation: '47 CFR 25.283(e), FCC 22-74 (2022)',
     },
     deorbit_swing: deorbitSwing,

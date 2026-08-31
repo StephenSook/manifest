@@ -1,11 +1,8 @@
 {
   "mcpServers": {
     "manifest-eval": {
-      "command": ".venv-forge/bin/python",
-      "args": [
-        "-m",
-        "eval.mcp_server"
-      ],
+      "command": ".bob/run-eval.sh",
+      "args": [],
       "env": {},
       "disabled": false,
       "alwaysAllow": [

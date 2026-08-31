@@ -191,6 +191,78 @@ function readCorpusShape(): Record<string, unknown> {
 const corpusShape = readCorpusShape();
 
 /**
+ * The four stages that produce an answer, and what each one still does with the
+ * model switched off.
+ *
+ * Borrowed from a rival that renders its pipeline as four side-by-side panels,
+ * each naming what that stage contributed, plus a counterfactual "AI off" panel
+ * so the value of the model is a visible delta rather than an assertion. It is
+ * the clearest legibility device in the batch.
+ *
+ * Ours inverts theirs, and the inversion is the point. Their counterfactual
+ * shows what you LOSE without the model. For the deorbit verdict, ours shows
+ * the verdict is UNCHANGED: engine/ holds eight source files with zero
+ * non-relative imports, so no model is reachable from the computation at all,
+ * and a test asserts it. On the ask path the model writes prose and the
+ * citation gate and the Guardian audit can only ever REMOVE an answer, never
+ * add one.
+ *
+ * Every string here describes a code path that exists. If a stage is ever
+ * removed or reordered, this block becomes a claim the product does not honour,
+ * which is the exact defect this endpoint was built to close.
+ */
+const PIPELINE = {
+  what_this_is:
+    'The stages behind POST /api/ask and the deorbit verdict, and what each ' +
+    'still does with the model switched off. Read the with_model_off column ' +
+    'first: it is the honest measure of how much the model is trusted here.',
+  ask: [
+    {
+      stage: '1. Retrieval',
+      contributes: 'Selects the top 8 corpus chunks for the question.',
+      with_model_off:
+        'Unchanged. The committed freeze is hashing-trick-768, so retrieval ' +
+        'runs with no model in every deployment, keyed or not.',
+    },
+    {
+      stage: '2. Generation',
+      contributes:
+        'ibm/granite-4-h-small writes prose over the retrieved chunks. This is ' +
+        'the ONLY stage a model can influence.',
+      with_model_off:
+        'The offline extractive path answers from the same chunks under the ' +
+        'same cite-or-abstain rule, and the response sets degraded with the ' +
+        'upstream error named in reason.',
+    },
+    {
+      stage: '3. Citation gate',
+      contributes:
+        'Every cited reference must resolve exactly against a retrieved chunk. ' +
+        'A pathed answer must earn its exact citation.',
+      with_model_off:
+        'Unchanged, and it is subtractive by construction: it can only refuse ' +
+        'an answer, never invent one.',
+    },
+    {
+      stage: '4. Guardian audit',
+      contributes:
+        'ibm/granite-guardian-3-8b checks groundedness before display. A ' +
+        'failed audit abstains rather than shipping the generated text.',
+      with_model_off:
+        'Does not run, and the response says so: audited is false and reason ' +
+        'names it. It fails CLOSED, so its absence can only withhold an ' +
+        'answer, never release one.',
+    },
+  ],
+  verdict_counterfactual:
+    'The deorbit compliance verdict does not appear above because no model ' +
+    'touches it. engine/ is eight source files with ZERO non-relative imports, ' +
+    'asserted by engine/__tests__/isolation.test.ts, so the regulatory verdict ' +
+    'is structurally unreachable by any model. With the model off it is ' +
+    'byte-identical.',
+} as const;
+
+/**
  * Where the corpus this deployment serves actually came from.
  *
  * This previously reported `vercel-blob` or `not-configured` purely from the
@@ -367,6 +439,9 @@ async function handleStatus(): Promise<NextResponse> {
     // Shape of the corpus that answers /api/ask, so a reader can see the
     // answering surface is real before asking and receiving an abstention.
     corpus: corpusShape,
+
+    // The four stages, and what each still does with the model off.
+    pipeline: PIPELINE,
     // Cascade sum across all violated nodes, kept for transparency. One slip
     // propagates to every downstream node, so this is NOT days-of-lateness.
     violated_day_sum_all_nodes: result.totalViolatedDays,

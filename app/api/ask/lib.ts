@@ -514,6 +514,30 @@ export interface ExtractiveResponseBody {
  * page renders the same words from app/layout.tsx, but a judge reading the
  * API with curl never sees the page.
  */
+/**
+ * The user-facing sentence for a Guardian outcome that stops an answer.
+ *
+ * Deliberately takes an OUTCOME, not the model's text. Guardian echoes its
+ * own risk definition back often enough that interpolating its output ships
+ * prompt scaffolding to the reader, which is what this replaced. The raw
+ * output is still logged server-side, where it is a diagnostic rather than
+ * a claim shown to a judge.
+ */
+export function guardianFailureReason(outcome: 'fail' | 'unparseable'): string {
+  if (outcome === 'fail') {
+    return (
+      'The Guardian audit did not certify this answer as grounded in the ' +
+      'retrieved sections, so the answer did not ship. The sections it was ' +
+      'checked against are listed below.'
+    );
+  }
+  return (
+    'The Guardian audit returned no readable verdict, so the answer could ' +
+    'not be certified and did not ship. The retrieved sections are listed ' +
+    'below and the raw audit output is in the server log.'
+  );
+}
+
 export const SCOPE_NOTICE =
   'Planning aid, not legal authority. Every regulatory statement here carries a ' +
   'section-level citation pinned to the corpus AMDDATE, or the product abstains ' +

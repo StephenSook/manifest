@@ -713,3 +713,45 @@ class TestTheUiNeverNamesABackendItDidNotMeasure:
             "/api/status, or say the client did not read it. Offenders:\n  "
             + "\n  ".join(offenders)
         )
+
+
+class TestNoModelOutputIsInterpolatedIntoAUserFacingReason:
+    """A `reason` is prose shown to whoever triggered an abstention.
+
+    Interpolating a model's raw text into it ships whatever the model felt
+    like emitting. Guardian echoes its own risk definition often enough that
+    this actually happened: the live reason field read "Guardian audit
+    returned no verdict: OUR SAFETY RISK DEFINITION IS DEFINED BELOW:
+    <START_OF_RISK_DEFINITION> * THE 'A", cut mid-word at 80 characters.
+
+    A model variable may be logged. It may not be interpolated into prose.
+    """
+
+    MODEL_VARS = ("lastResult", "generated_text", "rawVerdict", "guardianText")
+
+    def test_the_route_exists_and_builds_reasons(self):
+        """Anti-vacuity: the guard must be reading the real file."""
+        route = REPO / "app" / "api" / "ask" / "route.ts"
+        assert route.exists(), f"{route} is missing, so this guard checks nothing"
+        text = route.read_text(encoding="utf-8")
+        assert "reason:" in text, "route.ts builds no reason field, guard is misaimed"
+
+    def test_no_reason_interpolates_a_model_output_variable(self):
+        route = REPO / "app" / "api" / "ask" / "route.ts"
+        offenders = []
+        for lineno, line in enumerate(
+            route.read_text(encoding="utf-8").splitlines(), start=1
+        ):
+            stripped = line.strip()
+            if stripped.startswith("//") or stripped.startswith("*"):
+                continue
+            if "reason:" not in stripped and "reason =" not in stripped:
+                continue
+            for var in self.MODEL_VARS:
+                if "${" + var in stripped or "${" + var + "." in stripped:
+                    offenders.append(f"route.ts:{lineno}: {stripped[:100]}")
+        assert offenders == [], (
+            "A user-facing reason interpolates raw model output. Log it "
+            "server-side and return a shaped sentence instead. Offenders:\n  "
+            + "\n  ".join(offenders)
+        )

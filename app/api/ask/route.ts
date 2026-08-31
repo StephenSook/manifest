@@ -32,6 +32,7 @@ import {
   formatCfrReference,
   parseGuardianVerdict,
   SCOPE_NOTICE,
+  guardianFailureReason,
 } from './lib';
 
 export const runtime = 'nodejs';
@@ -370,13 +371,18 @@ Audit result (PASS or FAIL):`;
     const verdict = parseGuardianVerdict(lastResult);
     if (verdict === 'pass') return { passed: true };
     if (verdict === 'fail') {
-      return { passed: false, reason: `Guardian audit: ${lastResult}` };
+      // The raw verdict text is NOT interpolated. Guardian frequently echoes
+      // its own risk definition back, so pasting its output into a
+      // user-facing string ships prompt scaffolding to whoever triggered the
+      // abstention. It went out as: "Guardian audit returned no verdict: OUR
+      // SAFETY RISK DEFINITION IS DEFINED BELOW: <START_OF_RISK_DEFINITION>
+      // * THE 'A", truncated mid-word. Diagnostics go to the server log.
+      console.error('[guardian] FAIL verdict, raw output:', lastResult);
+      return { passed: false, reason: guardianFailureReason('fail') };
     }
   }
-  return {
-    passed: false,
-    reason: `Guardian audit returned no verdict: ${lastResult.slice(0, 80)}`,
-  };
+  console.error('[guardian] no parseable verdict, raw output:', lastResult);
+  return { passed: false, reason: guardianFailureReason('unparseable') };
 }
 
 function retrieveTop(

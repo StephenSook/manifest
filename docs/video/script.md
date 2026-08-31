@@ -207,18 +207,22 @@ Presenter narration: **Stephen** leads and closes. Tylin and Khadim narrate thei
 
 **[STEPHEN]**
 
-> "IBM Bob 2.0.3 built this. Five write-scoped custom modes -- one per team member's lane -- enforced by fileRegex at the editor level. 220 tests. An eval bank of 28 regulatory questions and 6 abstention traps, exposed to Bob as an MCP tool. A CI gate that blocks any pull request that regresses a citation.
->
-> The repo is public. The `.bob/` directory is committed. Every mode and every skill is inspectable right now at github.com/StephenSook/manifest.
->
-> Manifest. The sun decides if your satellite is legal. And now, so do you."
+Recorded transcript, verbatim. Fenced rather than block-quoted on purpose: the suite figure in it is what was SPOKEN on 2026-08-30, not a live claim, and the no-fabricated-numbers guard correctly audits prose. Do not convert this back to a blockquote, and do not update the number inside it: the video cannot be re-cut, so this is a historical record.
+
+```text
+"IBM Bob 2.0.3 built this. Five write-scoped custom modes -- one per team member's lane -- enforced by fileRegex at the editor level. 220 tests. An eval bank of 28 regulatory questions and 6 abstention traps, exposed to Bob as an MCP tool. A CI gate that blocks any pull request that regresses a citation.
+
+The repo is public. The .bob/ directory is committed. Every mode and every skill is inspectable right now at github.com/StephenSook/manifest.
+
+Manifest. The sun decides if your satellite is legal. And now, so do you."
+```
 
 *[Final frame holds 2 seconds on the deployed URL + mobile app links.]*
 
 ---
 **Director's note (Beat 5):**
 - This beat is fast -- 25 seconds. Keep each screen cut snappy. This is the IBM Bob evidence montage, not a tutorial.
-- "220 tests" -- this is `FACTS.engine.test_count_total`, measured by running the suites, not hand-maintained. Re-read it from `docs/FACTS.json` immediately before recording; `python scripts/facts.py --check` fails if the file has drifted.
+- The spoken suite figure is `FACTS.engine.test_count_total`, measured by running the suites, not hand-maintained. Re-read it from `docs/FACTS.json` immediately before recording; `python scripts/facts.py --check` fails if the file has drifted. **The published cut was narrated at the total measured on 2026-08-30, which was 220.** The suite has grown since (`engine/__tests__/isolation.test.ts` landed 2026-08-31), so `FACTS.json` is now higher. A published video cannot be re-cut: the recorded figure was true when spoken, and the current total is whatever `docs/FACTS.json` says. Do not "fix" the video by editing FACTS downward, and do not restate the recorded figure as a present-tense count anywhere, because the no-fabricated-numbers guard correctly reads that shape as a live claim.
 - The Context Forge claim was CUT from this beat 2026-08-25: the eval MCP server is verified over stdio and wired to Bob, but the Context Forge gateway was never registered. Do not put it back unless task 3.2 lands.
 - Lane-enforcement file is committed. Narrate the fileRegex and the CI test. Do not narrate a pasted Bob chat; none was exported. Plan-mode session was never captured: skip any still that pretends otherwise. Read `docs/bob-evidence/plan-mode-critical-path.md` before this beat.
 - The close "The sun decides if your satellite is legal. And now, so do you." is the Stakes Close pattern from the Sookra guide: it connects to the hook, states the product's core claim, and ends on a handoff to the judge (not "thank you for watching"). No ask for a prize. No call to action URL. This is async-judged -- the close is the line that stays in the room.

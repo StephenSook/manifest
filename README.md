@@ -183,6 +183,7 @@ IBM Bob 2.0.3 is the primary development tool (competition requirement). The `.b
 
 | Artifact | Location |
 |---|---|
+| Generated attribution table, counts computed from the repo | [`docs/bob-evidence/ATTRIBUTION.md`](docs/bob-evidence/ATTRIBUTION.md) |
 | Custom modes (5, write-scoped) | `.bob/custom_modes.yaml` |
 | Workspace skills | `.bob/skills/` |
 | Workspace MCP config | `.bob/mcp.json` |

@@ -7,7 +7,7 @@ Do not hand-edit. Re-run the script instead, and CI asserts it is current.
 
 | Evidence | Count | Where |
 |---|---|---|
-| Tracked files under `.bob/` | 14 | `.bob/` |
+| Tracked files under `.bob/` | 15 | `.bob/` |
 | Custom modes | 5 | `.bob/custom_modes.yaml` |
 | fileRegex write scopes | 5 | `.bob/custom_modes.yaml` |
 | Regime skills | 4 | `.bob/skills/*/SKILL.md` |

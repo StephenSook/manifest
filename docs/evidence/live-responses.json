@@ -1,0 +1,61 @@
+{
+  "what_this_is": "A verbatim capture of two real responses from the deployed product, so the generative path can be checked without a key, without a live endpoint, and without running anything. Nothing here is composed: each response is the exact JSON the endpoint returned.",
+  "captured_at_utc": "2026-08-31T22:24:40Z",
+  "captured_from": "https://manifest-web-roan.vercel.app",
+  "how_to_reproduce": [
+    "curl -s -X POST https://manifest-web-roan.vercel.app/api/ask -H 'content-type: application/json' -d '{\"question\":\"When is the pre-space notification due under 97.207(g)?\"}'",
+    "curl -s -X POST https://manifest-web-roan.vercel.app/api/ask -H 'content-type: application/json' -d '{\"question\":\"When does Part 100 take effect?\"}'",
+    "curl -s https://manifest-web-roan.vercel.app/api/status"
+  ],
+  "runtime_that_produced_these": {
+    "generation_backend": "watsonx",
+    "embedding_backend": "hashing-trick-768",
+    "guardian_audit": "active",
+    "corpus_source": "committed-freeze",
+    "basis": {
+      "generation_backend": "credentials-present (not a health check)",
+      "guardian_audit": "credentials-present (not a health check)",
+      "embedding_backend": "read from corpus/schema.json model",
+      "corpus_source": "read from the loaded corpus"
+    },
+    "note": "watsonx credentials are present, so /api/ask attempts the watsonx path. This is credential presence, not model health: a token quota, an outage or a rate limit is not visible from here. When watsonx is unreachable /api/ask degrades to the offline extractive path over the same corpus, sets degraded: true and names the upstream error in its reason, so POST /api/ask and read that reason for the path that actually answered. Query embedding runs on hashing-trick-768 in every case, because the committed corpus freeze determines the embedder."
+  },
+  "build_that_produced_these": "ABSENT: the deployment predates the commit that added the build block, so the exact SHA cannot be established from outside. Recorded as unknown rather than guessed.",
+  "responses": [
+    {
+      "name": "a real question, audited and cited",
+      "request": {
+        "question": "When is the pre-space notification due under 97.207(g)?"
+      },
+      "response": {
+        "answer": "The pre-space notification is due within 30 days after the date of launch vehicle determination, but no later than 90 days before integration of the space station into the launch vehicle (47 CFR 97.207(g)(1) AMDDATE: 2026-08-13).",
+        "citations": [
+          {
+            "cfrTitle": 47,
+            "part": 97,
+            "section": "97.207",
+            "paragraphPath": "(g)(1)",
+            "amddate": "2026-08-13",
+            "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+          }
+        ],
+        "audited": true,
+        "abstained": false
+      }
+    },
+    {
+      "name": "an abstention trap, refused with the regime line",
+      "request": {
+        "question": "When does Part 100 take effect?"
+      },
+      "response": {
+        "answer": null,
+        "citations": [],
+        "audited": false,
+        "abstained": true,
+        "reason": "Part 100 was adopted July 22, 2026 (FCC 26-47). The effective date has not been announced. Part 25 remains binding today."
+      }
+    }
+  ],
+  "what_these_two_together_show": "The first proves the product answers with an exact section-level citation pinned to the corpus AMDDATE and marks itself audited. The second proves it refuses rather than guessing, and returns the verbatim regime line rather than an improvised one. A product that only ever answers has not demonstrated the second half."
+}

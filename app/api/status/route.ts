@@ -247,10 +247,35 @@ async function handleStatus(): Promise<NextResponse> {
 
   const responseMs = Date.now() - t0;
 
+  // Which BUILD is answering. Added 2026-08-31 after production silently served
+  // code four merged commits behind main for a second time, while every check
+  // was green: the endpoint answers 200 either way, so uptime cannot see it and
+  // the only tell was a JSON key that a shipped fix had added and the deployed
+  // build did not have. Establishing that took an hour. With this it is one
+  // curl and a diff against `git rev-parse origin/main`.
+  //
+  // Vercel injects these at build time. Locally and in CI they are undefined,
+  // and the honest answer there is null: a fabricated "dev" or "unknown" would
+  // make the field look answered when nothing measured it. Read from
+  // process.env only, never from a committed constant, because a constant is
+  // exactly the thing that goes stale in the way this block exists to catch.
+  const build = {
+    commit_sha: process.env.VERCEL_GIT_COMMIT_SHA ?? null,
+    commit_ref: process.env.VERCEL_GIT_COMMIT_REF ?? null,
+    environment: process.env.VERCEL_ENV ?? null,
+    note:
+      'Nulls mean this process was not built by Vercel (a local run, or CI). ' +
+      'On a deployment, compare commit_sha against the head of main: if it is ' +
+      'behind, the code answering you is not the code in the repository.',
+  };
+
   return NextResponse.json({
     // Headline number: days by which the binding deadline chain is already
     // past feasible (worst single overrun among VIOLATED nodes).
     deadline_violations_days: worstViolationDays,
+
+    // Build identity of the process answering this request.
+    build,
     // Cascade sum across all violated nodes, kept for transparency. One slip
     // propagates to every downstream node, so this is NOT days-of-lateness.
     violated_day_sum_all_nodes: result.totalViolatedDays,

@@ -20,6 +20,7 @@ Authority: PLAN.md task 2.18, D15.
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -953,4 +954,71 @@ class TestReproducedBypassesStayClosed:
         """
         assert expected in eval_score_claims(phrase), (
             f"{phrase!r} did not yield {expected}: got {eval_score_claims(phrase)}"
+        )
+
+
+class TestEveryChunkCarriesItsPin:
+    """
+    Every corpus chunk must carry a well-formed AMDDATE.
+
+    Borrowed from a rival whose knowledge-base loader HARD-FAILS, naming the
+    offending record index, if any entry's source field is empty. Its whole
+    product is cite-or-abstain expressed as architecture rather than as a guard:
+    every output string is either a computed number or a field from a sourced
+    record, so the card structurally cannot cite something unsourced.
+
+    Ours has the same property and nothing was defending it. `amddate` is typed
+    `string` and flows untouched into two places that reach a judge:
+    app/api/ask/route.ts:253 renders it into the generation prompt, and
+    app/api/ask/lib.ts:390 puts it into the citation that ships in the response.
+    A chunk with an empty amddate would produce `(AMDDATE: undefined)` in a
+    prompt and an unpinned citation in an answer.
+
+    A citation without its pin is not a citation. The whole cite-or-abstain rule
+    rests on the pin, so this is the corpus half of that rule.
+
+    All 3524 committed chunks pass today. The realistic failure is a future
+    corpus rebuild, which is exactly when a silent pass would hurt, and CI is
+    where it should be caught rather than in a judge's answer.
+    """
+
+    def test_no_committed_chunk_is_missing_its_amddate(self) -> None:
+        import glob
+
+        chunk_files = sorted(glob.glob(str(REPO_ROOT / "corpus" / "chunks" / "*.json")))
+        assert chunk_files, (
+            "no corpus chunk files found. This guard cannot pass vacuously: if "
+            "corpus/chunks/ moved, that is the finding."
+        )
+
+        offenders: list[str] = []
+        total = 0
+        for path in chunk_files:
+            with open(path, encoding="utf-8") as fh:
+                data = json.load(fh)
+            rows = data if isinstance(data, list) else data.get("chunks", [])
+            for i, row in enumerate(rows):
+                total += 1
+                amddate = str(row.get("amddate") or "").strip()
+                if not amddate:
+                    # Name the offender, like the rival's loader does. "Some
+                    # chunk is missing a date" is not an actionable failure.
+                    offenders.append(
+                        f"{os.path.basename(path)} index {i} "
+                        f"(id={row.get('id', 'UNKNOWN')}) has no amddate"
+                    )
+                elif not re.fullmatch(r"\d{4}-\d{2}-\d{2}", amddate):
+                    offenders.append(
+                        f"{os.path.basename(path)} index {i} "
+                        f"(id={row.get('id', 'UNKNOWN')}) has a malformed "
+                        f"amddate {amddate!r}, expected YYYY-MM-DD"
+                    )
+
+        assert total >= 1000, (
+            f"only {total} chunks scanned. The corpus should hold thousands; a "
+            "small count means the parse shape changed and this guard went blind."
+        )
+        assert not offenders, (
+            f"{len(offenders)} corpus chunk(s) cannot be cited with a pin:\n"
+            + "\n".join(offenders[:20])
         )

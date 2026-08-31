@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-08-31T18:11:09.069322+00:00",
+    "generated_at": "2026-08-31T20:26:56.139296+00:00",
     "generated_by": "scripts/facts.py",
     "source_files": [
       "data/decay-table.json",
@@ -60,9 +60,9 @@
       "delivery"
     ],
     "node_count": 10,
-    "compute_ms": 0,
+    "compute_ms": 1,
     "seed_note": "GT-1 mission profile from data/missions/gt-1.json (task 2.16), re-based onto a live delivery date (2026-12-01). The planner's question is 'standing at today, licensing not started, which deadlines are already dead.' All dates ESTIMATED per D5.",
-    "measured_at": "2026-08-31T18:11:05.905927+00:00"
+    "measured_at": "2026-08-31T20:26:52.736402+00:00"
   },
   "beneficiary_sizing": {
     "missions_per_year_approx": "40",
@@ -75,10 +75,10 @@
     "licensing_runway_source": "NASA CubeSat 101 (CSLI, 2017), Section 2.8 'Regulatory Licensing (4-6 months)'; same document: FCC requires a minimum of 90 days from application receipt, and IARU coordination starts immediately at manifest. Age flagged per D5."
   },
   "engine": {
-    "test_count": 123,
+    "test_count": 126,
     "ask_route_test_count": 97,
-    "test_count_total": 220,
-    "test_count_note": "Counted by running the suites (vitest --reporter=json) at 2026-08-31T18:11:09.069322+00:00. engine_and_mobile = npm run test:engine, ask_route = npm run test:ask.",
+    "test_count_total": 223,
+    "test_count_note": "Counted by running the suites (vitest --reporter=json) at 2026-08-31T20:26:56.139296+00:00. engine_and_mobile = npm run test:engine, ask_route = npm run test:ask.",
     "decay_table_entries": 21,
     "decay_table_generated_at": "2026-08-16T20:38:16.649836+00:00"
   },
@@ -90,9 +90,9 @@
     "traps_abstained": 6,
     "rows_scored": 34,
     "mode": "fixtures",
-    "measured_at": "2026-08-31T18:11:09.060873+00:00"
+    "measured_at": "2026-08-31T20:26:56.132924+00:00"
   },
-  "eval_note": "Measured by running `python3 eval/runner.py --mode fixtures` at 2026-08-31T18:11:09.069322+00:00: offline, no network, no API key, against the committed fixtures, so anyone who clones the repo reproduces it. The score is the credential-free extractive path. The aspirational bar in CLAUDE.md section 5 is 90 percent; CI enforces a raise-only ratchet at today's measured floor instead, and eval-gate.yml fails on any regression or on any trap answering.",
+  "eval_note": "Measured by running `python3 eval/runner.py --mode fixtures` at 2026-08-31T20:26:56.139296+00:00: offline, no network, no API key, against the committed fixtures, so anyone who clones the repo reproduces it. The score is the credential-free extractive path. The aspirational bar in CLAUDE.md section 5 is 90 percent; CI enforces a raise-only ratchet at today's measured floor instead, and eval-gate.yml fails on any regression or on any trap answering.",
   "eval_live": {
     "score_pct": 7.1,
     "questions_correct": 2,

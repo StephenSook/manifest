@@ -6,7 +6,7 @@
 
 [![CI](https://github.com/StephenSook/manifest/actions/workflows/ci.yml/badge.svg)](https://github.com/StephenSook/manifest/actions/workflows/ci.yml)
 [![Eval](https://github.com/StephenSook/manifest/actions/workflows/eval-gate.yml/badge.svg)](https://github.com/StephenSook/manifest/actions/workflows/eval-gate.yml)
-[![Tests](https://img.shields.io/badge/tests-220%20passing-3fb950.svg)](engine/)
+[![Tests](https://img.shields.io/badge/tests-223%20passing-3fb950.svg)](engine/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![IBM AI Builders Challenge August 2026](https://img.shields.io/badge/IBM%20AI%20Builders-August%202026-054ada.svg)](https://aibuilderschallenge-bobhub.bemyapp.com/)
 
@@ -23,7 +23,7 @@ No account. No keys. Every claim below is either a live link or a `grep` command
 | **Try it, zero setup** | [manifest-web-roan.vercel.app/judge](https://manifest-web-roan.vercel.app/judge): numbered walkthrough. [/mission](https://manifest-web-roan.vercel.app/mission): the planner |
 | **The headline, recomputed live** | [manifest-web-roan.vercel.app/api/status](https://manifest-web-roan.vercel.app/api/status): unauthenticated, recomputes the violated-days number on every request and self-reports the wired models |
 | **The differentiator** | [`engine/interlocks/deorbit-compliance.ts`](engine/interlocks/deorbit-compliance.ts) + [`data/decay-table.json`](data/decay-table.json) -- same orbit, opposite verdict, solar cycle decides |
-| **123 engine and mobile tests passing** | `npm install && npm run test:engine` |
+| **126 engine and mobile tests passing** | `npm install && npm run test:engine` |
 | **The eval suite, offline** | `python3 eval/runner.py --mode fixtures` -- 28 questions + 6 abstention traps, no network, no key |
 | **Claims are wired, not aspirational** | `grep -r "ibm/granite" app/ pipeline/` -- every named model has an import or call |
 | **IBM Bob is committed and inspectable** | [`.bob/custom_modes.yaml`](.bob/custom_modes.yaml), [`.bob/mcp.json`](.bob/mcp.json), [`docs/bob-evidence/`](docs/bob-evidence/) |
@@ -74,7 +74,7 @@ The deorbit compliance verdict is computed by an NRLMSISE-00 orbital lifetime in
 
 **Embedding is the honest exception, and this README previously got it wrong.** `embedding_backend` is `hashing-trick-768`, not watsonx, in every deployment including this one. The route selects its embedder from the committed corpus freeze (task 1.3), so the watsonx embed call is unreachable in production. `ibm/granite-embedding-278m-multilingual` stays in the model inventory as what the pipeline is wired for, and the runtime block says what actually ran.
 
-**Which path is answering right now is a question for the endpoints, not for this file.** `POST /api/ask` reports `degraded` on every response and names any upstream error, and `GET /api/status` reports the configured backends with the basis for each. Those answer at the moment you ask, which is the whole reason they exist, and this README will not try to out-guess them.
+**Which path is answering right now is a question for the endpoints, not for this file.** `POST /api/ask` reports `degraded` on every response that attempted an answer, and names any upstream error. The abstention responses (an empty question, a matched abstention trap, a Guardian rejection) omit it deliberately, because no generation was attempted and a degradation flag there would assert something the request never tested, and `GET /api/status` reports the configured backends with the basis for each. Those answer at the moment you ask, which is the whole reason they exist, and this README will not try to out-guess them.
 
 For the record, because a dated incident is worth more than a claim of steadiness: on 2026-08-29 the account's watsonx Lite token quota was reached, generation returned HTTP 403, and production degraded to the extractive path over the same corpus with cite-or-abstain enforced and Guardian not running. Keyless environments, including CI and any fresh clone, take that same path by design. Configured against running is one unauthenticated request to diff, and this README says which is which rather than leaving a reader to assume.
 
@@ -266,7 +266,7 @@ Every item here is a deliberate scope decision, not an unknown. Naming them is c
 
 | Criterion | How Manifest earns it |
 |---|---|
-| **Technical Execution** | 123 engine and mobile tests passing (`npm run test:engine`). NRLMSISE-00 orbital lifetime integrator (pyatmos 1.2.7) producing real numbers committed to `data/decay-table.json`. Six regulatory interlocks wired against 47 CFR and 15 CFR with citation paths. Granite generation + Guardian audit + Granite embeddings, self-reported by `/api/status`. |
+| **Technical Execution** | 126 engine and mobile tests passing (`npm run test:engine`). NRLMSISE-00 orbital lifetime integrator (pyatmos 1.2.7) producing real numbers committed to `data/decay-table.json`. Six regulatory interlocks wired against 47 CFR and 15 CFR with citation paths. Granite generation + Guardian audit + Granite embeddings, self-reported by `/api/status`. |
 | **Innovation** | The only project in this field where space weather changes a legal outcome. At 550 km with Bc=180 kg/m^2: solar max lifetime 2.57 yr (FCC-compliant), solar min lifetime 15.0 yr (VIOLATED). Same orbit, opposite verdict -- the solar cycle decides. No planning tool has connected F10.7 to a regulatory determination before this. |
 | **Challenge Fit** | Live NOAA SWPC F10.7 ingest. IBM/NASA Surya heliophysics model (`surya.366m.v1.pt` checkpoint, Apache-2.0) contributes a real forward pass, reported beside the envelope and labelled ESTIMATED. Solar activity is the regulatory input, not a dashboard: NOAA's own flux bounds decide the verdict, and the IBMxNASA model is reported beside them. |
 | **Feasibility** | One-command reproduction: `npm install && npm run test:engine`. No credentials on the deterministic path. CI green. `data/decay-table.json` regeneratable in under 3 minutes from `pipeline/decay.py`. |

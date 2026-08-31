@@ -16,7 +16,7 @@ Nothing below is in this repo and nothing below should ever be committed. Put va
 | `WATSONX_PROJECT_ID` | watsonx.ai project details page (UUID). | Same as the API key. Both are required together. |
 | `WATSONX_REGION` | The region of that project. Use `us-south` unless the project was created elsewhere. | Same. Endpoint is `https://<region>.ml.cloud.ibm.com`. |
 | `BLOB_READ_WRITE_TOKEN` | Vercel dashboard: Storage, Blob, or `vercel blob` token. Khadim provisions this in 1.18. | corpus-build.yml upload. Production `/api/ask` cold-start fetch of sqlite + vectors.f32. |
-| `MANIFEST_DEPLOY_URL` | GitHub repo **variable** (Settings, Secrets and variables, Actions, Variables), not a secret. Set after Khadim 1.17. Example: `https://manifest-web.vercel.app` with no trailing slash. | Uptime workflow (3.10). It **fails** until this is set. Do not skip. |
+| `MANIFEST_DEPLOY_URL` | GitHub repo **variable** (Settings, Secrets and variables, Actions, Variables), not a secret. Set after Khadim 1.17. Example: `https://manifest-web-roan.vercel.app` with no trailing slash. | Uptime workflow (3.10). It **fails** until this is set. Do not skip. |
 | GitHub Actions secrets | Same four watsonx/blob names, on `StephenSook/manifest`. | Manual `workflow_dispatch` of `.github/workflows/corpus-build.yml`. |
 
 **Do not gather (cut or not yours):** VAPID keys and Vercel KV were for web push (2.11), which is cut. `.env.example` lists placeholder names only. Khadim 1.18 still provisions the real values on Vercel and as GitHub Actions secrets. Vercel project name `manifest-web` is verified before any `--prod` (4.3).

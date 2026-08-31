@@ -4,7 +4,7 @@
 # Offset minutes. Never */N and never :00.
 #
 # Required repo variable (set when Khadim's 1.17 URL exists):
-#   MANIFEST_DEPLOY_URL   e.g. https://manifest-web.vercel.app
+#   MANIFEST_DEPLOY_URL   e.g. https://manifest-web-roan.vercel.app
 # If unset, this job FAILS. A skipped watchdog is a false green.
 
 name: Uptime

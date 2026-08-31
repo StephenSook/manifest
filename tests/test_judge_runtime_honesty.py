@@ -348,3 +348,70 @@ def test_uptime_still_demands_a_guardian_audited_answer() -> None:
     assert 'data.get("degraded") is True' in workflow
     assert '"97.207" in combined' in workflow
     assert 'data.get("abstained") is not False' in workflow
+
+
+DEORBIT_PANEL = REPO / "components" / "deorbit" / "DeorbitPanel.tsx"
+
+
+def test_components_block_asserts_only_what_it_measured() -> None:
+    """
+    /api/status may publish per-component booleans ONLY for state this handler
+    observed while building the response.
+
+    Borrowed, with its failure attached, from a rival whose /api/health returned
+    per-component booleans reporting both models loaded while the endpoint those
+    models serve returned 500 on every attempt. The booleans described what was
+    CONFIGURED. A health field that cannot be wrong is decoration, and a health
+    field that contradicts the product is worse than none.
+
+    watsonx and Guardian therefore must NOT appear as booleans here: their health
+    cannot be established without spending a token. runtime.basis already reports
+    them in words as credential presence, which is the honest framing.
+    """
+    text = _read(STATUS_ROUTE)
+    start = text.index("const components = {")
+    block = text[start : text.index("};", start)]
+
+    for measured in (
+        "engine_graph_built",
+        "critical_path_computed",
+        "decay_table_loaded",
+        "corpus_bundled",
+        "scenarios_loaded",
+    ):
+        assert measured in block, f"components lost its measured field {measured}"
+
+    # The whole point. A boolean for either of these would be asserting health
+    # that nothing checked, which is the defect this block was copied FROM.
+    for unmeasurable in ("watsonx_", "guardian_", "_healthy", "model_loaded"):
+        assert unmeasurable not in block, (
+            f"components declares '{unmeasurable}', which cannot be measured "
+            "without spending a token. Report it in runtime.basis as credential "
+            "presence instead, or measure it for real."
+        )
+
+
+def test_deorbit_panel_labels_the_f107_it_used_in_BOTH_states() -> None:
+    """
+    The F10.7 row must say where its number came from whether or not a live
+    reading was supplied.
+
+    Until 2026-08-31 only the `(live)` branch was labelled, and nothing in the
+    app passes f107Override, so that branch could never render: every user saw a
+    bare number and could reasonably read it as today's flux. It is the value the
+    decay-table row assumed.
+
+    Borrowed from a rival that renders "Simulated NDVI grid (demo)" under the
+    chart itself rather than only in its README.
+    """
+    text = _read(DEORBIT_PANEL)
+    assert "(live)" in text, "the live label disappeared"
+    assert "table nominal" in text, (
+        "the DEFAULT state is unlabelled again. The branch that actually renders "
+        "is the one without an override, so it is the one that must say so."
+    )
+    assert "not a live integration for this orbit" in text, (
+        "the panel no longer states that the verdict is a lookup into a frozen "
+        "NRLMSISE-00 run. README and docs/submission.md both say it; the panel "
+        "is what a judge looks at."
+    )

@@ -287,9 +287,14 @@ because it signals the evidence trail is not trustworthy.
   output of a Plan-mode session, not a fabricated summary. Use the current
   session output (this planning session is the critical-path plan, so its
   transcript is the artifact).
-- `docs/bob-evidence/orchestrator-run.md` exists (task 2.22). Content: a
-  real Orchestrator session transcript where Bob delegated regime-specific
-  work to a subagent. The AskPanel build (task 2.5) used Bob's Plan mode
+- ~~`docs/bob-evidence/orchestrator-run.md` exists (task 2.22)~~ **CUT
+  2026-08-31, and it was never possible.** Bob 2.0.3 has no Orchestrator mode:
+  a grep over `/Applications/IBM Bob.app` finds `orchestrator` only inside
+  TypeScript's own compiler files, and the switcher offers Agent, Plan and Ask
+  plus the five workspace modes. This plan asked for a transcript of a mode
+  that does not exist, so the file was correctly never created. The honesty log
+  `docs/bob-evidence/plan-mode-critical-path.md` records what actually happened.
+  Inventing the transcript was the alternative and it is the fabrication line. The AskPanel build (task 2.5) used Bob's Plan mode
   and Agent mode with subagent spawning. If a session with that shape
   exists in history, extract and commit it. If not, run one targeted
   Orchestrator session (e.g. delegating the architecture diagram cross-
@@ -299,8 +304,7 @@ because it signals the evidence trail is not trustworthy.
 - README evidence table rows for plan-mode and orchestrator-run no longer
   say "not yet committed" (ping Stephen, his lane).
 
-**Files:** `docs/bob-evidence/plan-mode-critical-path.md`,
-`docs/bob-evidence/orchestrator-run.md`
+**Files:** `docs/bob-evidence/plan-mode-critical-path.md` (the orchestrator file is cut, see above)
 
 ---
 
@@ -392,7 +396,7 @@ If cut: remove `@playwright/test` and `happy-dom` in K3, remove the
 `test:e2e` script from `package.json`, and confirm `tests/e2e/` is either
 empty or removed.
 
-**Files:** `tests/e2e/smoke.spec.ts` (new), `package.json` (if cut)
+**Files:** ~~`tests/e2e/smoke.spec.ts`~~ **CUT.** No Playwright spec was ever written, and the dead `test:e2e` script was removed from `package.json` on 2026-08-31 rather than left pointing at a runner with no inputs.
 
 ---
 

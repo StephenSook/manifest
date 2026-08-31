@@ -20,6 +20,7 @@ No em-dashes. No fabricated figures.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -415,3 +416,76 @@ def test_deorbit_panel_labels_the_f107_it_used_in_BOTH_states() -> None:
         "NRLMSISE-00 run. README and docs/submission.md both say it; the panel "
         "is what a judge looks at."
     )
+
+
+def test_every_repo_path_named_in_bob_actually_exists() -> None:
+    """
+    A path named inside `.bob/` must exist in the tree.
+
+    `.bob/` is this project's strongest judged artifact, and the failure mode it
+    is exposed to is drift: a mode, plan or skill that names files which moved or
+    were never written. A rival graded this cycle shipped a `.bob/` declaring one
+    file the single source of truth while a duplicate of it sat in `src/` and was
+    the copy the code imported. Their `.bob/` read as configuration and was
+    documentation. This guard is what keeps ours from becoming the same thing.
+
+    Running it the first time found two real drifts: the freeze plan required an
+    Orchestrator transcript for a mode Bob 2.0.3 does not have, and a Playwright
+    spec that was never written while `package.json` still carried a `test:e2e`
+    script pointing at a runner with zero inputs. Both were closed rather than
+    documented.
+
+    FRAGMENT GUARD, and it exists because the first version of this check was
+    wrong. `custom_modes.yaml` holds fileRegex patterns, so a scan pulls
+    `tests/test_decay.py` out of `^pipeline/(decay\\.py|...|tests/test_decay\\.py)$`
+    and reports it missing while `pipeline/tests/test_decay.py` sits right there.
+    A candidate that is a SUFFIX of a real tracked path is a fragment of a longer
+    path, not a missing file. Without this the guard cries wolf on its own
+    strongest evidence, which is how a useful check gets deleted.
+    """
+    import subprocess
+
+    tracked = set(
+        subprocess.run(
+            ["git", "ls-files"], cwd=REPO, capture_output=True, text=True, check=True
+        ).stdout.split()
+    )
+    bob_files = [f for f in tracked if f.startswith(".bob/")]
+    assert len(bob_files) >= 10, (
+        f"only {len(bob_files)} tracked files under .bob/. This guard cannot pass "
+        "vacuously: if .bob/ shrank, that is the finding."
+    )
+
+    pattern = re.compile(
+        r"\b((?:app|engine|lib|corpus|eval|pipeline|components|data|tests|scripts"
+        r"|docs|mobile|services)/[A-Za-z0-9_./-]+"
+        r"\.(?:ts|tsx|py|json|jsonl|md|sh|yaml|yml))\b"
+    )
+
+    # A path inside ~~strikethrough~~ is a RECORD of something cut, not a live
+    # claim, and a plan has to be able to name what it removed. Same principle
+    # as fencing a published video transcript so a historical figure is not
+    # linted as a present-tense count. Anything outside the strikethrough is
+    # still a claim and is still checked.
+    struck = re.compile(r"~~.*?~~", re.S)
+
+    referenced, missing = 0, []
+    for rel in bob_files:
+        path = REPO / rel
+        if not path.is_file():
+            continue
+        text = struck.sub("", path.read_text(encoding="utf-8"))
+        for candidate in sorted(set(pattern.findall(text))):
+            referenced += 1
+            if candidate in tracked:
+                continue
+            # Fragment of a longer real path, see the docstring.
+            if any(real.endswith("/" + candidate) for real in tracked):
+                continue
+            missing.append(f"{rel} names {candidate}, which is not in the tree")
+
+    assert referenced >= 20, (
+        f"only {referenced} repo paths found across .bob/. The extraction pattern "
+        "probably broke, which would make this guard silently useless."
+    )
+    assert not missing, "\n".join(missing)

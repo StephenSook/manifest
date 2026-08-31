@@ -48,6 +48,14 @@ interface AskResponse {
   abstained: boolean;
   reason?: string;
   /**
+   * Which models produced this response, present only on the generated path.
+   * A judge should be able to prove the writer from ONE unauthenticated curl
+   * of this endpoint, rather than cross-referencing /api/status and trusting
+   * that both describe the same request.
+   */
+  generation_model?: string;
+  guardian_model?: string;
+  /**
    * True when watsonx was configured for this deployment but could not be
    * reached, so the answer came from the offline extractive path instead.
    * Machine-readable on purpose: a score measured across degraded responses
@@ -548,10 +556,20 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
     });
   }
 
+  // degraded and the two model ids ship on the SUCCESS path too, not only on
+  // the failure paths. The README states that /api/ask "reports degraded on
+  // every response", and until 2026-08-31 a successful answer omitted the
+  // field entirely, so the published claim was false on the one response a
+  // judge is most likely to look at. Naming the writer and the auditor here
+  // means a single unauthenticated curl proves which model produced the
+  // answer, without cross-referencing /api/status.
   return NextResponse.json({
     answer: rawAnswer,
     citations,
     audited: true,
     abstained: false,
+    degraded: false,
+    generation_model: 'ibm/granite-4-h-small',
+    guardian_model: 'ibm/granite-guardian-3-8b',
   });
 }

@@ -139,7 +139,11 @@ therefore mostly done once K1 is resolved.
 
 ### K1: Verify and fix the Vercel deploy path
 **Owner:** Khadim
-**Status:** [ ] pending
+**Status:** [x] DONE, verified 2026-08-31. `GET /api/status` on the production URL
+returns `generation_backend: watsonx` and `guardian_audit: active`, so a
+deploy carrying the watsonx path did reach production. The path is manual
+`vercel --prod` from Khadim's account, NOT GitHub auto-deploy, so it stays a
+per-release action rather than a solved problem: see K4.
 **Blocks:** everything judge-facing
 
 **Intent:** Every judge-facing claim about the live URL is only as good as
@@ -209,7 +213,11 @@ docs say, not about rewriting the docs.
 
 ### K3: Cut orphan dependencies
 **Owner:** Khadim
-**Status:** [ ] pending
+**Status:** [x] DONE, verified 2026-08-31. `@tanstack/react-table` and
+`vis-timeline` are no longer declared. `happy-dom` was NOT an orphan: it has
+first-party references and stays. `@playwright/test` was the last real one,
+declared with zero references anywhere but prose, and is cut in the same
+commit that carries this line.
 **Blocks:** 3.6 and 3.8 audits, THIRD_PARTY_NOTICES.md accuracy
 
 **Intent:** Four dependencies with zero first-party references.
@@ -243,7 +251,13 @@ its credibility on the dependencies that ARE in use.
 
 ### K4: Force a production deploy and verify live state
 **Owner:** Khadim
-**Status:** [ ] pending (depends on K1 and K3)
+**Status:** [ ] OPEN, and re-measured 2026-08-31: production is behind `main` again.
+Probed live: the `build`, `components`, `pipeline` and `corpus_shape` blocks
+are all ABSENT from `/api/status`, and `POST /api/ask` still returns only
+`['abstained', 'answer', 'audited', 'citations']` with no `scope` field. So
+every merge after the watsonx fix is invisible on the judge-facing URL. K1
+being green does not carry K4: a manual deploy path has to be RUN, and this
+recurrence is the reason the status above says per-release action.
 
 **Intent:** After K1 establishes the deploy path and K3 makes the final
 pre-freeze package changes, run a clean deploy and confirm every

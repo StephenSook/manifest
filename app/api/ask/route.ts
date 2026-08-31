@@ -31,6 +31,7 @@ import {
   resolveCfrCitations,
   formatCfrReference,
   parseGuardianVerdict,
+  SCOPE_NOTICE,
 } from './lib';
 
 export const runtime = 'nodejs';
@@ -47,6 +48,12 @@ interface AskResponse {
   audited: boolean;
   abstained: boolean;
   reason?: string;
+  /**
+   * REQUIRED, not optional, and that is deliberate. Making it required means
+   * the compiler enumerates every response path that forgets it, rather than a
+   * regex guessing which returns matter. See SCOPE_NOTICE below.
+   */
+  scope: string;
   /**
    * Which models produced this response, present only on the generated path.
    * A judge should be able to prove the writer from ONE unauthenticated curl
@@ -399,6 +406,26 @@ export function OPTIONS(): NextResponse {
   return corsPreflight();
 }
 
+/**
+ * The scope notice, welded into every /api/ask response.
+ *
+ * It already rendered on every PAGE from app/layout.tsx, and a test asserts
+ * that. But a judge who curls this endpoint receives a regulatory
+ * determination with citations and NO statement of scope, because a notice
+ * that lives in the layout can be separated from the content the moment
+ * anyone consumes the API instead of the UI.
+ *
+ * Borrowed from a rival that welds its disclaimer into the returned payload and
+ * asserts it with a test, so it cannot drift out of the product the way a
+ * README line can. Ours already does this on /api/solar via its `disclosure`
+ * field, asserted in two test files. /api/ask was the one that did not, and it
+ * is the higher-stakes surface: it answers questions about FCC licensing
+ * deadlines.
+ *
+ * It ships on EVERY response shape, answered and abstained alike. An
+ * abstention is still a regulatory statement about what the corpus does not
+ * support, so it needs the notice as much as an answer does.
+ */
 export async function POST(req: NextRequest): Promise<NextResponse<AskResponse>> {
   return withCors(await handleAsk(req));
 }
@@ -409,7 +436,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
     body = await req.json();
   } catch {
     return NextResponse.json(
-      { answer: null, citations: [], audited: false, abstained: true, reason: 'Invalid JSON body' },
+      { answer: null, citations: [], audited: false, abstained: true, scope: SCOPE_NOTICE, reason: 'Invalid JSON body' },
       { status: 400 },
     );
   }
@@ -417,7 +444,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
   const { question } = body;
   if (!question?.trim()) {
     return NextResponse.json(
-      { answer: null, citations: [], audited: false, abstained: true, reason: 'Question is required' },
+      { answer: null, citations: [], audited: false, abstained: true, scope: SCOPE_NOTICE, reason: 'Question is required' },
       { status: 400 },
     );
   }
@@ -429,6 +456,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
       citations: [],
       audited: false,
       abstained: true,
+      scope: SCOPE_NOTICE,
       reason: abstainReason,
     });
   }
@@ -439,7 +467,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     return NextResponse.json(
-      { answer: null, citations: [], audited: false, abstained: true, reason: `Corpus unavailable: ${msg}` },
+      { answer: null, citations: [], audited: false, abstained: true, scope: SCOPE_NOTICE, reason: `Corpus unavailable: ${msg}` },
       { status: 503 },
     );
   }
@@ -453,7 +481,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     return NextResponse.json(
-      { answer: null, citations: [], audited: false, abstained: true, reason: `Embedding failed: ${msg}` },
+      { answer: null, citations: [], audited: false, abstained: true, scope: SCOPE_NOTICE, reason: `Embedding failed: ${msg}` },
     );
   }
 
@@ -495,6 +523,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
       citations: topChunks.filter((c) => c.cfr_title > 0).map(chunkToCitation),
       audited: false,
       abstained: true,
+      scope: SCOPE_NOTICE,
       reason: 'Model could not answer from the provided regulatory text.',
     });
   }
@@ -508,6 +537,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
       citations: topChunks.filter((c) => c.cfr_title > 0).map(chunkToCitation),
       audited: false,
       abstained: true,
+      scope: SCOPE_NOTICE,
       reason: `The generated answer cited references that do not resolve against the retrieved context (${unresolvedRefs.join(', ')}), so it does not ship. Retrieved sections are listed.`,
     });
   }
@@ -521,6 +551,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
       citations: topChunks.filter((c) => c.cfr_title > 0).map(chunkToCitation),
       audited: false,
       abstained: true,
+      scope: SCOPE_NOTICE,
       reason: 'The generated answer did not cite any retrieved section, so it does not ship. Retrieved sections are listed.',
     });
   }
@@ -552,6 +583,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
       citations: topChunks.filter((c) => c.cfr_title > 0).map(chunkToCitation),
       audited: true,
       abstained: true,
+      scope: SCOPE_NOTICE,
       reason: auditReason ?? 'Guardian audit failed.',
     });
   }
@@ -568,6 +600,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
     citations,
     audited: true,
     abstained: false,
+    scope: SCOPE_NOTICE,
     degraded: false,
     generation_model: 'ibm/granite-4-h-small',
     guardian_model: 'ibm/granite-guardian-3-8b',

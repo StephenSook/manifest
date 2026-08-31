@@ -88,7 +88,7 @@ Feasibility is one command from a fresh clone:
 npm ci && npm run test:engine
 ```
 
-128 engine and mobile tests (`npm run test:engine`). 97 ask-route tests (`npm run test:ask`). No network, no keys. The regulatory interlocks are unit-tested individually: the 97.207(g) dual clock, the NOAA-before-FCC ordering, IARU before Part 97, ITU publication lead time, and delivery as the hard wall.
+128 engine and mobile tests (`npm run test:engine`). 99 ask-route tests (`npm run test:ask`). No network, no keys. The regulatory interlocks are unit-tested individually: the 97.207(g) dual clock, the NOAA-before-FCC ordering, IARU before Part 97, ITU publication lead time, and delivery as the hard wall.
 
 The correctness bar is a committed eval bank of 28 regulatory questions and 6 abstention traps, run in CI on every push against committed fixtures with no network and no key, with a ratchet that fails the build on any regression and a per-question baseline that fails if a previously passing question stops passing. Today that suite scores 53.6 percent on the offline extractive path with all 6 abstention traps holding. On the live watsonx pipeline, measured against production on 2026-08-29, the full suite scored 7.1 percent with zero fabricated citations: the Guardian audit fails closed on most generated answers rather than ship an ungrounded one, and we publish that number instead of hiding it. The eval runner is also exposed to IBM Bob as an MCP tool over stdio, so the agent that wrote the engine can score it.
 
@@ -130,7 +130,7 @@ The eval bank, 28 regulatory questions with exact expected citations plus 6 abst
 
 ## Fill-at-freeze checklist
 
-- [x] Replace every `[FACTS: ...]` from a `scripts/facts.py` run, never by hand. The headline is deliberately NOT restated here: it is recomputed from the current date on every request, so any number written into this checklist is stale by the next UTC day and the no-fabricated-numbers guard correctly refuses it. Test counts and eval scores (123+97 tests, eval 53.6 percent, 6 of 6 traps) are stable and stay.
+- [x] Replace every `[FACTS: ...]` from a `scripts/facts.py` run, never by hand. The headline is deliberately NOT restated here: it is recomputed from the current date on every request, so any number written into this checklist is stale by the next UTC day and the no-fabricated-numbers guard correctly refuses it. Test counts and the eval score are stable and stay, but they are still quoted only where the counts guard can bind each number to its own suite, never as a bare sum: 123+97 was already stale here and no guard could see it.
 - [x] Beneficiary figures resolved to primary sources 2026-08-16 (Swartwout and Jayne SmallSat 2016; CubeSat 101 2017). The "full year for licensing" research-pack claim was cut: the primary says 4 to 6 months.
 - [x] Restructured against the four binding criteria 2026-08-25, and the two IBM Bob prize sections added.
 - [x] Claim audit against shipped code 2026-08-25: the Granite generation, Guardian audit and embedding claims now state the credential condition and point at the runtime self-report; the Context Forge claim is reduced to the stdio MCP server that is actually verified; the engine test count and headline number are `[FACTS: ...]` placeholders rather than stale literals.

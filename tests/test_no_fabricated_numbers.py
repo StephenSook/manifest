@@ -1022,3 +1022,67 @@ class TestEveryChunkCarriesItsPin:
             f"{len(offenders)} corpus chunk(s) cannot be cited with a pin:\n"
             + "\n".join(offenders[:20])
         )
+
+
+class TestThirdPartyNoticesMatchesTheDeclaredDependencies:
+    """The notices file is a claim about what this product depends on.
+
+    It drifted once already: it listed packages with zero first-party
+    references as if they were in use, which is the wired-or-cut defect
+    pointed at our own tree. Both directions matter. A row for a package we
+    do not declare overstates the dependency surface, and a declared package
+    with no row understates it.
+    """
+
+    @staticmethod
+    def _declared() -> set[str]:
+        """Both manifests. The notices file covers the Python pipeline too.
+
+        Reading only package.json was this guard's own first bug: it reported
+        seven Python packages as unbacked rows when pipeline/pyproject.toml
+        declares every one of them. An instrument that measures the wrong set
+        produces a confident wrong count that reads exactly like a right one.
+        """
+        pkg = json.loads((REPO_ROOT / "package.json").read_text(encoding="utf-8"))
+        names = set(pkg.get("dependencies", {})) | set(pkg.get("devDependencies", {}))
+
+        pyproject = REPO_ROOT / "pipeline" / "pyproject.toml"
+        assert pyproject.exists(), f"{pyproject} is missing, so the Python half is unchecked"
+        for raw in re.findall(r'"([^"]+)"', pyproject.read_text(encoding="utf-8")):
+            name = re.split(r"[<>=!~\[]", raw, maxsplit=1)[0].strip()
+            if name:
+                names.add(name)
+        return names
+
+    @staticmethod
+    def _listed() -> set[str]:
+        text = (REPO_ROOT / "docs" / "THIRD_PARTY_NOTICES.md").read_text(
+            encoding="utf-8"
+        )
+        names: set[str] = set()
+        for line in text.splitlines():
+            if not line.startswith("|"):
+                continue
+            first = line.split("|")[1].strip()
+            if not first or first.startswith("-") or first.lower() == "package":
+                continue
+            # One row may cover a family, e.g. "eslint, eslint-config-next".
+            for part in first.split(","):
+                # A row may annotate its package, e.g. "pyatmos (decay.py)".
+                cleaned = re.sub(r"\s*\(.*\)$", "", part.strip()).strip("`")
+                if cleaned:
+                    names.add(cleaned)
+        return names
+
+    def test_the_tables_are_not_empty(self):
+        """A guard that walks nothing passes without checking anything."""
+        assert len(self._declared()) >= 10, "package.json declared too few deps"
+        assert len(self._listed()) >= 10, "notices table parsed too few rows"
+
+    def test_every_notices_row_is_a_declared_dependency(self):
+        extra = sorted(self._listed() - self._declared())
+        assert extra == [], (
+            "docs/THIRD_PARTY_NOTICES.md lists packages this product does not "
+            "declare, which overstates the dependency surface: "
+            f"{extra}. Cut the row, or declare and wire the package."
+        )

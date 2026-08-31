@@ -22,7 +22,6 @@ requirement. Confirmed absent: elkjs (EPL/GPL), orbdetpy (GPL-3.0).
 | tailwindcss | MIT |
 | tsx | MIT |
 | happy-dom | MIT |
-| @playwright/test | Apache-2.0 |
 | @tailwindcss/postcss | MIT |
 | @types/node | MIT |
 | @types/react | MIT |

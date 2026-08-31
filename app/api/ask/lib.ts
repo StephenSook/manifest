@@ -503,7 +503,21 @@ export interface ExtractiveResponseBody {
   abstained: boolean;
   reason: string;
   degraded: boolean;
+  /** See SCOPE_NOTICE below. Required so the compiler catches an omission. */
+  scope: string;
 }
+
+/**
+ * Shipped in the body of every /api/ask response, answered and abstained
+ * alike. An abstention is still a regulatory statement about what the corpus
+ * does not support, so it needs the notice as much as an answer does. The
+ * page renders the same words from app/layout.tsx, but a judge reading the
+ * API with curl never sees the page.
+ */
+export const SCOPE_NOTICE =
+  'Planning aid, not legal authority. Every regulatory statement here carries a ' +
+  'section-level citation pinned to the corpus AMDDATE, or the product abstains ' +
+  'and says why. Verify against the cited text before you file.';
 
 /**
  * The response body for the offline extractive path, used both when watsonx is
@@ -534,6 +548,7 @@ export function buildExtractiveResponse(
       citations: [],
       audited: false,
       abstained: true,
+      scope: SCOPE_NOTICE,
       reason: `${degradation} The extractive path resolved no citable section, so no answer ships.`,
       degraded,
     };
@@ -548,6 +563,7 @@ export function buildExtractiveResponse(
       citations: chunks.filter((c) => c.cfr_title > 0).map(chunkToCitation),
       audited: false,
       abstained: true,
+      scope: SCOPE_NOTICE,
       reason: `${degradation} The retrieved sections do not address this question, so no answer ships. Retrieved sections are listed.`,
       degraded,
     };
@@ -557,6 +573,7 @@ export function buildExtractiveResponse(
     citations,
     audited: false,
     abstained: false,
+    scope: SCOPE_NOTICE,
     reason: `${degradation} Answer quoted verbatim from the retrieved corpus text, not generated. The Guardian audit did not run on it.`,
     degraded,
   };

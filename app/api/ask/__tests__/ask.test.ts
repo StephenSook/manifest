@@ -6,6 +6,7 @@ import {
   hybridSelect,
   matchAbstention,
   type ChunkRow,
+  SCOPE_NOTICE,
 } from '../lib';
 
 const g1: ChunkRow = {
@@ -164,5 +165,20 @@ describe('buildExtractiveResponse', () => {
     // The eval runner can separate a watsonx measurement from an extractive
     // one on this field alone, without parsing prose.
     expect(degradedRun.degraded).not.toBe(keylessRun.degraded);
+  });
+});
+
+describe('the scope notice ships in the payload, not only on the page', () => {
+  it('is present on an abstention', () => {
+    const body = buildExtractiveResponse('anything', [], 'Degraded.', true);
+    expect(body.scope).toContain('Planning aid, not legal authority');
+    expect(body.scope).toContain('Verify against the cited text before you file');
+  });
+
+  it('states the pin, because the pin is what the whole rule rests on', () => {
+    // A notice that says "planning aid" but not WHY the citations are
+    // trustworthy is half a disclosure. The AMDDATE is the pin.
+    expect(SCOPE_NOTICE).toContain('AMDDATE');
+    expect(SCOPE_NOTICE).toContain('abstains');
   });
 });

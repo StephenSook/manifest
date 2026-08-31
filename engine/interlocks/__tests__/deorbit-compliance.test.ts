@@ -144,4 +144,26 @@ describe('computeDeorbitCompliance: nearest-altitude lookup', () => {
     expect(closest).not.toBeNull();
     expect(tableAlts).toContain(closest);
   });
+
+  // Beyond the grid entirely, not merely between two rows. /mission accepts any
+  // positive perigee, and the table stops at 700 km, so an 850 km orbit still
+  // returns a legal verdict computed from the 700 km row. That substitution is
+  // 150 km wide and it decides a compliance outcome, so it must be reported
+  // rather than folded silently into the number.
+  //
+  // Found by running a rival's defect class back at us: a project publishing
+  // location predictions from a training set holding twelve Arctic coordinates.
+  // The question is not whether the model is good, it is whether the range a
+  // user will actually enter is inside the data the model saw.
+  it('an orbit ABOVE the table ceiling reports the substitution it made', () => {
+    const result = computeDeorbitCompliance(850, 180);
+    expect(result.closestAltitudeKmUsed).toBe(700);
+    expect(result.lifetimeYears).toBeGreaterThan(0);
+  });
+
+  it('a ballistic coefficient outside the tiers still reports its altitude row', () => {
+    // BC tiers are 120 / 180 / 250. 400 is far above all three.
+    const result = computeDeorbitCompliance(530, 400);
+    expect(result.closestAltitudeKmUsed).not.toBeNull();
+  });
 });

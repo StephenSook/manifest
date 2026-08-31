@@ -7,6 +7,7 @@ import {
   matchAbstention,
   type ChunkRow,
   SCOPE_NOTICE,
+  guardianFailureReason,
 } from '../lib';
 
 const g1: ChunkRow = {
@@ -180,5 +181,50 @@ describe('the scope notice ships in the payload, not only on the page', () => {
     // trustworthy is half a disclosure. The AMDDATE is the pin.
     expect(SCOPE_NOTICE).toContain('AMDDATE');
     expect(SCOPE_NOTICE).toContain('abstains');
+  });
+});
+
+describe('a Guardian outcome never ships the model raw text', () => {
+  // Verbatim from a live watsonx run on 2026-08-31. Guardian echoed its own
+  // prompt, and 80 characters of it reached the user-facing reason field.
+  const ECHOED_PROMPT =
+    "OUR SAFETY RISK DEFINITION IS DEFINED BELOW:\n<START_OF_RISK_DEFINITION>\n* THE 'ANSWER'";
+
+  const SCAFFOLDING = [
+    'RISK_DEFINITION',
+    'START_OF',
+    'END_OF',
+    'OUR SAFETY',
+    'DEFINED BELOW',
+  ];
+
+  it('says what happened in a sentence, on both outcomes', () => {
+    for (const outcome of ['fail', 'unparseable'] as const) {
+      const reason = guardianFailureReason(outcome);
+      expect(reason).toContain('did not ship');
+      expect(reason.length).toBeGreaterThan(60);
+      // Not truncated mid-word: the old one ended "* THE 'A".
+      expect(reason.trimEnd().endsWith('.')).toBe(true);
+    }
+  });
+
+  it('cannot carry prompt scaffolding, because it never takes the text', () => {
+    const reasons = [
+      guardianFailureReason('fail'),
+      guardianFailureReason('unparseable'),
+    ];
+    for (const reason of reasons) {
+      for (const marker of SCAFFOLDING) {
+        expect(reason.toUpperCase()).not.toContain(marker);
+      }
+      expect(reason).not.toContain(ECHOED_PROMPT.slice(0, 20));
+    }
+  });
+
+  it('distinguishes the two outcomes, so the log is findable', () => {
+    expect(guardianFailureReason('fail')).not.toEqual(
+      guardianFailureReason('unparseable'),
+    );
+    expect(guardianFailureReason('unparseable')).toContain('no readable verdict');
   });
 });

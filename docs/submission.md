@@ -88,7 +88,7 @@ Feasibility is one command from a fresh clone:
 npm ci && npm run test:engine
 ```
 
-128 engine and mobile tests (`npm run test:engine`). 99 ask-route tests (`npm run test:ask`). No network, no keys. The regulatory interlocks are unit-tested individually: the 97.207(g) dual clock, the NOAA-before-FCC ordering, IARU before Part 97, ITU publication lead time, and delivery as the hard wall.
+128 engine and mobile tests (`npm run test:engine`). 102 ask-route tests (`npm run test:ask`). No network, no keys. The regulatory interlocks are unit-tested individually: the 97.207(g) dual clock, the NOAA-before-FCC ordering, IARU before Part 97, ITU publication lead time, and delivery as the hard wall.
 
 The correctness bar is a committed eval bank of 28 regulatory questions and 6 abstention traps, run in CI on every push against committed fixtures with no network and no key, with a ratchet that fails the build on any regression and a per-question baseline that fails if a previously passing question stops passing. Today that suite scores 53.6 percent on the offline extractive path with all 6 abstention traps holding. On the live watsonx pipeline, measured against production on 2026-08-29, the full suite scored 7.1 percent with zero fabricated citations: the Guardian audit fails closed on most generated answers rather than ship an ungrounded one, and we publish that number instead of hiding it. The eval runner is also exposed to IBM Bob as an MCP tool over stdio, so the agent that wrote the engine can score it.
 

@@ -33,4 +33,30 @@ describe('apiBase', () => {
   it('is empty during SSR where window is absent', () => {
     expect(apiBase()).toBe('');
   });
+
+  // Regression: the protocol-only guard shipped a broken Android build.
+  // Capacitor's Android default scheme is https (CapConfig.java), so the WebView
+  // origin is https://localhost and the old check treated it as the open web.
+  it('targets the hosted API on ANDROID, whose Capacitor scheme is https', () => {
+    vi.stubGlobal('window', {
+      location: { protocol: 'https:', hostname: 'localhost' },
+      Capacitor: { isNativePlatform: () => true, platform: 'android' },
+    } as unknown as Window);
+    expect(apiBase()).toBe('https://manifest-web-roan.vercel.app');
+  });
+
+  it('still targets the hosted API on iOS, whose scheme is capacitor:', () => {
+    vi.stubGlobal('window', {
+      location: { protocol: 'capacitor:', hostname: 'localhost' },
+      Capacitor: { isNativePlatform: () => true, platform: 'ios' },
+    } as unknown as Window);
+    expect(apiBase()).toBe('https://manifest-web-roan.vercel.app');
+  });
+
+  it('stays relative on a real https site even though the scheme matches Android', () => {
+    vi.stubGlobal('window', {
+      location: { protocol: 'https:', hostname: 'manifest-web-roan.vercel.app' },
+    } as unknown as Window);
+    expect(apiBase()).toBe('');
+  });
 });

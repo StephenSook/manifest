@@ -48,6 +48,7 @@ Five write-scoped modes restrict Bob's write access to each team member's lane, 
 
 | Evidence | Location |
 |---|---|
+| **Generated attribution table** (counts computed from the repo, and what the evidence does NOT prove) | [`docs/bob-evidence/ATTRIBUTION.md`](docs/bob-evidence/ATTRIBUTION.md), regenerate with `scripts/bob-attribution.sh` |
 | 5 custom modes with fileRegex write scopes | [`.bob/custom_modes.yaml`](.bob/custom_modes.yaml) |
 | Workspace MCP config (eval server, no credentials) | [`.bob/mcp.json`](.bob/mcp.json) |
 | Lane enforcement (fileRegex, not a pasted chat) | [`docs/bob-evidence/lane-enforcement.md`](docs/bob-evidence/lane-enforcement.md) |

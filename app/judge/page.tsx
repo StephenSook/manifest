@@ -434,8 +434,14 @@ export default function JudgePage() {
             {(
               [
                 [
-                  'watsonx credentials on this deploy',
-                  'Task 0.13. Until they land, GET /api/status runtime.generation_backend is offline-extractive and Guardian is inactive.',
+                  'watsonx model health on this deploy',
+                  'Credentials have landed: GET /api/status reports runtime.generation_backend ' +
+                    'watsonx and guardian_audit active. What no status field can show is HEALTH. ' +
+                    'Both of those values are read from credential presence, so a token quota, an ' +
+                    'outage or a rate limit is invisible here, and on 2026-08-29 the watsonx Lite ' +
+                    'quota did run out and every generation call returned 403 while this page still ' +
+                    'said watsonx. POST /api/ask and read degraded and reason for the path that ' +
+                    'actually answered that request.',
                 ],
               ] as const
             ).map(([surface, waiting]) => (

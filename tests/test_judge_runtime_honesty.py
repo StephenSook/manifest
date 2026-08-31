@@ -175,9 +175,29 @@ def test_judge_page_does_not_claim_unwired_bob_layers() -> None:
 
 
 def test_judge_pending_table_names_real_gaps() -> None:
+    """
+    The pending table must name a gap that is CURRENTLY real.
+
+    Until 2026-08-31 this asserted the row said watsonx credentials had not
+    landed and generation was "offline-extractive". They landed, production
+    began reporting generation_backend watsonx and guardian_audit active, and
+    the row kept telling judges the opposite of what the same deployment's
+    /api/status returned. A guard pinned to the old wording is what kept it
+    there: the assertion was green precisely because the claim was stale.
+
+    So this guard retires by asserting the SUCCESSOR state rather than by
+    dropping the check. The row must now name model HEALTH as the open gap,
+    say that the reported values come from credential presence, and point at
+    the request that actually settles it. And it must NOT still say the
+    credentials are being waited on.
+    """
     text = _read(JUDGE_PAGE)
-    assert "offline-extractive" in text
-    assert "Task 0.13" in text
+    assert "watsonx model health" in text
+    assert "credential presence" in text
+    assert "degraded and reason" in text
+    # The stale claim must be gone, not merely outweighed by new text.
+    assert "Until they land" not in text
+    assert "offline-extractive and Guardian is inactive" not in text
     assert "lane-enforcement.md is not yet committed" not in text
     assert "Plan-mode transcript (task 1.13)" not in text
     assert "Task 1.3 (corpus freeze)" not in text

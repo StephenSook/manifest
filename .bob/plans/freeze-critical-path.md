@@ -35,6 +35,8 @@ if shipped as-is. Everything else is polish or evidence.
 > NOT CREDENTIALED. `/api/status` now returns a `runtime` block naming
 > the backend that actually answered.
 
+That quote is preserved as written on the date of this plan. **The row it quotes was revised 2026-08-31**: watsonx generation and the Guardian audit are now credentialed in production, and the granite embedding turned out to be structurally unreachable rather than merely uncredentialed, because the committed corpus freeze picks the embedder. Read `docs/claims-audit.md` for the current statement, not this quote.
+
 The README AI Approach section (lines 73-77) already states the condition
 correctly: "Those credentials are not set on the current deployment, so
 answers today come from the offline extractive path." The `runtime` block

@@ -24,6 +24,7 @@ No account. No keys. Every claim below is either a live link or a `grep` command
 | **The headline, recomputed live** | [manifest-web-roan.vercel.app/api/status](https://manifest-web-roan.vercel.app/api/status): unauthenticated, recomputes the violated-days number on every request and self-reports the wired models |
 | **The differentiator** | [`engine/interlocks/deorbit-compliance.ts`](engine/interlocks/deorbit-compliance.ts) + [`data/decay-table.json`](data/decay-table.json) -- same orbit, opposite verdict, solar cycle decides |
 | **128 engine and mobile tests passing** | `npm install && npm run test:engine` |
+| **Two real responses, captured verbatim** | [`docs/evidence/live-responses.json`](docs/evidence/live-responses.json) (one audited and cited, one refused; no key needed to read it) |
 | **The eval suite, offline** | `python3 eval/runner.py --mode fixtures` -- 28 questions + 6 abstention traps, no network, no key |
 | **Claims are wired, not aspirational** | `grep -r "ibm/granite" app/ pipeline/` -- every named model has an import or call |
 | **IBM Bob is committed and inspectable** | [`.bob/custom_modes.yaml`](.bob/custom_modes.yaml), [`.bob/mcp.json`](.bob/mcp.json), [`docs/bob-evidence/`](docs/bob-evidence/) |

@@ -108,6 +108,22 @@ It was not enough. On 2026-08-29 the account's monthly ceiling was reached, gene
 
 **Eval as an MCP tool:** `eval/mcp_server.py` exposes `run_eval` and `eval_last_report` over MCP, wired into `.bob/mcp.json` so IBM Bob invokes the regression suite during development.
 
+### Designs we tried and rejected, and what each one cost
+
+Every row is a real commit in this repo. The point of publishing them is that a
+reviewer can check each claim against the diff rather than take our word that
+the guards were earned.
+
+| Rejected design | What it cost, measured | Shipped instead |
+|---|---|---|
+| `PASS` matched anywhere in Guardian's output | **Fail-OPEN on the gate the product rests on.** BYPASS, COMPASSION, SURPASSES and PASSAGE all read as a pass, and the ordinary sentence "the answer does not pass muster" released the answer while meaning the opposite. | `PASS` as a standalone token, not negated within two preceding tokens, plus the role-glued `ASSISTANTPASS` the model measurably emits. `FAIL` stays a substring test on purpose: over-triggering FAIL only abstains more. Six regression cases, each verified failing first (`dd25c85`). |
+| Guardian at `max_new_tokens: 8` | **Three of seven audit abstentions were truncation, not judgement**, measured live 2026-08-29. The model opens with its own safety preamble and the verdict never arrived. | 40 tokens, one retry with a reinforced one-word instruction, then fail closed. |
+| Interpolating Guardian's raw output into the user-facing reason | Shipped **80 characters of prompt scaffolding** to the reader, cut mid-word: `OUR SAFETY RISK DEFINITION IS DEFINED BELOW: <START_OF_RISK_DEFINITION> * THE 'A`. | `guardianFailureReason(outcome)` takes an outcome, never the text. The raw output goes to the server log (`#32`). |
+| An eval expectation with no section, title or part | **Two of 28 rows could not fail**, and both scored correct while citing FCC sections unrelated to their questions. 7.1 points of a published score rested on checks that constrained nothing. | `load_bank` refuses such a bank. The rows were retracted with written reasons and replaced by two harder ones that currently fail, taking the score 53.6 to 46.4 (`#33`). |
+| Deciding "am I in a native WebView" from the URL protocol | **The Android build could never load live data**, because Capacitor uses a different scheme per platform and the fix only ever covered iOS. | Platform-aware detection, with a test per platform (`#17`). |
+| A hardcoded embedder name as a UI fallback | Correct on the day it was written, and it would have kept printing the old name after a corpus rebuild while `/api/status` reported the new one. | The client renders what it read, or says it did not read it. A guard rejects a model literal in any component (`#30`). |
+| Publishing `local_fallback: granite4.1:8b` in the model inventory | An integration claimed and **never implemented**. | Cut, under wired-or-cut (`1e17f40`). |
+
 ### Architecture, wired paths only
 
 Designed artifact: [`docs/architecture.svg`](docs/architecture.svg). The mermaid below is the same map in a form GitHub renders. Every edge is a path that exists in the shipped tree. Cut surfaces (timeline view, web push, Context Forge gateway) are named in Known Limitations, not drawn as if they run.

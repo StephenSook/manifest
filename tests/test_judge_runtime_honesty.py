@@ -755,3 +755,67 @@ class TestNoModelOutputIsInterpolatedIntoAUserFacingReason:
             "server-side and return a shaped sentence instead. Offenders:\n  "
             + "\n  ".join(offenders)
         )
+
+
+class TestTheReadmeQuoteOfThePromptCannotDriftFromTheCode:
+    """The README quotes the generation prompt verbatim. Verify it IS verbatim.
+
+    Quoting a prompt in a README is only worth doing if the quote is bound to
+    the code. Unbound, it is a design doc: it stays true until someone edits
+    the string, and then it is a confident, readable, wrong claim about the
+    product's central rule. This is the same failure as a README describing
+    an integration the shipped code no longer uses.
+    """
+
+    @staticmethod
+    def _shipped_prompt() -> str:
+        source = (REPO / "app" / "api" / "ask" / "route.ts").read_text(
+            encoding="utf-8"
+        )
+        start = source.index("const prompt = `") + len("const prompt = `")
+        end = source.index("`;", start)
+        return source[start:end].strip()
+
+    @staticmethod
+    def _readme_quote() -> str:
+        """The README quotes the prompt as a markdown blockquote.
+
+        Only the first two lines are quoted: the rest of the template is the
+        context and question interpolation, which says nothing a reader needs.
+        So this compares the quoted PREFIX, not the whole string, and asserts
+        the prefix is the real opening of the shipped prompt.
+        """
+        text = (REPO / "README.md").read_text(encoding="utf-8")
+        marker = "**The honesty rule, quoted verbatim from the shipped prompt**"
+        assert marker in text, (
+            "the README line that introduces the verbatim prompt quote is "
+            "gone, so this guard is checking nothing"
+        )
+        after = text[text.index(marker) :]
+        lines = []
+        for line in after.splitlines()[1:]:
+            if line.startswith("> "):
+                lines.append(line[2:])
+            elif lines:
+                break
+        assert lines, "no blockquote follows the marker line"
+        return "\n".join(lines).strip()
+
+    def test_both_sides_are_substantial(self):
+        """Anti-vacuity: two empty strings are equal and prove nothing."""
+        for name, value in (
+            ("shipped prompt", self._shipped_prompt()),
+            ("README quote", self._readme_quote()),
+        ):
+            assert len(value) > 200, f"{name} is only {len(value)} chars"
+            assert "cite" in value.lower(), f"{name} does not mention citing"
+
+    def test_the_readme_quote_is_byte_identical_to_the_shipped_prompt(self):
+        shipped = self._shipped_prompt()
+        quoted = self._readme_quote()
+        assert shipped.startswith(quoted), (
+            "The README quote of the generation prompt has drifted from "
+            "app/api/ask/route.ts. The quoted lines must be a verbatim "
+            "PREFIX of the shipped template.\n"
+            f"--- README ---\n{quoted}\n--- SHIPPED ---\n{shipped}"
+        )

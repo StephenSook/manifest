@@ -566,6 +566,10 @@ async function handleStatus(): Promise<NextResponse> {
       fcc_limit_years: deorbitResult.fccLimitYears,
       method: deorbitResult.method,
       closest_altitude_km_used: deorbitResult.closestAltitudeKmUsed,
+      // Always populated when a row was used, so the payload does not require
+      // the reader to know that null means exact.
+      altitude_km_used: deorbitResult.altitudeKmUsed,
+      altitude_match: deorbitResult.altitudeMatch,
       table_entry_not_found: deorbitResult.tableEntryNotFound,
       citation: '47 CFR 25.283(e), FCC 22-74 (2022)',
     },

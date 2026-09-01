@@ -167,3 +167,42 @@ describe('computeDeorbitCompliance: nearest-altitude lookup', () => {
     expect(result.closestAltitudeKmUsed).not.toBeNull();
   });
 });
+
+describe('the row disclosure explains itself in the payload', () => {
+  // The old field is correct and unreadable: null means "exact grid hit", a
+  // rule that lived only in a code comment. A judge reading the JSON saw null
+  // beside a real VIOLATED verdict and could not tell an exact match from a
+  // failed lookup. These assert the payload no longer requires that knowledge.
+
+  it('an EXACT grid point still names the row it used', () => {
+    const r = computeDeorbitCompliance(550, 180);
+    expect(r.verdict).toBe('VIOLATED');
+    expect(r.closestAltitudeKmUsed).toBeNull(); // unchanged, exact means null
+    expect(r.altitudeKmUsed).toBe(550);
+    expect(r.altitudeMatch).toBe('exact');
+  });
+
+  it('an off-grid orbit says the row was substituted, and which', () => {
+    const r = computeDeorbitCompliance(523, 180);
+    expect(r.altitudeKmUsed).not.toBeNull();
+    expect(r.altitudeMatch).toBe('nearest-row-substituted');
+    expect(r.closestAltitudeKmUsed).toBe(r.altitudeKmUsed);
+  });
+
+  it('above the rule threshold, no row was used and it says so', () => {
+    const r = computeDeorbitCompliance(2500, 180);
+    expect(r.verdict).toBe('ABSTAIN');
+    expect(r.altitudeKmUsed).toBeNull();
+    expect(r.altitudeMatch).toBe('no-row-used');
+  });
+
+  it('a real verdict is NEVER reported without naming its row', () => {
+    // The invariant the whole fix exists for.
+    for (const alt of [400, 450, 500, 523, 550, 600, 650, 700]) {
+      const r = computeDeorbitCompliance(alt, 180);
+      if (r.verdict === 'ABSTAIN') continue;
+      expect(r.altitudeKmUsed, `altitude ${alt} produced a verdict with no row`).not.toBeNull();
+      expect(['exact', 'nearest-row-substituted']).toContain(r.altitudeMatch);
+    }
+  });
+});

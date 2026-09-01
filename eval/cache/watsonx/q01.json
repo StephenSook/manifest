@@ -1,0 +1,73 @@
+{
+  "answer": null,
+  "citations": [
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.207",
+      "paragraphPath": "(g)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.207",
+      "paragraphPath": "(g)(1)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.207",
+      "paragraphPath": "(g)(1)(i)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.207",
+      "paragraphPath": "(g)(1)(ii)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.207",
+      "paragraphPath": "(g)(1)(iii)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.207",
+      "paragraphPath": "(g)(1)(iv)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.207",
+      "paragraphPath": "(g)(1)(iv)(A)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.207",
+      "paragraphPath": "(g)(1)(iv)(A)(1)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    }
+  ],
+  "audited": true,
+  "abstained": true,
+  "scope": "Planning aid, not legal authority. Every regulatory statement here carries a section-level citation pinned to the corpus AMDDATE, or the product abstains and says why. Verify against the cited text before you file.",
+  "reason": "The Guardian audit returned no readable verdict, so the answer could not be certified and did not ship. The retrieved sections are listed below and the raw audit output is in the server log."
+}

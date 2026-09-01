@@ -279,7 +279,17 @@ def score_row(row: dict, resp: dict) -> tuple[bool, str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--mode", choices=["url", "fixtures"], required=True)
+    parser.add_argument(
+        "--mode",
+        choices=["url", "fixtures", "cached"],
+        required=True,
+        help=(
+            "url: hit a live deployment. fixtures: score the committed "
+            "offline-extractive responses, which is what CI enforces. cached: "
+            "score the committed REAL watsonx responses in eval/cache/watsonx, "
+            "so anyone can reproduce the model path with no API key."
+        ),
+    )
     parser.add_argument("--url", default="http://localhost:3000")
     parser.add_argument("--bank", type=Path, default=DEFAULT_BANK)
     parser.add_argument("--fixtures", type=Path, default=DEFAULT_FIXTURES)
@@ -289,6 +299,16 @@ def main() -> int:
     parser.add_argument("--timeout", type=int, default=120)
     parser.add_argument("--min-score", type=float, default=MIN_SCORE_PCT)
     args = parser.parse_args()
+
+    # `cached` is `fixtures` pointed at the committed watsonx capture. The
+    # model path is otherwise invisible to anyone without a key, which is most
+    # readers, so the responses it produced are committed and replayable.
+    if args.mode == "cached":
+        if args.fixtures == DEFAULT_FIXTURES:
+            args.fixtures = Path("eval/cache/watsonx")
+        args.mode = "fixtures"
+        if args.report == DEFAULT_REPORT:
+            args.report = Path("eval/cache/watsonx-report.json")
 
     rows = load_bank(args.bank)
     questions = [r for r in rows if not r.get("abstain")]

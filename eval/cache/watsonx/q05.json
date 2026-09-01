@@ -1,0 +1,8 @@
+{
+  "answer": null,
+  "citations": [],
+  "audited": true,
+  "abstained": true,
+  "scope": "Planning aid, not legal authority. Every regulatory statement here carries a section-level citation pinned to the corpus AMDDATE, or the product abstains and says why. Verify against the cited text before you file.",
+  "reason": "The Guardian audit returned no readable verdict, so the answer could not be certified and did not ship. The retrieved sections are listed below and the raw audit output is in the server log."
+}

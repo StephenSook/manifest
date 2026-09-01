@@ -1,0 +1,324 @@
+{
+  "mode": "fixtures",
+  "generatedAt": "2026-09-01T01:29:27.568733+00:00",
+  "questions": 28,
+  "questions_correct": 3,
+  "score_pct": 10.7,
+  "traps": 6,
+  "traps_abstained": 6,
+  "bar": {
+    "min_score_pct": 0.0,
+    "all_traps_must_abstain": true
+  },
+  "passed": true,
+  "pipeline": "watsonx",
+  "degraded_rows": [],
+  "results": [
+    {
+      "id": "q01",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The Guardian audit returned no readable verdict, so the answer could not be certified and did not ship. The retrieved sections are listed below and the raw audit output is in the server log.",
+      "degraded": false,
+      "audited": true
+    },
+    {
+      "id": "q02",
+      "pass": true,
+      "trap": false,
+      "abstained": false,
+      "detail": "answered with expected citations",
+      "degraded": false,
+      "audited": true
+    },
+    {
+      "id": "q03",
+      "pass": true,
+      "trap": false,
+      "abstained": false,
+      "detail": "answered with expected citations",
+      "degraded": false,
+      "audited": true
+    },
+    {
+      "id": "q04",
+      "pass": false,
+      "trap": false,
+      "abstained": false,
+      "detail": "missing citation 97.207(b); got ['97.207(c)']",
+      "degraded": false,
+      "audited": true
+    },
+    {
+      "id": "q05",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The Guardian audit returned no readable verdict, so the answer could not be certified and did not ship. The retrieved sections are listed below and the raw audit output is in the server log.",
+      "degraded": false,
+      "audited": true
+    },
+    {
+      "id": "q06",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The generated answer cited references that do not resolve against the retrieved context (47 CFR 97.207(g)(1)), so it does not ship. Retrieved sections are listed.",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "q07",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The generated answer did not cite any retrieved section, so it does not ship. Retrieved sections are listed.",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "q08",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The generated answer did not cite any retrieved section, so it does not ship. Retrieved sections are listed.",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "q09",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The generated answer cited references that do not resolve against the retrieved context (47 CFR 100.260(a)), so it does not ship. Retrieved sections are listed.",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "q10",
+      "pass": false,
+      "trap": false,
+      "abstained": false,
+      "detail": "missing citation 25.283(e); got ['FCC 22-74 (5-Year Orbital Disposal Rule)']",
+      "degraded": false,
+      "audited": true
+    },
+    {
+      "id": "q11",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The Guardian audit did not certify this answer as grounded in the retrieved sections, so the answer did not ship. The sections it was checked against are listed below.",
+      "degraded": false,
+      "audited": true
+    },
+    {
+      "id": "q12",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The generated answer cited references that do not resolve against the retrieved context (47 CFR 100.321), so it does not ship. Retrieved sections are listed.",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "q13",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The Guardian audit did not certify this answer as grounded in the retrieved sections, so the answer did not ship. The sections it was checked against are listed below.",
+      "degraded": false,
+      "audited": true
+    },
+    {
+      "id": "q14",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The generated answer cited references that do not resolve against the retrieved context (47 CFR 97.207(g)(1)), so it does not ship. Retrieved sections are listed.",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "q15",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The Guardian audit did not certify this answer as grounded in the retrieved sections, so the answer did not ship. The sections it was checked against are listed below.",
+      "degraded": false,
+      "audited": true
+    },
+    {
+      "id": "q16",
+      "pass": false,
+      "trap": false,
+      "abstained": false,
+      "detail": "missing citation 960.4; got ['960.2(c)']",
+      "degraded": false,
+      "audited": true
+    },
+    {
+      "id": "q17",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The generated answer did not cite any retrieved section, so it does not ship. Retrieved sections are listed.",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "q18",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The generated answer cited references that do not resolve against the retrieved context (47 CFR 97.207(g)(1)), so it does not ship. Retrieved sections are listed.",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "q19",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The generated answer did not cite any retrieved section, so it does not ship. Retrieved sections are listed.",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "q22",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The generated answer did not cite any retrieved section, so it does not ship. Retrieved sections are listed.",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "q23",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The Guardian audit did not certify this answer as grounded in the retrieved sections, so the answer did not ship. The sections it was checked against are listed below.",
+      "degraded": false,
+      "audited": true
+    },
+    {
+      "id": "q24",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The generated answer did not cite any retrieved section, so it does not ship. Retrieved sections are listed.",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "q25",
+      "pass": true,
+      "trap": false,
+      "abstained": false,
+      "detail": "answered with expected citations",
+      "degraded": false,
+      "audited": true
+    },
+    {
+      "id": "q26",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The generated answer cited references that do not resolve against the retrieved context (47 CFR 97.207(g)(1)), so it does not ship. Retrieved sections are listed.",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "q27",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The generated answer did not cite any retrieved section, so it does not ship. Retrieved sections are listed.",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "q28",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The generated answer cited references that do not resolve against the retrieved context (47 CFR 97.207(1)), so it does not ship. Retrieved sections are listed.",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "a01",
+      "pass": true,
+      "trap": true,
+      "abstained": true,
+      "detail": "trap abstained",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "a02",
+      "pass": true,
+      "trap": true,
+      "abstained": true,
+      "detail": "trap abstained",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "a03",
+      "pass": true,
+      "trap": true,
+      "abstained": true,
+      "detail": "trap abstained",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "a04",
+      "pass": true,
+      "trap": true,
+      "abstained": true,
+      "detail": "trap abstained",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "a05",
+      "pass": true,
+      "trap": true,
+      "abstained": true,
+      "detail": "trap abstained",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "a06",
+      "pass": true,
+      "trap": true,
+      "abstained": true,
+      "detail": "trap abstained",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "q29",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The generated answer did not cite any retrieved section, so it does not ship. Retrieved sections are listed.",
+      "degraded": false,
+      "audited": false
+    },
+    {
+      "id": "q30",
+      "pass": false,
+      "trap": false,
+      "abstained": true,
+      "detail": "abstained on a real question: The generated answer cited references that do not resolve against the retrieved context (47 CFR 5.3(a)), so it does not ship. Retrieved sections are listed.",
+      "degraded": false,
+      "audited": false
+    }
+  ]
+}

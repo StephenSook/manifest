@@ -1221,3 +1221,137 @@ class TestNoSurfaceNamesAnEmbedderThatDoesNotRun:
             f"marked NOT ACTIVE. A bare model id in an inventory reads as a model "
             f"that runs. Line: {line.strip()[:120]}"
         )
+
+
+class TestTheModelVsRulesArtifactMatchesItsOwnCache:
+    """The comparison doc must be recomputable from the committed cache.
+
+    A published comparison between two pipelines is exactly the kind of number
+    that rots: the bank changes, the cache is recaptured, and the prose keeps
+    the old figure. Every number in the doc is re-derived here from the same
+    files a reader would use, so the doc cannot drift from the artifacts it
+    describes.
+
+    Borrowed from a rival that ships a replayable model-output cache beside a
+    report quantifying what the model added over its deterministic baseline.
+    Theirs is unverified prose; this is the half that makes it evidence.
+    """
+
+    CACHE = "eval/cache/watsonx"
+    DOC = "docs/evidence/model-vs-rules.md"
+
+    @staticmethod
+    def _bank() -> dict:
+        return {
+            json.loads(line)["id"]: json.loads(line)
+            for line in (REPO_ROOT / "eval" / "bank.jsonl")
+            .read_text(encoding="utf-8")
+            .splitlines()
+            if line.strip()
+        }
+
+    def _cache(self) -> dict:
+        d = REPO_ROOT / self.CACHE
+        assert d.is_dir(), f"{self.CACHE} is missing, so this guard checks nothing"
+        out = {}
+        for p in sorted(d.glob("*.json")):
+            if p.name.endswith("-report.json"):
+                continue
+            out[p.stem] = json.loads(p.read_text(encoding="utf-8"))
+        assert len(out) >= 20, f"only {len(out)} cache entries parsed; guard is misaimed"
+        return out
+
+    def test_the_cache_covers_every_bank_row(self):
+        missing = sorted(set(self._bank()) - set(self._cache()))
+        assert missing == [], (
+            f"eval/cache/watsonx has no captured response for {missing}. A "
+            "partial cache scores a different bank than the one CI enforces."
+        )
+
+    def test_every_cached_response_really_came_from_watsonx(self):
+        """A degraded row is the offline path wearing the cache's name."""
+        degraded = [k for k, v in self._cache().items() if v.get("degraded")]
+        assert degraded == [], (
+            f"Cached rows {degraded} are marked degraded, meaning watsonx was "
+            "unreachable when they were captured. They are offline-extractive "
+            "responses in a directory that claims to be the model path. "
+            "Recapture them."
+        )
+
+    def test_the_cache_carries_the_scope_notice_like_any_response(self):
+        """A captured body must be a real API body, not a hand-made stub."""
+        thin = [
+            k
+            for k, v in self._cache().items()
+            if "scope" not in v or "citations" not in v
+        ]
+        assert thin == [], (
+            f"Cached rows {thin} lack fields every /api/ask response carries. "
+            "A hand-written stub in the cache would make the comparison fiction."
+        )
+
+    @staticmethod
+    def _score(fixtures_dir: str) -> set:
+        """Score a committed response directory with the runner's own logic.
+
+        Deliberately does NOT read eval/report.json. That file is gitignored as
+        a local runner artifact, so a guard depending on it passes locally and
+        dies with FileNotFoundError in CI, which is exactly what happened on
+        the first push of this feature. Both directories read here are
+        committed, so this runs identically in both places.
+        """
+        import sys
+
+        sys.path.insert(0, str(REPO_ROOT / "eval"))
+        from runner import load_bank, score_row  # noqa: PLC0415
+
+        bank = load_bank(REPO_ROOT / "eval" / "bank.jsonl")
+        passed = set()
+        for row in bank:
+            path = REPO_ROOT / fixtures_dir / f"{row['id']}.json"
+            if not path.exists():
+                continue
+            ok, _ = score_row(row, json.loads(path.read_text(encoding="utf-8")))
+            if ok and not row.get("abstain"):
+                passed.add(row["id"])
+        assert passed, f"scoring {fixtures_dir} produced zero passes; guard is broken"
+        return passed
+
+    def test_the_published_counts_are_recomputable(self):
+        """Re-derive every headline figure from committed artifacts alone."""
+        text = (REPO_ROOT / self.DOC).read_text(encoding="utf-8")
+        bank = self._bank()
+        questions = [i for i in bank if not bank[i].get("abstain")]
+
+        rules_pass = self._score("eval/fixtures")
+        model_pass = self._score(self.CACHE)
+        only_model = sorted(model_pass - rules_pass)
+        only_rules = sorted(rules_pass - model_pass)
+
+        # The rules figure is also published in FACTS.json, so assert the two
+        # agree. Two independent derivations of the same number that disagree
+        # means one of them is stale.
+        facts = load_facts().get("eval", {})
+        assert facts.get("questions_correct") == len(rules_pass), (
+            f"FACTS.json says {facts.get('questions_correct')} rules passes, "
+            f"scoring the committed fixtures gives {len(rules_pass)}. "
+            "Run: python3 eval/runner.py --mode fixtures, then scripts/facts.py"
+        )
+
+        expected = [
+            (f"**{len(rules_pass)} of {len(questions)}**", "rules score"),
+            (f"**{len(model_pass)} of {len(questions)}**", "model score"),
+            (f"**{len(only_rules)}**", "rules-only count"),
+            (f"**{len(only_model)}**", "model-only count"),
+        ]
+        for needle, label in expected:
+            assert needle in text, (
+                f"{self.DOC} does not state the recomputed {label} {needle}. "
+                "Regenerate the doc from the cache; do not edit the numbers."
+            )
+        if only_rules:
+            joined = ", ".join(only_rules)
+            assert joined in text, (
+                f"{self.DOC} must name the questions only the rules path gets "
+                f"right: {joined}"
+            )

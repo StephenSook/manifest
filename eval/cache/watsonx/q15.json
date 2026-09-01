@@ -1,0 +1,33 @@
+{
+  "answer": null,
+  "citations": [
+    {
+      "cfrTitle": 47,
+      "part": 25,
+      "section": "25.161",
+      "paragraphPath": "(b)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    },
+    {
+      "cfrTitle": 15,
+      "part": 960,
+      "section": "960.5",
+      "paragraphPath": "(c)",
+      "amddate": "2026-08-18",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+    },
+    {
+      "cfrTitle": 15,
+      "part": 960,
+      "section": "960.15",
+      "paragraphPath": "(a)",
+      "amddate": "2026-08-18",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+    }
+  ],
+  "audited": true,
+  "abstained": true,
+  "scope": "Planning aid, not legal authority. Every regulatory statement here carries a section-level citation pinned to the corpus AMDDATE, or the product abstains and says why. Verify against the cited text before you file.",
+  "reason": "The Guardian audit did not certify this answer as grounded in the retrieved sections, so the answer did not ship. The sections it was checked against are listed below."
+}

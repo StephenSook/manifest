@@ -1,0 +1,19 @@
+{
+  "answer": "All non-Federal Government CubeSats with any type of active or passive imager must obtain a remote sensing license from NOAA's Commercial Remote Sensing Regulatory Affairs (CRSRA) (15 CFR 960.2(c) (AMDDATE: 2026-08-18)).",
+  "citations": [
+    {
+      "cfrTitle": 15,
+      "part": 960,
+      "section": "960.2",
+      "paragraphPath": "(c)",
+      "amddate": "2026-08-18",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-15/ECFR-title15.xml"
+    }
+  ],
+  "audited": true,
+  "abstained": false,
+  "scope": "Planning aid, not legal authority. Every regulatory statement here carries a section-level citation pinned to the corpus AMDDATE, or the product abstains and says why. Verify against the cited text before you file.",
+  "degraded": false,
+  "generation_model": "ibm/granite-4-h-small",
+  "guardian_model": "ibm/granite-guardian-3-8b"
+}

@@ -1,0 +1,19 @@
+{
+  "answer": "",
+  "citations": [
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "NASA CubeSat 101 (2017)",
+      "paragraphPath": "",
+      "amddate": "2017-08-01",
+      "sourceUrl": "https://www.nasa.gov/wp-content/uploads/2017/08/nasa_csli_cubesat_101_508.pdf"
+    }
+  ],
+  "audited": true,
+  "abstained": false,
+  "scope": "Planning aid, not legal authority. Every regulatory statement here carries a section-level citation pinned to the corpus AMDDATE, or the product abstains and says why. Verify against the cited text before you file.",
+  "degraded": false,
+  "generation_model": "ibm/granite-4-h-small",
+  "guardian_model": "ibm/granite-guardian-3-8b"
+}

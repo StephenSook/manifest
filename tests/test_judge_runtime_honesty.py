@@ -971,3 +971,97 @@ class TestTheScopeNoticeSurvivesAnUnexpectedThrow:
         assert "console.error" in catch, (
             "the thrown error is neither logged nor rendered, so it is lost"
         )
+
+
+class TestTheGateDemoIsADemonstrationNotTheatre:
+    """A judge-facing demo of the citation gate must actually demonstrate it.
+
+    Borrowed from HITS, whose /gate/demo serves the same deterministic check
+    twice: once against a real explanation, once against a copy with one digit
+    transposed. Our guards are proven red in CI, which is the right place for
+    them and the wrong place for a judge who will not clone the repo.
+
+    Three properties make it evidence rather than a staged animation, and all
+    three are asserted here because each could rot independently.
+    """
+
+    ROUTE = "app/api/gate/demo/route.ts"
+
+    def _source(self) -> str:
+        p = REPO / self.ROUTE
+        assert p.exists(), f"{self.ROUTE} is missing, so this guard checks nothing"
+        return p.read_text(encoding="utf-8")
+
+    def test_it_uses_the_shipped_resolver_not_a_copy(self):
+        src = self._source()
+        assert "resolveCfrCitations" in src, (
+            "the demo does not call resolveCfrCitations. A demo that "
+            "reimplements the check proves nothing about the product."
+        )
+        assert "from '../../ask/lib'" in src, (
+            "the resolver must be imported from the ask route's own library, "
+            "so the demo and the product cannot diverge."
+        )
+
+    def test_the_honest_text_is_a_committed_real_response(self):
+        src = self._source()
+        # Assert the FILE READ, not the mere presence of the name: the same
+        # string appears in a prose `source` field, so a substring check passed
+        # while the real read pointed elsewhere. Found by injecting exactly
+        # that and watching the first version of this test stay green.
+        #
+        # Matched as the literal argument sequence rather than by regex around
+        # path.join, because the first regex broke on process.cwd(): its
+        # closing paren ended the match before reaching the filename.
+        assert "'docs', 'evidence', 'live-responses.json'" in src, (
+            "the demo does not READ docs/evidence/live-responses.json. Its "
+            "honest side must be the committed production capture, not prose "
+            "written for the demo, and naming the file in a description string "
+            "is not reading it."
+        )
+        evidence = json.loads(
+            (REPO / "docs" / "evidence" / "live-responses.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        answer = evidence["responses"][0]["response"]["answer"]
+        assert answer and "97.207(g)(1)" in answer, (
+            "the committed response no longer cites 97.207(g)(1), so the demo's "
+            "substitution has nothing to replace. Repoint it."
+        )
+
+    def test_the_fabricated_path_is_absent_from_the_corpus(self):
+        """The whole point: a fabrication must not be a real provision.
+
+        If (g)(4) ever became real, the demo would show the gate rejecting
+        something TRUE, which is worse than no demo at all.
+        """
+        src = self._source()
+        m = re.search(r"FABRICATED_PATH = '([^']+)'", src)
+        assert m, "FABRICATED_PATH is gone from the demo"
+        fabricated = m.group(1)
+        rows = json.loads(
+            (REPO / "corpus" / "chunks" / "title47-part97.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        real_paths = {
+            str(r.get("paragraphPath") or "")
+            for r in rows
+            if str(r.get("section")) == "97.207"
+        }
+        assert len(real_paths) >= 5, (
+            f"only {len(real_paths)} paragraph paths parsed for 97.207; this "
+            "guard is reading the wrong file or schema and would pass vacuously"
+        )
+        assert fabricated not in real_paths, (
+            f"{fabricated} IS a real provision under 97.207. The demo would show "
+            "the gate rejecting a true citation. Choose a path that does not exist."
+        )
+
+    def test_it_fails_closed_when_its_own_precondition_breaks(self):
+        src = self._source()
+        assert "DEMO_PRECONDITION_FAILED" in src, (
+            "the demo must return an explicit error when the fabrication is real "
+            "or the corpus is missing, rather than quietly demonstrating a lie."
+        )

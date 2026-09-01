@@ -6,7 +6,7 @@
 
 [![CI](https://github.com/StephenSook/manifest/actions/workflows/ci.yml/badge.svg)](https://github.com/StephenSook/manifest/actions/workflows/ci.yml)
 [![Eval](https://github.com/StephenSook/manifest/actions/workflows/eval-gate.yml/badge.svg)](https://github.com/StephenSook/manifest/actions/workflows/eval-gate.yml)
-[![Tests](https://img.shields.io/badge/tests-237%20passing-3fb950.svg)](engine/)
+[![Tests](https://img.shields.io/badge/tests-241%20passing-3fb950.svg)](engine/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![IBM AI Builders Challenge August 2026](https://img.shields.io/badge/IBM%20AI%20Builders-August%202026-054ada.svg)](https://aibuilderschallenge-bobhub.bemyapp.com/)
 
@@ -23,7 +23,7 @@ No account. No keys. Every claim below is either a live link or a `grep` command
 | **Try it, zero setup** | [manifest-web-roan.vercel.app/judge](https://manifest-web-roan.vercel.app/judge): numbered walkthrough. [/mission](https://manifest-web-roan.vercel.app/mission): the planner |
 | **The headline, recomputed live** | [manifest-web-roan.vercel.app/api/status](https://manifest-web-roan.vercel.app/api/status): unauthenticated, recomputes the violated-days number on every request and self-reports the wired models |
 | **The differentiator** | [`engine/interlocks/deorbit-compliance.ts`](engine/interlocks/deorbit-compliance.ts) + [`data/decay-table.json`](data/decay-table.json) -- same orbit, opposite verdict, solar cycle decides |
-| **135 engine and mobile tests passing** | `npm install && npm run test:engine` |
+| **139 engine and mobile tests passing** | `npm install && npm run test:engine` |
 | **Two real responses, captured verbatim** | [`docs/evidence/live-responses.json`](docs/evidence/live-responses.json) (one audited and cited, one refused; no key needed to read it) |
 | **Does the sun actually decide?** | `python3 scripts/solar_sweep.py` -- 10 of 21 configurations flip legal verdict on solar activity alone, in the 450 to 600 km band. For the other 11 the sun decides nothing, and [`docs/evidence/solar-decides-sweep.md`](docs/evidence/solar-decides-sweep.md) says so. No key, no network, reads one committed file |
 | **What the model adds over the rules** | `python3 eval/runner.py --mode cached` -- replays 34 real watsonx responses committed in [`eval/cache/watsonx/`](eval/cache/watsonx/). The measured answer is that it won 0 questions the rules did not: [`docs/evidence/model-vs-rules.md`](docs/evidence/model-vs-rules.md) |
@@ -285,7 +285,7 @@ Every item here is a deliberate scope decision, not an unknown. Naming them is c
 
 | Criterion | How Manifest earns it |
 |---|---|
-| **Technical Execution** | 135 engine and mobile tests passing (`npm run test:engine`). NRLMSISE-00 orbital lifetime integrator (pyatmos 1.2.7) producing real numbers committed to `data/decay-table.json`, and `/api/status` now reports which table row a verdict actually used when the orbit is off the grid. Six regulatory interlocks wired against 47 CFR and 15 CFR with citation paths. Granite generation and the Guardian audit run on watsonx; the Granite embedder is configured but unreachable because the committed corpus freeze picks the embedder, and `/api/status` self-reports all three. |
+| **Technical Execution** | 139 engine and mobile tests passing (`npm run test:engine`). NRLMSISE-00 orbital lifetime integrator (pyatmos 1.2.7) producing real numbers committed to `data/decay-table.json`, and `/api/status` now reports which table row a verdict actually used when the orbit is off the grid. Six regulatory interlocks wired against 47 CFR and 15 CFR with citation paths. Granite generation and the Guardian audit run on watsonx; the Granite embedder is configured but unreachable because the committed corpus freeze picks the embedder, and `/api/status` self-reports all three. |
 | **Innovation** | The only project in this field where space weather changes a legal outcome. At 550 km with Bc=180 kg/m^2: solar max lifetime 2.57 yr (FCC-compliant), solar min lifetime 15.0 yr (VIOLATED). Same orbit, opposite verdict -- the solar cycle decides. No planning tool has connected F10.7 to a regulatory determination before this. |
 | **Challenge Fit** | Live NOAA SWPC F10.7 ingest. IBM/NASA Surya heliophysics model (`surya.366m.v1.pt` checkpoint, Apache-2.0) contributes a real forward pass, reported beside the envelope and labelled ESTIMATED. Solar activity is the regulatory input, not a dashboard: NOAA's own flux bounds decide the verdict, and the IBMxNASA model is reported beside them. |
 | **Feasibility** | One-command reproduction: `npm install && npm run test:engine`. No credentials on the deterministic path. CI green. `data/decay-table.json` regeneratable in under 3 minutes from `pipeline/decay.py`. |

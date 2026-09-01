@@ -71,6 +71,17 @@ export interface DeorbitComplianceResult {
    * Null if an exact match was found.
    */
   closestAltitudeKmUsed: number | null;
+  /**
+   * The decay-table altitude the verdict was ACTUALLY computed from, always
+   * populated when a row was found. `closestAltitudeKmUsed` is null on an
+   * exact grid hit, which is a correct signal and an unreadable one: a judge
+   * reading the JSON sees null next to a real verdict and cannot tell an exact
+   * match from a failed lookup. The rule that null means exact lived only in a
+   * code comment, which the reader of the payload never sees.
+   */
+  altitudeKmUsed: number | null;
+  /** How that row was chosen, so the payload explains itself. */
+  altitudeMatch: 'exact' | 'nearest-row-substituted' | 'no-row-used';
   /** Governing citation -- paragraph path VERIFY_FROM_SNAPSHOT (task 1.1) */
   citation: Citation;
 }
@@ -173,6 +184,8 @@ export function computeDeorbitCompliance(
       aboveRuleThreshold: true,
       tableEntryNotFound: false,
       closestAltitudeKmUsed: null,
+      altitudeKmUsed: null,
+      altitudeMatch: 'no-row-used',
       citation: PART_25_DEORBIT_CITATION,
     };
   }
@@ -191,6 +204,8 @@ export function computeDeorbitCompliance(
       aboveRuleThreshold: false,
       tableEntryNotFound: true,
       closestAltitudeKmUsed: null,
+      altitudeKmUsed: null,
+      altitudeMatch: 'no-row-used',
       citation: PART_25_DEORBIT_CITATION,
     };
   }
@@ -237,6 +252,8 @@ export function computeDeorbitCompliance(
     aboveRuleThreshold: false,
     tableEntryNotFound: false,
     closestAltitudeKmUsed: closestAlt,
+    altitudeKmUsed: entry.altitudeKm,
+    altitudeMatch: closestAlt === null ? 'exact' : 'nearest-row-substituted',
     citation: PART_25_DEORBIT_CITATION,
   };
 }

@@ -1,0 +1,19 @@
+{
+  "answer": "The five-year post-mission disposal rule for satellites in low Earth orbit was adopted by FCC 22-74, which was published on 2022-09-29. This is stated in the context under [1] FCC 22-74 (5-Year Orbital Disposal Rule) (AMDDATE: 2022-09-29).",
+  "citations": [
+    {
+      "cfrTitle": 0,
+      "part": 0,
+      "section": "FCC 22-74 (5-Year Orbital Disposal Rule)",
+      "paragraphPath": "",
+      "amddate": "2022-09-29",
+      "sourceUrl": "https://docs.fcc.gov/public/attachments/FCC-22-74A1.pdf"
+    }
+  ],
+  "audited": true,
+  "abstained": false,
+  "scope": "Planning aid, not legal authority. Every regulatory statement here carries a section-level citation pinned to the corpus AMDDATE, or the product abstains and says why. Verify against the cited text before you file.",
+  "degraded": false,
+  "generation_model": "ibm/granite-4-h-small",
+  "guardian_model": "ibm/granite-guardian-3-8b"
+}

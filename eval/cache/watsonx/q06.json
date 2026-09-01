@@ -1,0 +1,8 @@
+{
+  "answer": null,
+  "citations": [],
+  "audited": false,
+  "abstained": true,
+  "scope": "Planning aid, not legal authority. Every regulatory statement here carries a section-level citation pinned to the corpus AMDDATE, or the product abstains and says why. Verify against the cited text before you file.",
+  "reason": "The generated answer cited references that do not resolve against the retrieved context (47 CFR 97.207(g)(1)), so it does not ship. Retrieved sections are listed."
+}

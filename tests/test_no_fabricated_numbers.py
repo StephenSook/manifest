@@ -1221,3 +1221,116 @@ class TestNoSurfaceNamesAnEmbedderThatDoesNotRun:
             f"marked NOT ACTIVE. A bare model id in an inventory reads as a model "
             f"that runs. Line: {line.strip()[:120]}"
         )
+
+
+class TestTheModelVsRulesArtifactMatchesItsOwnCache:
+    """The comparison doc must be recomputable from the committed cache.
+
+    A published comparison between two pipelines is exactly the kind of number
+    that rots: the bank changes, the cache is recaptured, and the prose keeps
+    the old figure. Every number in the doc is re-derived here from the same
+    files a reader would use, so the doc cannot drift from the artifacts it
+    describes.
+
+    Borrowed from a rival that ships a replayable model-output cache beside a
+    report quantifying what the model added over its deterministic baseline.
+    Theirs is unverified prose; this is the half that makes it evidence.
+    """
+
+    CACHE = "eval/cache/watsonx"
+    DOC = "docs/evidence/model-vs-rules.md"
+
+    @staticmethod
+    def _bank() -> dict:
+        return {
+            json.loads(line)["id"]: json.loads(line)
+            for line in (REPO_ROOT / "eval" / "bank.jsonl")
+            .read_text(encoding="utf-8")
+            .splitlines()
+            if line.strip()
+        }
+
+    def _cache(self) -> dict:
+        d = REPO_ROOT / self.CACHE
+        assert d.is_dir(), f"{self.CACHE} is missing, so this guard checks nothing"
+        out = {}
+        for p in sorted(d.glob("*.json")):
+            if p.name.endswith("-report.json"):
+                continue
+            out[p.stem] = json.loads(p.read_text(encoding="utf-8"))
+        assert len(out) >= 20, f"only {len(out)} cache entries parsed; guard is misaimed"
+        return out
+
+    def test_the_cache_covers_every_bank_row(self):
+        missing = sorted(set(self._bank()) - set(self._cache()))
+        assert missing == [], (
+            f"eval/cache/watsonx has no captured response for {missing}. A "
+            "partial cache scores a different bank than the one CI enforces."
+        )
+
+    def test_every_cached_response_really_came_from_watsonx(self):
+        """A degraded row is the offline path wearing the cache's name."""
+        degraded = [k for k, v in self._cache().items() if v.get("degraded")]
+        assert degraded == [], (
+            f"Cached rows {degraded} are marked degraded, meaning watsonx was "
+            "unreachable when they were captured. They are offline-extractive "
+            "responses in a directory that claims to be the model path. "
+            "Recapture them."
+        )
+
+    def test_the_cache_carries_the_scope_notice_like_any_response(self):
+        """A captured body must be a real API body, not a hand-made stub."""
+        thin = [
+            k
+            for k, v in self._cache().items()
+            if "scope" not in v or "citations" not in v
+        ]
+        assert thin == [], (
+            f"Cached rows {thin} lack fields every /api/ask response carries. "
+            "A hand-written stub in the cache would make the comparison fiction."
+        )
+
+    def test_the_published_counts_are_recomputable(self):
+        """Re-derive the doc's headline figures from the artifacts."""
+        text = (REPO_ROOT / self.DOC).read_text(encoding="utf-8")
+        bank = self._bank()
+        questions = [i for i in bank if not bank[i].get("abstain")]
+
+        rules = {
+            r["id"]: r
+            for r in json.loads(
+                (REPO_ROOT / "eval" / "report.json").read_text(encoding="utf-8")
+            )["results"]
+        }
+        wx_report = REPO_ROOT / "eval" / "cache" / "watsonx-report.json"
+        assert wx_report.exists(), (
+            "eval/cache/watsonx-report.json is missing. Run: "
+            "python3 eval/runner.py --mode cached"
+        )
+        model = {
+            r["id"]: r
+            for r in json.loads(wx_report.read_text(encoding="utf-8"))["results"]
+        }
+
+        rules_pass = {i for i in questions if rules[i]["pass"]}
+        model_pass = {i for i in questions if model[i]["pass"]}
+        only_model = sorted(model_pass - rules_pass)
+        only_rules = sorted(rules_pass - model_pass)
+
+        expected = [
+            (f"**{len(rules_pass)} of {len(questions)}**", "rules score"),
+            (f"**{len(model_pass)} of {len(questions)}**", "model score"),
+            (f"**{len(only_rules)}**", "rules-only count"),
+            (f"**{len(only_model)}**", "model-only count"),
+        ]
+        for needle, label in expected:
+            assert needle in text, (
+                f"{self.DOC} does not state the recomputed {label} {needle}. "
+                "Regenerate the doc from the cache; do not edit the numbers."
+            )
+        if only_rules:
+            joined = ", ".join(only_rules)
+            assert joined in text, (
+                f"{self.DOC} must name the questions only the rules path gets "
+                f"right: {joined}"
+            )

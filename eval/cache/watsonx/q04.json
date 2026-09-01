@@ -1,0 +1,19 @@
+{
+  "answer": "The following frequency bands and segments are authorized to space stations: the 17 m, 15 m, 12 m, and 10 m bands, 6 mm, 4 mm, 2 mm and 1 mm bands; and the 7.0-7.1 MHz, 14.00-14.25 MHz, 144-146 MHz, 435-438 MHz, 2400-2450 MHz, 5.83-5.85 GHz, 10.45-10.50 GHz, and 24.00-24.05 GHz segments (47 CFR 97.207(c) (AMDDATE: 2026-08-13)).",
+  "citations": [
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.207",
+      "paragraphPath": "(c)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    }
+  ],
+  "audited": true,
+  "abstained": false,
+  "scope": "Planning aid, not legal authority. Every regulatory statement here carries a section-level citation pinned to the corpus AMDDATE, or the product abstains and says why. Verify against the cited text before you file.",
+  "degraded": false,
+  "generation_model": "ibm/granite-4-h-small",
+  "guardian_model": "ibm/granite-guardian-3-8b"
+}

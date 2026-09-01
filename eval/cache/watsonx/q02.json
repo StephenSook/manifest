@@ -1,0 +1,19 @@
+{
+  "answer": "The FCC must receive the pre-space notification no later than 90 days before integration of the space station into the launch vehicle, as specified in 47 CFR 97.207(g)(1) (AMDDATE: 2026-08-13).",
+  "citations": [
+    {
+      "cfrTitle": 47,
+      "part": 97,
+      "section": "97.207",
+      "paragraphPath": "(g)(1)",
+      "amddate": "2026-08-13",
+      "sourceUrl": "https://www.govinfo.gov/bulkdata/ECFR/title-47/ECFR-title47.xml"
+    }
+  ],
+  "audited": true,
+  "abstained": false,
+  "scope": "Planning aid, not legal authority. Every regulatory statement here carries a section-level citation pinned to the corpus AMDDATE, or the product abstains and says why. Verify against the cited text before you file.",
+  "generation_model": "ibm/granite-4-h-small",
+  "guardian_model": "ibm/granite-guardian-3-8b",
+  "degraded": false
+}

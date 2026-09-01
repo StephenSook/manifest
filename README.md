@@ -25,6 +25,8 @@ No account. No keys. Every claim below is either a live link or a `grep` command
 | **The differentiator** | [`engine/interlocks/deorbit-compliance.ts`](engine/interlocks/deorbit-compliance.ts) + [`data/decay-table.json`](data/decay-table.json) -- same orbit, opposite verdict, solar cycle decides |
 | **128 engine and mobile tests passing** | `npm install && npm run test:engine` |
 | **Two real responses, captured verbatim** | [`docs/evidence/live-responses.json`](docs/evidence/live-responses.json) (one audited and cited, one refused; no key needed to read it) |
+| **Does the sun actually decide?** | `python3 scripts/solar_sweep.py` -- 10 of 21 configurations flip legal verdict on solar activity alone, in the 450 to 600 km band. For the other 11 the sun decides nothing, and [`docs/evidence/solar-decides-sweep.md`](docs/evidence/solar-decides-sweep.md) says so. No key, no network, reads one committed file |
+| **What the model adds over the rules** | `python3 eval/runner.py --mode cached` -- replays 34 real watsonx responses committed in [`eval/cache/watsonx/`](eval/cache/watsonx/). The measured answer is that it won 0 questions the rules did not: [`docs/evidence/model-vs-rules.md`](docs/evidence/model-vs-rules.md) |
 | **The eval suite, offline** | `python3 eval/runner.py --mode fixtures` -- 28 questions + 6 abstention traps, no network, no key |
 | **Claims are wired, not aspirational** | `grep -r "ibm/granite" app/ pipeline/` -- every named model has an import or call |
 | **IBM Bob is committed and inspectable** | [`.bob/custom_modes.yaml`](.bob/custom_modes.yaml), [`.bob/mcp.json`](.bob/mcp.json), [`docs/bob-evidence/`](docs/bob-evidence/) |

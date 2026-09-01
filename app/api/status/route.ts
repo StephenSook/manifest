@@ -59,7 +59,13 @@ const GT1_MISSION: MissionInput = {
 const MODEL_INVENTORY = {
   generation: 'ibm/granite-4-h-small',        // watsonx.ai, app/api/ask/route.ts (Tylin 2.6)
   audit: 'ibm/granite-guardian-3-8b',          // watsonx.ai, app/api/ask/route.ts (Tylin 2.6)
-  embedding: 'ibm/granite-embedding-278m-multilingual', // watsonx.ai (Tylin 1.3)
+  // INTENDED, NOT ACTIVE. The committed corpus was built with hashing-trick-768
+  // and that is what every deployment retrieves with. Kept in the inventory
+  // because the README names it as the production embedder, and annotated here
+  // for the same reason the Ollama entry below was annotated: a bare model id in
+  // an inventory reads to a judge as a model that runs. runtime.embedding_backend
+  // reports the real one.
+  embedding: 'ibm/granite-embedding-278m-multilingual', // watsonx.ai (Tylin 1.3), NOT ACTIVE
   surya: 'nasa-ibm-ai4science/Surya-1.0',      // D7 cached artifact at data/surya-outlook.json
   // NOTE: granite4.1:8b was listed here as an Ollama local_fallback until
   // 2026-08-29. Nothing implemented it. A grep of this repository for

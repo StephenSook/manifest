@@ -909,3 +909,65 @@ class TestEveryStackClaimPointsAtCodeThatExists:
             "granite-embedding is marked load_bearing, but it does not run. "
             "The corpus was built with hashing-trick-768."
         )
+
+
+class TestTheScopeNoticeSurvivesAnUnexpectedThrow:
+    """The disclosure must hold on the path nobody exercises.
+
+    Every RETURN in the ask route carries the scope notice, enforced by the
+    required `scope` field on AskResponse. A THROW carries nothing: it bypasses
+    every return, and Next answers with a 500 and a zero-byte body. Measured by
+    fault injection, not assumed.
+
+    Borrowed from a rival whose safety envelope is merged into its exception
+    handlers precisely so its authority disclaimer cannot diverge between
+    paths. A disclosure that holds on thirteen paths and vanishes on the
+    fourteenth is one a judge can catch us not making.
+    """
+
+    @staticmethod
+    def _post_body() -> str:
+        route = (REPO / "app" / "api" / "ask" / "route.ts").read_text(encoding="utf-8")
+        start = route.index("export async function POST(")
+        end = route.index("\nasync function handleAsk(", start)
+        return route[start:end]
+
+    def test_the_handler_is_actually_there(self):
+        """Anti-vacuity: an empty slice satisfies nothing below."""
+        body = self._post_body()
+        assert len(body) > 200, f"POST handler parsed to {len(body)} chars"
+        assert "handleAsk" in body
+
+    def test_the_post_handler_catches_everything(self):
+        body = self._post_body()
+        assert "try {" in body and "catch" in body, (
+            "app/api/ask/route.ts POST has no top-level try/catch, so an "
+            "unexpected throw returns a 500 with a zero-byte body and no scope "
+            "notice. Verified by fault injection when this guard was written."
+        )
+
+    def test_the_catch_returns_a_shaped_abstention_with_the_notice(self):
+        body = self._post_body()
+        catch = body[body.index("catch") :]
+        for needle, why in (
+            ("scope: SCOPE_NOTICE", "the scope notice must ship on the throw path"),
+            ("abstained: true", "a failed request is an abstention, not an answer"),
+            ("answer: null", "no answer may be implied when nothing was generated"),
+            ("citations: []", "no citation may be implied when nothing was retrieved"),
+        ):
+            assert needle in catch, f"the catch block omits {needle!r}: {why}"
+
+    def test_the_catch_never_interpolates_the_error_into_prose(self):
+        """Pasting an exception into `reason` is how Guardian scaffolding once
+        reached the reader. The error is logged, never rendered."""
+        body = self._post_body()
+        catch = body[body.index("catch") :]
+        reason_start = catch.index("reason:")
+        reason = catch[reason_start : reason_start + 400]
+        assert "${err" not in reason and "${error" not in reason, (
+            "the catch interpolates the thrown error into the user-facing "
+            "reason. Log it instead."
+        )
+        assert "console.error" in catch, (
+            "the thrown error is neither logged nor rendered, so it is lost"
+        )

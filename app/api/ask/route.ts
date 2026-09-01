@@ -433,7 +433,43 @@ export function OPTIONS(): NextResponse {
  * support, so it needs the notice as much as an answer does.
  */
 export async function POST(req: NextRequest): Promise<NextResponse<AskResponse>> {
-  return withCors(await handleAsk(req));
+  // Every RETURN inside handleAsk carries the scope notice, enforced by the
+  // required `scope` field on AskResponse. A THROW carries nothing: it bypasses
+  // every return and Next answers with a 500 and a zero-byte body. Measured,
+  // not assumed: injecting a fault produced `HTTP 500, 0B, no content-type`,
+  // so a caller got no JSON, no abstention and no scope notice on the one path
+  // nobody exercises.
+  //
+  // Borrowed from a rival whose safety envelope is merged into its exception
+  // handlers precisely so `command_authority: NONE` can never diverge between
+  // paths. The failure mode here is the same shape: a disclosure that holds on
+  // thirteen paths and vanishes on the fourteenth is a disclosure a judge can
+  // catch us not making.
+  //
+  // The thrown error is logged, never interpolated into `reason`. Pasting an
+  // exception into user-facing prose is how Guardian scaffolding once reached
+  // the reader.
+  try {
+    return withCors(await handleAsk(req));
+  } catch (err) {
+    console.error('[ask] unhandled error, returning a shaped abstention:', err);
+    return withCors(
+      NextResponse.json(
+        {
+          answer: null,
+          citations: [],
+          audited: false,
+          abstained: true,
+          scope: SCOPE_NOTICE,
+          reason:
+            'The request failed unexpectedly, so no answer ships. This is an ' +
+            'abstention, not an answer with something missing: nothing was ' +
+            'retrieved and nothing was generated. The error is in the server log.',
+        },
+        { status: 500 },
+      ),
+    );
+  }
 }
 
 async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {

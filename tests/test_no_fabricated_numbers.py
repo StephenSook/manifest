@@ -1151,3 +1151,73 @@ class TestTheRejectedDesignsTableCitesRealCommits:
             f"README cites PR numbers {ahead} above the highest merged PR "
             f"(#{highest}), so they cannot yet be evidence."
         )
+
+
+class TestNoSurfaceNamesAnEmbedderThatDoesNotRun:
+    """A model named as the thing that DOES the work must be the one that runs.
+
+    The README's architecture list names four models: generation, audit,
+    retrieval, solar. Three of them run. The retrieval one does not: the
+    committed corpus was built with hashing-trick-768. The README disclosed
+    that honestly in one paragraph and then, fifteen lines later, presented
+    granite-embedding as the retrieval model with no qualifier.
+
+    That split is the defect, not either half. A judge reading a four-item
+    stack list does not cross-reference it against a caveat further up. Found
+    by running a rival's own defect back at us: their transparency endpoint
+    disclosed an 8-chunk corpus honestly on one line and asserted a
+    load-bearing dependency that was never installed on another.
+    """
+
+    SHIPPED = "hashing-trick-768"
+    INTENDED = "ibm/granite-embedding-278m-multilingual"
+
+    @staticmethod
+    def _readme() -> str:
+        return (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+
+    def test_the_corpus_still_declares_the_embedder_this_guard_assumes(self):
+        """Anti-vacuity: if the corpus is rebuilt, this guard must be revisited."""
+        schema = json.loads(
+            (REPO_ROOT / "corpus" / "schema.json").read_text(encoding="utf-8")
+        )
+        model = schema.get("model") or schema.get("embedder")
+        assert model == self.SHIPPED, (
+            f"corpus/schema.json declares embedder {model!r}, not {self.SHIPPED!r}. "
+            "If the corpus was rebuilt with the Granite embedder, this guard and "
+            "the README qualifier both need updating, in that order."
+        )
+
+    def test_every_readme_mention_of_the_intended_embedder_is_qualified(self):
+        """Each mention must name the shipped embedder in the same paragraph."""
+        offenders = []
+        for para in self._readme().split("\n\n"):
+            if self.INTENDED not in para:
+                continue
+            if self.SHIPPED in para:
+                continue
+            if "not run" in para or "NOT ACTIVE" in para or "rehearsal" in para:
+                continue
+            offenders.append(para.strip().replace("\n", " ")[:150])
+        assert offenders == [], (
+            "README names the intended embedder without saying, in the same "
+            "paragraph, that it is not what runs. A reader of a stack list does "
+            "not go looking for the caveat. Offenders:\n  " + "\n  ".join(offenders)
+        )
+
+    def test_the_model_inventory_marks_it_not_active(self):
+        route = (REPO_ROOT / "app" / "api" / "status" / "route.ts").read_text(
+            encoding="utf-8"
+        )
+        i = route.find("const MODEL_INVENTORY")
+        assert i != -1, "MODEL_INVENTORY is gone, so this guard checks nothing"
+        block = route[i : i + 1800]
+        assert self.INTENDED in block, "the embedding entry left the inventory"
+        line = next(
+            l for l in block.splitlines() if l.strip().startswith("embedding:")
+        )
+        assert "NOT ACTIVE" in line, (
+            "MODEL_INVENTORY.embedding names a model that does not run and is not "
+            f"marked NOT ACTIVE. A bare model id in an inventory reads as a model "
+            f"that runs. Line: {line.strip()[:120]}"
+        )

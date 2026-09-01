@@ -1290,32 +1290,53 @@ class TestTheModelVsRulesArtifactMatchesItsOwnCache:
             "A hand-written stub in the cache would make the comparison fiction."
         )
 
+    @staticmethod
+    def _score(fixtures_dir: str) -> set:
+        """Score a committed response directory with the runner's own logic.
+
+        Deliberately does NOT read eval/report.json. That file is gitignored as
+        a local runner artifact, so a guard depending on it passes locally and
+        dies with FileNotFoundError in CI, which is exactly what happened on
+        the first push of this feature. Both directories read here are
+        committed, so this runs identically in both places.
+        """
+        import sys
+
+        sys.path.insert(0, str(REPO_ROOT / "eval"))
+        from runner import load_bank, score_row  # noqa: PLC0415
+
+        bank = load_bank(REPO_ROOT / "eval" / "bank.jsonl")
+        passed = set()
+        for row in bank:
+            path = REPO_ROOT / fixtures_dir / f"{row['id']}.json"
+            if not path.exists():
+                continue
+            ok, _ = score_row(row, json.loads(path.read_text(encoding="utf-8")))
+            if ok and not row.get("abstain"):
+                passed.add(row["id"])
+        assert passed, f"scoring {fixtures_dir} produced zero passes; guard is broken"
+        return passed
+
     def test_the_published_counts_are_recomputable(self):
-        """Re-derive the doc's headline figures from the artifacts."""
+        """Re-derive every headline figure from committed artifacts alone."""
         text = (REPO_ROOT / self.DOC).read_text(encoding="utf-8")
         bank = self._bank()
         questions = [i for i in bank if not bank[i].get("abstain")]
 
-        rules = {
-            r["id"]: r
-            for r in json.loads(
-                (REPO_ROOT / "eval" / "report.json").read_text(encoding="utf-8")
-            )["results"]
-        }
-        wx_report = REPO_ROOT / "eval" / "cache" / "watsonx-report.json"
-        assert wx_report.exists(), (
-            "eval/cache/watsonx-report.json is missing. Run: "
-            "python3 eval/runner.py --mode cached"
-        )
-        model = {
-            r["id"]: r
-            for r in json.loads(wx_report.read_text(encoding="utf-8"))["results"]
-        }
-
-        rules_pass = {i for i in questions if rules[i]["pass"]}
-        model_pass = {i for i in questions if model[i]["pass"]}
+        rules_pass = self._score("eval/fixtures")
+        model_pass = self._score(self.CACHE)
         only_model = sorted(model_pass - rules_pass)
         only_rules = sorted(rules_pass - model_pass)
+
+        # The rules figure is also published in FACTS.json, so assert the two
+        # agree. Two independent derivations of the same number that disagree
+        # means one of them is stale.
+        facts = load_facts().get("eval", {})
+        assert facts.get("questions_correct") == len(rules_pass), (
+            f"FACTS.json says {facts.get('questions_correct')} rules passes, "
+            f"scoring the committed fixtures gives {len(rules_pass)}. "
+            "Run: python3 eval/runner.py --mode fixtures, then scripts/facts.py"
+        )
 
         expected = [
             (f"**{len(rules_pass)} of {len(questions)}**", "rules score"),

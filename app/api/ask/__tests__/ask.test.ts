@@ -105,7 +105,7 @@ describe('buildExtractiveResponse', () => {
     'Extractive path: watsonx generation was unreachable, so the generated answer did not ship (upstream error: Access is denied due to invalid credentials.).';
 
   it('answers from the corpus when watsonx is unreachable, and says so', () => {
-    const body = buildExtractiveResponse('What is the 97.207(g) deadline?', [g1], upstream, true);
+    const body = buildExtractiveResponse('What is the 97.207(g) deadline?', [g1], upstream, true, 'extractive-generation-unreachable');
     expect(body.abstained).toBe(false);
     expect(body.answer).toContain('30 days');
     expect(body.citations[0].section).toBe('97.207');
@@ -116,7 +116,7 @@ describe('buildExtractiveResponse', () => {
   });
 
   it('reports the upstream error as upstream text, without restating its cause', () => {
-    const body = buildExtractiveResponse('What is the 97.207(g) deadline?', [g1], upstream, true);
+    const body = buildExtractiveResponse('What is the 97.207(g) deadline?', [g1], upstream, true, 'extractive-generation-unreachable');
     expect(body.reason).toContain('upstream error:');
     // The IBM SDK renders a 403 token_quota_reached as an invalid-credentials
     // message, so the route must not adopt that wording as its own diagnosis.
@@ -124,7 +124,7 @@ describe('buildExtractiveResponse', () => {
   });
 
   it('abstains rather than shipping an uncited quote (hard rule 1)', () => {
-    const body = buildExtractiveResponse('What is the 97.207(g) deadline?', [], upstream, true);
+    const body = buildExtractiveResponse('What is the 97.207(g) deadline?', [], upstream, true, 'extractive-generation-unreachable');
     expect(body.abstained).toBe(true);
     expect(body.answer).toBeNull();
     expect(body.citations).toHaveLength(0);
@@ -137,6 +137,7 @@ describe('buildExtractiveResponse', () => {
       [g1],
       'Extractive path: WATSONX_API_KEY is not configured on this deployment.',
       false,
+      'extractive-no-credentials',
     );
     expect(body.abstained).toBe(false);
     expect(body.degraded).toBe(false);
@@ -147,22 +148,22 @@ describe('buildExtractiveResponse', () => {
   // text "Hawaii;". Retrieval returns its top k for any input, so a citation
   // existing was never evidence the corpus addressed the question.
   it('abstains on an off-corpus question instead of citing an unrelated section', () => {
-    const body = buildExtractiveResponse('Who won the 2026 FIFA World Cup?', [g1], upstream, true);
+    const body = buildExtractiveResponse('Who won the 2026 FIFA World Cup?', [g1], upstream, true, 'extractive-generation-unreachable');
     expect(body.abstained).toBe(true);
     expect(body.answer).toBeNull();
     expect(body.reason).toContain('do not address this question');
   });
 
   it('still lists the retrieved sections when it abstains for lack of anchor', () => {
-    const body = buildExtractiveResponse('How do I bake sourdough bread?', [g1], upstream, true);
+    const body = buildExtractiveResponse('How do I bake sourdough bread?', [g1], upstream, true, 'extractive-generation-unreachable');
     expect(body.abstained).toBe(true);
     expect(body.citations.length).toBeGreaterThan(0);
     expect(body.citations[0].section).toBe('97.207');
   });
 
   it('keeps degraded machine-readable so a degraded run is never published as a watsonx score', () => {
-    const degradedRun = buildExtractiveResponse('q', [g1], upstream, true);
-    const keylessRun = buildExtractiveResponse('q', [g1], 'Extractive path: no key.', false);
+    const degradedRun = buildExtractiveResponse('q', [g1], upstream, true, 'extractive-generation-unreachable');
+    const keylessRun = buildExtractiveResponse('q', [g1], 'Extractive path: no key.', false, 'extractive-generation-unreachable');
     // The eval runner can separate a watsonx measurement from an extractive
     // one on this field alone, without parsing prose.
     expect(degradedRun.degraded).not.toBe(keylessRun.degraded);
@@ -171,7 +172,7 @@ describe('buildExtractiveResponse', () => {
 
 describe('the scope notice ships in the payload, not only on the page', () => {
   it('is present on an abstention', () => {
-    const body = buildExtractiveResponse('anything', [], 'Degraded.', true);
+    const body = buildExtractiveResponse('anything', [], 'Degraded.', true, 'extractive-generation-unreachable');
     expect(body.scope).toContain('Planning aid, not legal authority');
     expect(body.scope).toContain('Verify against the cited text before you file');
   });

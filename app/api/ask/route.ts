@@ -33,6 +33,7 @@ import {
   parseGuardianVerdict,
   SCOPE_NOTICE,
   guardianFailureReason,
+  type AnswerPath,
 } from './lib';
 
 export const runtime = 'nodejs';
@@ -71,6 +72,20 @@ interface AskResponse {
    * watsonx measurement.
    */
   degraded?: boolean;
+  /**
+   * WHICH path produced this response, as an enum rather than prose.
+   *
+   * `degraded` says whether the model path failed. It does not say WHY, and
+   * recovering the reason meant string-matching the English in `reason`. We
+   * did exactly that when analysing the committed watsonx cache for
+   * docs/evidence/model-vs-rules.md, matching on "no readable verdict" and
+   * "did not certify", which breaks the moment that prose is reworded.
+   *
+   * Borrowed from a rival whose single `source` field carries five values
+   * naming the failure cause. Required, not optional, so the compiler
+   * enumerates any path that forgets to label itself.
+   */
+  path: AnswerPath;
 }
 
 interface CorpusCache {
@@ -402,9 +417,10 @@ function extractiveResponse(
   topChunks: ChunkRow[],
   degradation: string,
   degraded: boolean,
+  path: AnswerPath,
 ): NextResponse<AskResponse> {
   return NextResponse.json(
-    buildExtractiveResponse(question, topChunks, degradation, degraded),
+    buildExtractiveResponse(question, topChunks, degradation, degraded, path),
   );
 }
 
@@ -454,12 +470,13 @@ export async function POST(req: NextRequest): Promise<NextResponse<AskResponse>>
   } catch (err) {
     console.error('[ask] unhandled error, returning a shaped abstention:', err);
     return withCors(
-      NextResponse.json(
+      NextResponse.json<AskResponse>(
         {
           answer: null,
           citations: [],
           audited: false,
           abstained: true,
+          path: 'error-unexpected',
           scope: SCOPE_NOTICE,
           reason:
             'The request failed unexpectedly, so no answer ships. This is an ' +
@@ -478,7 +495,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
     body = await req.json();
   } catch {
     return NextResponse.json(
-      { answer: null, citations: [], audited: false, abstained: true, scope: SCOPE_NOTICE, reason: 'Invalid JSON body' },
+      { answer: null, citations: [], audited: false, abstained: true, scope: SCOPE_NOTICE, reason: 'Invalid JSON body', path: 'abstained-bad-request' },
       { status: 400 },
     );
   }
@@ -486,7 +503,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
   const { question } = body;
   if (!question?.trim()) {
     return NextResponse.json(
-      { answer: null, citations: [], audited: false, abstained: true, scope: SCOPE_NOTICE, reason: 'Question is required' },
+      { answer: null, citations: [], audited: false, abstained: true, scope: SCOPE_NOTICE, reason: 'Question is required', path: 'abstained-bad-request' },
       { status: 400 },
     );
   }
@@ -498,6 +515,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
       citations: [],
       audited: false,
       abstained: true,
+      path: 'abstained-no-relevant-section',
       scope: SCOPE_NOTICE,
       reason: abstainReason,
     });
@@ -509,7 +527,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     return NextResponse.json(
-      { answer: null, citations: [], audited: false, abstained: true, scope: SCOPE_NOTICE, reason: `Corpus unavailable: ${msg}` },
+      { answer: null, citations: [], audited: false, abstained: true, scope: SCOPE_NOTICE, reason: `Corpus unavailable: ${msg}`, path: 'abstained-corpus-unavailable' },
       { status: 503 },
     );
   }
@@ -523,7 +541,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     return NextResponse.json(
-      { answer: null, citations: [], audited: false, abstained: true, scope: SCOPE_NOTICE, reason: `Embedding failed: ${msg}` },
+      { answer: null, citations: [], audited: false, abstained: true, scope: SCOPE_NOTICE, reason: `Embedding failed: ${msg}`, path: 'abstained-embedding-failed' },
     );
   }
 
@@ -537,6 +555,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
       topChunks,
       'Extractive path: WATSONX_API_KEY is not configured on this deployment.',
       false,
+      'extractive-no-credentials',
     );
   }
 
@@ -556,6 +575,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
       topChunks,
       `Extractive path: watsonx generation was unreachable, so the generated answer did not ship (upstream error: ${msg}).`,
       true,
+      'extractive-generation-unreachable',
     );
   }
 
@@ -565,6 +585,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
       citations: topChunks.filter((c) => c.cfr_title > 0).map(chunkToCitation),
       audited: false,
       abstained: true,
+      path: 'abstained-no-relevant-section',
       scope: SCOPE_NOTICE,
       reason: 'Model could not answer from the provided regulatory text.',
     });
@@ -579,6 +600,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
       citations: topChunks.filter((c) => c.cfr_title > 0).map(chunkToCitation),
       audited: false,
       abstained: true,
+      path: 'abstained-citation-gate',
       scope: SCOPE_NOTICE,
       reason: `The generated answer cited references that do not resolve against the retrieved context (${unresolvedRefs.join(', ')}), so it does not ship. Retrieved sections are listed.`,
     });
@@ -593,6 +615,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
       citations: topChunks.filter((c) => c.cfr_title > 0).map(chunkToCitation),
       audited: false,
       abstained: true,
+      path: 'abstained-citation-gate',
       scope: SCOPE_NOTICE,
       reason: 'The generated answer did not cite any retrieved section, so it does not ship. Retrieved sections are listed.',
     });
@@ -616,6 +639,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
       topChunks,
       `Extractive path: the Guardian audit was unreachable, so the generated answer could not be certified and did not ship (upstream error: ${msg}).`,
       true,
+      'extractive-guardian-unreachable',
     );
   }
 
@@ -625,6 +649,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
       citations: topChunks.filter((c) => c.cfr_title > 0).map(chunkToCitation),
       audited: true,
       abstained: true,
+      path: 'abstained-guardian-refused',
       scope: SCOPE_NOTICE,
       reason: auditReason ?? 'Guardian audit failed.',
     });
@@ -642,6 +667,7 @@ async function handleAsk(req: NextRequest): Promise<NextResponse<AskResponse>> {
     citations,
     audited: true,
     abstained: false,
+    path: 'watsonx-audited',
     scope: SCOPE_NOTICE,
     degraded: false,
     generation_model: 'ibm/granite-4-h-small',

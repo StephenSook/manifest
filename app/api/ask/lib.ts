@@ -505,6 +505,8 @@ export interface ExtractiveResponseBody {
   degraded: boolean;
   /** See SCOPE_NOTICE below. Required so the compiler catches an omission. */
   scope: string;
+  /** Which extractive path produced this. */
+  path: AnswerPath;
 }
 
 /**
@@ -538,6 +540,24 @@ export function guardianFailureReason(outcome: 'fail' | 'unparseable'): string {
   );
 }
 
+/**
+ * Every way an /api/ask response can be produced, named. Defined here rather
+ * than in route.ts because both the route and the extractive body builder
+ * need it, and lib.ts is the direction imports already flow.
+ */
+export type AnswerPath =
+  | 'watsonx-audited'
+  | 'extractive-no-credentials'
+  | 'extractive-generation-unreachable'
+  | 'extractive-guardian-unreachable'
+  | 'abstained-bad-request'
+  | 'abstained-citation-gate'
+  | 'abstained-guardian-refused'
+  | 'abstained-corpus-unavailable'
+  | 'abstained-embedding-failed'
+  | 'abstained-no-relevant-section'
+  | 'error-unexpected';
+
 export const SCOPE_NOTICE =
   'Planning aid, not legal authority. Every regulatory statement here carries a ' +
   'section-level citation pinned to the corpus AMDDATE, or the product abstains ' +
@@ -564,6 +584,7 @@ export function buildExtractiveResponse(
   chunks: ChunkRow[],
   degradation: string,
   degraded: boolean,
+  path: AnswerPath,
 ): ExtractiveResponseBody {
   const { answer, citations } = extractiveAnswer(question, chunks);
   if (citations.length === 0) {
@@ -573,6 +594,7 @@ export function buildExtractiveResponse(
       audited: false,
       abstained: true,
       scope: SCOPE_NOTICE,
+      path,
       reason: `${degradation} The extractive path resolved no citable section, so no answer ships.`,
       degraded,
     };
@@ -588,6 +610,7 @@ export function buildExtractiveResponse(
       audited: false,
       abstained: true,
       scope: SCOPE_NOTICE,
+      path,
       reason: `${degradation} The retrieved sections do not address this question, so no answer ships. Retrieved sections are listed.`,
       degraded,
     };
@@ -598,6 +621,7 @@ export function buildExtractiveResponse(
     audited: false,
     abstained: false,
     scope: SCOPE_NOTICE,
+    path,
     reason: `${degradation} Answer quoted verbatim from the retrieved corpus text, not generated. The Guardian audit did not run on it.`,
     degraded,
   };

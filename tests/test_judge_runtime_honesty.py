@@ -1065,3 +1065,73 @@ class TestTheGateDemoIsADemonstrationNotTheatre:
             "the demo must return an explicit error when the fabrication is real "
             "or the corpus is missing, rather than quietly demonstrating a lie."
         )
+
+
+class TestEveryAnswerPathIsLabelledAndUsed:
+    """`degraded` says whether the model path failed. `path` says WHY.
+
+    Recovering the reason previously meant string-matching the English in
+    `reason`. We did exactly that when analysing the committed watsonx cache
+    for docs/evidence/model-vs-rules.md, matching on "no readable verdict" and
+    "did not certify", which breaks the moment that prose is reworded.
+
+    Borrowed from a rival whose single `source` field carries five values
+    naming the failure cause.
+    """
+
+    @staticmethod
+    def _declared() -> set[str]:
+        lib = (REPO / "app" / "api" / "ask" / "lib.ts").read_text(encoding="utf-8")
+        i = lib.index("export type AnswerPath =")
+        block = lib[i : lib.index(";", i)]
+        vals = set(re.findall(r"'([a-z-]+)'", block))
+        assert len(vals) >= 8, (
+            f"parsed only {len(vals)} AnswerPath values; the guard is misaimed "
+            "and would pass without checking anything"
+        )
+        return vals
+
+    @staticmethod
+    def _used() -> set[str]:
+        used: set[str] = set()
+        for name in ("route.ts", "lib.ts"):
+            src = (REPO / "app" / "api" / "ask" / name).read_text(encoding="utf-8")
+            used |= set(re.findall(r"path: '([a-z-]+)'", src))
+            used |= set(re.findall(r"'(extractive-[a-z-]+)'", src))
+        return used
+
+    def test_no_declared_path_is_dead(self):
+        """A value nothing can emit is a promise the payload cannot keep."""
+        dead = sorted(self._declared() - self._used())
+        assert dead == [], (
+            f"AnswerPath declares {dead} which no code path emits. Either wire "
+            "them or remove them: an enum value a caller can never observe is "
+            "documentation pretending to be a contract."
+        )
+
+    def test_no_emitted_path_is_undeclared(self):
+        rogue = sorted(self._used() - self._declared())
+        assert rogue == [], f"code emits AnswerPath values not in the type: {rogue}"
+
+    def test_the_labels_agree_with_the_booleans_they_sit_beside(self):
+        """An `abstained-` label on a non-abstention would be a lie."""
+        route = (REPO / "app" / "api" / "ask" / "route.ts").read_text(encoding="utf-8")
+        offenders = []
+        for m in re.finditer(r"path: '(abstained-[a-z-]+)'", route):
+            window = route[max(0, m.start() - 400) : m.start() + 200]
+            if "abstained: true" not in window:
+                offenders.append(m.group(1))
+        assert offenders == [], (
+            f"these paths are labelled as abstentions but the response does not "
+            f"set abstained: true: {offenders}"
+        )
+
+    def test_the_success_label_is_the_only_watsonx_one_on_a_shipped_answer(self):
+        route = (REPO / "app" / "api" / "ask" / "route.ts").read_text(encoding="utf-8")
+        m = re.search(r"path: 'watsonx-audited'", route)
+        assert m, "no response is labelled watsonx-audited, so no answer ever ships"
+        window = route[max(0, m.start() - 500) : m.start() + 300]
+        assert "abstained: false" in window and "audited: true" in window, (
+            "the watsonx-audited label must sit on a response that is both "
+            "answered and audited"
+        )

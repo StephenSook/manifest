@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import json
 import os
+import subprocess
 import re
 import sys
 from pathlib import Path
@@ -1085,4 +1086,68 @@ class TestThirdPartyNoticesMatchesTheDeclaredDependencies:
             "docs/THIRD_PARTY_NOTICES.md lists packages this product does not "
             "declare, which overstates the dependency surface: "
             f"{extra}. Cut the row, or declare and wire the package."
+        )
+
+
+class TestTheRejectedDesignsTableCitesRealCommits:
+    """Every commit or PR the README cites as evidence must resolve.
+
+    The table's whole value is that a reviewer can check each claim against
+    the diff. A reference to a commit that does not exist is worse than no
+    reference: it reads as verifiable and cannot be verified. Reviewers in
+    this project have twice produced a real finding attached to an invented
+    location, so our own citations get the same check.
+    """
+
+    HEADING = "### Designs we tried and rejected, and what each one cost"
+
+    def _table(self) -> str:
+        text = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+        assert self.HEADING in text, (
+            "the rejected-designs table is gone, so this guard checks nothing"
+        )
+        after = text[text.index(self.HEADING) :]
+        nxt = after.find("\n### ", 1)
+        return after if nxt == -1 else after[:nxt]
+
+    def test_the_table_has_rows(self):
+        rows = [l for l in self._table().splitlines() if l.startswith("| ")]
+        assert len(rows) >= 5, (
+            f"only {len(rows)} table lines found; the guard is misaimed or the "
+            "table was emptied, either of which would pass vacuously"
+        )
+
+    def test_every_cited_sha_resolves_to_a_commit(self):
+        shas = set(re.findall(r"\(`([0-9a-f]{7,40})`\)", self._table()))
+        assert shas, "no commit shas cited in the table; expected at least one"
+        missing = [
+            s
+            for s in sorted(shas)
+            if subprocess.run(
+                ["git", "cat-file", "-e", f"{s}^{{commit}}"],
+                cwd=REPO_ROOT,
+                capture_output=True,
+            ).returncode
+            != 0
+        ]
+        assert missing == [], (
+            f"README cites commits that do not exist in this repo: {missing}"
+        )
+
+    def test_every_cited_pr_number_is_plausible(self):
+        prs = {int(n) for n in re.findall(r"\(`#(\d+)`\)", self._table())}
+        assert prs, "no PR numbers cited in the table; expected at least one"
+        # The PR API needs the network, which this suite does not use. Assert
+        # the shape instead: a PR number must be positive and not ahead of the
+        # highest one this repo has merged, which is discoverable from history.
+        merged = re.findall(r"\(#(\d+)\)", subprocess.run(
+            ["git", "log", "--format=%s", "-500"],
+            cwd=REPO_ROOT, capture_output=True, text=True,
+        ).stdout)
+        highest = max((int(n) for n in merged), default=0)
+        assert highest > 0, "no merged PR numbers found in history"
+        ahead = sorted(n for n in prs if n > highest)
+        assert ahead == [], (
+            f"README cites PR numbers {ahead} above the highest merged PR "
+            f"(#{highest}), so they cannot yet be evidence."
         )

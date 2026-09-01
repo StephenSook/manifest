@@ -77,7 +77,7 @@ curl -s -X POST https://manifest-web-roan.vercel.app/api/ask \
   -d '{"question":"When does Part 100 take effect?"}'
 ```
 
-That refusal is the product working, not failing. Six such traps are scored in the eval, and cite-or-abstain is the reason the score is 53.6 and not higher: an answer without a resolvable citation does not ship.
+That refusal is the product working, not failing. Six such traps are scored in the eval, and cite-or-abstain is the reason the score is 46.4 and not higher: an answer without a resolvable citation does not ship.
 
 If the network is down: `npm install && npm run test:engine` is the one-command deterministic proof.
 
@@ -86,7 +86,7 @@ If the network is down: `npm install && npm run test:engine` is the one-command 
 ## What this project is NOT claiming
 
 - Surya runs as a real forward pass whose output is a frozen artifact (`data/surya-outlook.json`), served by `GET /api/solar` (decision D7). If the artifact is absent the endpoint returns `surya_absent: true`. The activity index is reported for context and is NOT applied to the envelope or to the verdict: no code adjusts a NOAA number using it. We do not claim live Surya inference in the request path.
-- The eval score today is 53.6 percent with all 6 abstention traps abstaining, measured on the credential-free extractive path and enforced in CI as a raise-only floor. The full watsonx pipeline was measured against production on 2026-08-29: 7.1 percent, all 6 traps abstaining, zero fabricated citations. Guardian rejects most generated answers rather than ship an ungrounded citation, so the pipeline fails closed instead of scoring points. Both numbers are in `docs/FACTS.json`. We do not claim 90.
+- The eval score today is 46.4 percent with all 6 abstention traps abstaining, measured on the credential-free extractive path and enforced in CI as a raise-only floor. The full watsonx pipeline was measured against production on 2026-08-29: 7.1 percent, all 6 traps abstaining, zero fabricated citations. Guardian rejects most generated answers rather than ship an ungrounded citation, so the pipeline fails closed instead of scoring points. Both numbers are in `docs/FACTS.json`. We do not claim 90.
 - `/api/ask` reads the corpus committed in this repository, which is traced into the deployed function; Vercel Blob is an optional overlay and is not required. Without watsonx credentials the route answers from the offline extractive path over that same corpus rather than abstaining, and `/api/status` reports which backend answered. It abstains when the corpus genuinely cannot load or the question is not supported by the corpus, always with a stated reason, and it never fabricates.
 - Every number in `docs/FACTS.json` comes from a real engine run, and the no-fabricated-numbers test enforces that README figures match it.
 - If you would rather not run anything, `docs/evidence/live-responses.json` is a VERBATIM capture of two real responses from the deployment: one audited answer citing 47 CFR 97.207(g)(1) at AMDDATE 2026-08-13, and one abstention trap refused with the regime line. It records the runtime block that produced them and the exact curl commands to reproduce them. Both halves are there on purpose: a capture showing only the answers would be marketing, and a test refuses to let this file contain only successes or a paraphrased quote.

@@ -316,7 +316,7 @@ export default function JudgePage() {
               'The 28 regulatory questions and 6 abstention traps are scored ' +
               'by eval/runner.py. docs/FACTS.json publishes both measured ' +
               'scores: eval is the credential-free extractive path on ' +
-              'committed fixtures (53.6 percent), and eval_live is the full ' +
+              'committed fixtures (46.4 percent), and eval_live is the full ' +
               'watsonx pipeline measured against this deployment on ' +
               '2026-08-29 (7.1 percent, 6/6 traps abstaining, zero ' +
               'fabricated citations: the Guardian audit rejects most ' +

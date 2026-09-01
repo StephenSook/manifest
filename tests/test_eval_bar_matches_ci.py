@@ -28,6 +28,7 @@ No em-dashes. No fabricated figures.
 
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -93,3 +94,63 @@ def test_the_documented_command_is_the_bare_one() -> None:
     for doc in ("README.md", "JUDGE.md"):
         text = _read(REPO / doc)
         assert "eval/runner.py --mode fixtures" in text, f"{doc} lost the command"
+
+
+class TestBaselineRetractionsAreRealAndExplained:
+    """An id may leave the baseline only by retraction, never by deletion.
+
+    The raise-only rule exists so a hard question cannot be dropped to lift
+    the number. It needed exactly one escape: a row whose citation check
+    could never fail was never a pass, and leaving its id in the baseline
+    makes the regression gate fail forever once the row is gone.
+
+    Both halves are asserted here as well as in CI. A guard that runs only on
+    the CI machine is one nobody can prove red locally, and a guard that runs
+    only locally never sees the merge.
+    """
+
+    @staticmethod
+    def _baseline() -> dict:
+        return json.loads(
+            (REPO / "eval" / "baseline_passing.json").read_text(encoding="utf-8")
+        )
+
+    @staticmethod
+    def _bank_ids() -> set[str]:
+        ids = {
+            json.loads(line)["id"]
+            for line in (REPO / "eval" / "bank.jsonl")
+            .read_text(encoding="utf-8")
+            .splitlines()
+            if line.strip()
+        }
+        assert len(ids) >= 20, (
+            f"bank parsed only {len(ids)} ids, so this guard is reading the "
+            "wrong file or an empty one and would pass without checking."
+        )
+        return ids
+
+    def test_every_retraction_carries_a_reason(self):
+        for entry in self._baseline().get("retracted", []):
+            assert (entry.get("reason") or "").strip(), (
+                f"retracted id {entry.get('id')!r} has no reason. A retraction "
+                "without a stated reason is a deletion."
+            )
+
+    def test_no_retracted_id_is_still_scored(self):
+        bank = self._bank_ids()
+        still = [
+            e["id"] for e in self._baseline().get("retracted", []) if e["id"] in bank
+        ]
+        assert still == [], (
+            f"ids {still} are recorded as retracted but are still in the bank, "
+            "so they are still scored while exempt from the regression gate."
+        )
+
+    def test_every_baseline_id_still_exists_in_the_bank(self):
+        bank = self._bank_ids()
+        orphans = sorted(set(self._baseline()["passing"]) - bank)
+        assert orphans == [], (
+            f"baseline ids {orphans} name rows the bank no longer contains, so "
+            "the regression gate can never pass. Retract them explicitly."
+        )

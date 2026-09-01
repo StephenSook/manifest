@@ -1,7 +1,7 @@
 {
-  "note": "Every id here must keep passing. The eval gate fails on any regression from this list. Raise-only: add ids as retrieval improves, never remove.",
-  "recordedAt": "2026-08-25T01:50:02.301999+00:00",
-  "score_pct": 53.6,
+  "note": "Every id here must keep passing. The eval gate fails on any regression from this list. Raise-only: add ids as retrieval improves. An id may be REMOVED only by RETRACTION, which requires that the id no longer exists in eval/bank.jsonl and that it appears in `retracted` below with a reason. CI enforces both halves, so a hard question cannot be quietly deleted to make the number look better.",
+  "recordedAt": "2026-08-31T00:00:00+00:00",
+  "score_pct": 46.4,
   "passing": [
     "a01",
     "a02",
@@ -20,9 +20,17 @@
     "q16",
     "q18",
     "q19",
-    "q20",
-    "q21",
     "q25",
     "q26"
+  ],
+  "retracted": [
+    {
+      "id": "q20",
+      "reason": "Asked what atmospheric density model Manifest itself uses, which the regulatory corpus cannot ground. Its expected citation had no section, no cfrTitle and no part, so citation_matches accepted any citation and the row could not fail. It scored correct while citing 47 CFR 25.137(d)(1), an FCC licensing rule unrelated to the question. Removed from the bank on 2026-08-31."
+    },
+    {
+      "id": "q21",
+      "reason": "Asked which NOAA data product supplies the solar flux forecast, another question about Manifest's own implementation rather than the corpus. Same empty expectation, same unfailable check. It scored correct while citing 47 CFR 25.110(b)(3)(ii). Removed from the bank on 2026-08-31."
+    }
   ]
 }

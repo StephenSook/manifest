@@ -59,7 +59,29 @@ DEFAULT_REPORT = Path("eval/report.json")
 # the same 53.6 the README publishes as the measured score. A judge running our
 # own documented command should not watch the product call itself a failure
 # against a target nothing enforces.
-MIN_SCORE_PCT = 53.5
+#
+# LOWERED 53.5 -> 46.4 on 2026-08-31, and this is a RETRACTION plus two harder
+# rows, not a regression. The 13 genuine passes never changed.
+#
+# q20 and q21 carried an expected citation with no section, no cfrTitle and no
+# part, which citation_matches satisfies with ANY citation, so neither row
+# could fail. Both scored correct while citing FCC licensing sections unrelated
+# to the questions they asked, which were about Manifest's own implementation
+# rather than the corpus. 53.6 was therefore 13 real passes and 2 unfailable
+# rows over 28.
+#
+# They were RETRACTED, not deleted, and replaced by q29 (47 CFR 25.117, no
+# modification of a station authorization without application and grant) and
+# q30 (47 CFR 5.64, construction before grant at the applicant's risk). Both
+# are grounded verbatim in the committed corpus and both currently FAIL:
+# retrieval returns 25.203(k) and 25.280(a)(5) instead. So the bank still holds
+# 28 questions and 6 traps, which is what the published video states, and
+# 13/28 = 46.4 is the first score in which every row can fail.
+#
+# load_bank now refuses any bank carrying an unfailable expectation, and the
+# raise-only gate accepts a removal only when the id is absent from the bank
+# AND recorded in `retracted` with a reason, so this cannot happen twice.
+MIN_SCORE_PCT = 46.4
 
 # The target in CLAUDE.md section 5. Not enforced anywhere: the ratchet above is
 # what gates CI, raise-only, so a regression fails and an improvement lifts the
@@ -67,13 +89,59 @@ MIN_SCORE_PCT = 53.5
 ASPIRATIONAL_SCORE_PCT = 90.0
 
 
+def expectation_constrains_nothing(expected: dict) -> bool:
+    """True when this expected citation is satisfied by ANY citation.
+
+    citation_matches skips each field it was given no value for, so an
+    expectation with no section, no section_any_of, no cfrTitle and no part
+    matches whatever the product happened to return. A row carrying one
+    cannot fail its citation check, and it still counts toward the score.
+    """
+    if expected.get("section_any_of"):
+        return False
+    if str(expected.get("section") or ""):
+        return False
+    if int(expected.get("cfrTitle") or 0):
+        return False
+    if int(expected.get("part") or 0):
+        return False
+    return True
+
+
 def load_bank(bank_path: Path) -> list[dict]:
+    """Load the bank, refusing any row whose citation check cannot fail.
+
+    This is a specification error, not a lenient case to accept quietly. Two
+    rows carried one for the life of the bank: they asked what density model
+    and what NOAA product Manifest itself uses, questions the regulatory
+    corpus cannot ground, and they scored as correct while citing unrelated
+    FCC licensing sections. Seven points of the headline rested on checks
+    that constrained nothing. Failing loudly here is the only way a future
+    row cannot repeat it.
+    """
     rows = []
     with bank_path.open() as f:
         for line in f:
             line = line.strip()
             if line:
                 rows.append(json.loads(line))
+    if not rows:
+        raise ValueError(f"{bank_path} loaded zero rows, so nothing is scored")
+
+    vacuous = [
+        row.get("id")
+        for row in rows
+        for expected in (row.get("expected_citations") or [])
+        if expectation_constrains_nothing(expected)
+    ]
+    if vacuous:
+        raise ValueError(
+            f"{bank_path}: rows {sorted(set(vacuous))} carry an expected "
+            "citation with no section, no section_any_of, no cfrTitle and no "
+            "part. Such an expectation is satisfied by any citation at all, "
+            "so the row cannot fail and still counts toward the score. Give "
+            "it a real expectation, or remove the row."
+        )
     return rows
 
 

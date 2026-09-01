@@ -26,7 +26,7 @@ Regenerate it yourself: `pipeline/.venv/bin/python3 pipeline/decay.py` (no keys,
 npm install && npm run test:engine
 ```
 
-Expected: **128 tests passing**, 0 failures. These cover:
+Expected: **135 tests passing**, 0 failures. These cover:
 - Critical-path backward pass (diamond fixture hand-computed)
 - 97.207(g) dual clock (30 days after LV det + 90 days before integration, binding = earlier)
 - NOAA CRSRA prerequisite injection (imaging missions only)

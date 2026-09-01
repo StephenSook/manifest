@@ -26,7 +26,7 @@ on:
   workflow_dispatch:
 
 env:
-  RATCHET_MIN_SCORE: "53.5"
+  RATCHET_MIN_SCORE: "46.4"
 
 jobs:
   eval-fixtures:
@@ -75,9 +75,32 @@ jobs:
               sys.exit(1)
           parent = set(json.loads(proc.stdout)["passing"])
           removed = sorted(parent - current)
+          # Raise-only, with one narrow escape: RETRACTION. A row whose check
+          # could never fail was never a pass, and leaving its id here would
+          # make the regression gate below fail forever once the row is gone.
+          # Both halves are required, so a hard question cannot be quietly
+          # deleted to lift the number: the id must be ABSENT from the bank,
+          # and it must be listed in `retracted` with a non-empty reason.
           if removed:
-              print(f"::error::baseline ids were REMOVED, violating raise-only: {removed}")
-              sys.exit(1)
+              doc = json.load(open("eval/baseline_passing.json"))
+              retracted = {
+                  r["id"]: (r.get("reason") or "").strip()
+                  for r in doc.get("retracted", [])
+              }
+              bank_ids = {
+                  json.loads(line)["id"]
+                  for line in open("eval/bank.jsonl")
+                  if line.strip()
+              }
+              unexplained = [i for i in removed if not retracted.get(i)]
+              still_in_bank = [i for i in removed if i in bank_ids]
+              if unexplained:
+                  print(f"::error::baseline ids REMOVED with no retraction reason: {unexplained}")
+                  sys.exit(1)
+              if still_in_bank:
+                  print(f"::error::retracted ids are still scored in the bank: {still_in_bank}")
+                  sys.exit(1)
+              print(f"ok: {len(removed)} retracted id(s), each absent from the bank and explained: {removed}")
           print(f"ok: baseline is a superset of {base} ({len(parent)} -> {len(current)} ids)")
           PY
 

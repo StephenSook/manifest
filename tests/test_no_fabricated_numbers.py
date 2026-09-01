@@ -1355,3 +1355,84 @@ class TestTheModelVsRulesArtifactMatchesItsOwnCache:
                 f"{self.DOC} must name the questions only the rules path gets "
                 f"right: {joined}"
             )
+
+
+class TestTheSolarSweepIsRecomputableAndStatesItsLimits:
+    """The headline claim's own refutation artifact must stay honest.
+
+    "The sun decides if your satellite is legal" is our tagline. This asserts
+    the published sweep is recomputable from the committed decay table, and
+    that it still carries the half of the result that cuts AGAINST the
+    headline. A refutation artifact that quietly loses its refuting half is
+    marketing with a table in it.
+
+    The discipline is borrowed from a rival that published per-feature
+    importances beside its headline metric, and whose own artifact then
+    showed the space-weather inputs it was named for contributed nothing.
+    """
+
+    DOC = "docs/evidence/solar-decides-sweep.md"
+
+    @staticmethod
+    def _sweep() -> dict:
+        import sys
+
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        from solar_sweep import sweep  # noqa: PLC0415
+
+        return sweep()
+
+    def test_the_table_is_big_enough_to_measure(self):
+        """Anti-vacuity: a one-row table would make every share 0 or 100."""
+        s = self._sweep()
+        assert s["configurations"] >= 12, (
+            f"decay table has only {s['configurations']} configurations; the "
+            "sweep cannot support a published share"
+        )
+
+    def test_the_published_counts_are_recomputable(self):
+        s = self._sweep()
+        text = (REPO_ROOT / self.DOC).read_text(encoding="utf-8")
+        n = s["configurations"]
+        for count, label in (
+            (s["verdict_flips_on_solar_alone"], "flip count"),
+            (s["compliant_at_every_solar_level"], "always-compliant count"),
+            (s["non_compliant_at_every_solar_level"], "never-compliant count"),
+        ):
+            assert f"{count} of {n}" in text, (
+                f"{self.DOC} does not state the recomputed {label} "
+                f"'{count} of {n}'. Regenerate it; do not edit the numbers."
+            )
+
+    def test_the_doc_still_states_the_half_that_refutes_the_headline(self):
+        s = self._sweep()
+        text = (REPO_ROOT / self.DOC).read_text(encoding="utf-8")
+        n = s["configurations"]
+        not_decided = n - s["verdict_flips_on_solar_alone"]
+        assert f"{not_decided} of {n} configurations, the sun decides nothing" in text, (
+            f"{self.DOC} must state plainly that for {not_decided} of {n} "
+            "configurations the sun decides nothing. Removing that sentence "
+            "turns a refutable measurement into a marketing claim."
+        )
+
+    def test_the_doc_discloses_the_integration_ceiling(self):
+        """A lower bound presented as a lifetime is a fabricated figure."""
+        s = self._sweep()
+        text = (REPO_ROOT / self.DOC).read_text(encoding="utf-8")
+        capped = s["flips_whose_worst_case_hit_the_integration_ceiling"]
+        assert "LOWER BOUND" in text, (
+            f"{self.DOC} must say the {capped} rows at the integration ceiling "
+            "are lower bounds, not measured lifetimes."
+        )
+        assert str(capped) in text, f"{self.DOC} does not state the capped count {capped}"
+
+    def test_the_claimed_limit_is_the_one_the_engine_uses(self):
+        """The sweep must score against the same rule the product cites."""
+        from solar_sweep import FCC_LIMIT_YEARS  # noqa: PLC0415
+
+        assert FCC_LIMIT_YEARS == 5.0
+        engine = (REPO_ROOT / "engine" / "graph.ts").read_text(encoding="utf-8")
+        assert "25.283" in engine, (
+            "the engine no longer cites 25.283, so the sweep is scoring "
+            "against a rule the product does not use"
+        )

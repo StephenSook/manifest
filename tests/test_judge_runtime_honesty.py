@@ -819,3 +819,93 @@ class TestTheReadmeQuoteOfThePromptCannotDriftFromTheCode:
             "PREFIX of the shipped template.\n"
             f"--- README ---\n{quoted}\n--- SHIPPED ---\n{shipped}"
         )
+
+
+class TestEveryStackClaimPointsAtCodeThatExists:
+    """The half a rival's transparency endpoint was missing.
+
+    A competitor publishes per-technology `wired_in` and `load_bearing` as
+    JSON. It is the right shape and it is unchecked, which is exactly how they
+    came to assert Docling as load_bearing with a named file path while Docling
+    was absent from their dependencies, had no input directory, and never ran.
+
+    A claim table nobody verifies is a design doc with a JSON content type.
+    These tests are what make ours evidence: every wired_in path must exist,
+    and must contain the marker string the entry claims proves it.
+    """
+
+    @staticmethod
+    def _entries() -> list[dict]:
+        source = (REPO / "app" / "api" / "status" / "route.ts").read_text(
+            encoding="utf-8"
+        )
+        i = source.index("const STACK = [")
+        block = source[i : source.index("] as const;", i)]
+        entries = []
+        for chunk in block.split("{")[1:]:
+            entry = {}
+            for key in ("wired_in", "marker", "name", "without_it"):
+                m = re.search(rf"{key}:\s*\n?\s*'([^']*)'", chunk)
+                if m:
+                    entry[key] = m.group(1)
+            m = re.search(r"load_bearing:\s*(true|false)", chunk)
+            if m:
+                entry["load_bearing"] = m.group(1) == "true"
+            if "wired_in" in entry:
+                entries.append(entry)
+        return entries
+
+    def test_the_table_was_actually_parsed(self):
+        """Anti-vacuity: an empty list passes every check below."""
+        entries = self._entries()
+        assert len(entries) >= 6, (
+            f"parsed only {len(entries)} stack entries; the parser is broken or "
+            "the table was emptied, either of which would pass silently"
+        )
+
+    def test_every_wired_in_path_exists(self):
+        missing = [
+            f"{e['name']} -> {e['wired_in']}"
+            for e in self._entries()
+            if not (REPO / e["wired_in"]).exists()
+        ]
+        assert missing == [], (
+            "The stack manifest names files that do not exist in this repo: "
+            f"{missing}. This is the exact defect the table exists to prevent."
+        )
+
+    def test_every_marker_is_present_in_its_named_file(self):
+        offenders = []
+        for e in self._entries():
+            path = REPO / e["wired_in"]
+            if not path.exists():
+                continue
+            text = path.read_text(encoding="utf-8", errors="replace").lower()
+            if e["marker"].lower() not in text:
+                offenders.append(f"{e['name']}: {e['wired_in']} lacks {e['marker']!r}")
+        assert offenders == [], (
+            "A stack entry claims a technology is wired in a file that does not "
+            "mention it:\n  " + "\n  ".join(offenders)
+        )
+
+    def test_every_entry_states_what_happens_without_it(self):
+        thin = [
+            e["name"]
+            for e in self._entries()
+            if len(e.get("without_it", "")) < 40
+        ]
+        assert thin == [], (
+            f"Entries with no meaningful degradation statement: {thin}. "
+            "'load_bearing' means nothing unless the alternative is stated."
+        )
+
+    def test_the_inactive_model_is_declared_inactive(self):
+        """The honest entry is the one this whole table is judged on."""
+        entry = next(
+            (e for e in self._entries() if "Embedding" in e["name"]), None
+        )
+        assert entry is not None, "the embedding entry left the stack manifest"
+        assert entry["load_bearing"] is False, (
+            "granite-embedding is marked load_bearing, but it does not run. "
+            "The corpus was built with hashing-trick-768."
+        )

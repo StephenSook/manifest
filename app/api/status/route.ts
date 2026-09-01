@@ -217,6 +217,91 @@ const corpusShape = readCorpusShape();
  * removed or reordered, this block becomes a claim the product does not honour,
  * which is the exact defect this endpoint was built to close.
  */
+/**
+ * Per-technology claim table, machine readable.
+ *
+ * Borrowed from a direct competitor's /api/judges endpoint, which publishes
+ * role, wired_in and load_bearing per IBM technology. Theirs is the better
+ * shape than our prose, and it is also what exposed their own false claim:
+ * they list Docling as load_bearing with a wired_in path, and Docling is not
+ * in their dependencies, has no input directory, and never ran.
+ *
+ * So this version adds the half theirs is missing. Every `wired_in` path must
+ * exist in this repository AND contain `marker`, and a test asserts exactly
+ * that. An unchecked claim table is a design doc with a JSON content type; the
+ * check is what makes it evidence.
+ *
+ * `load_bearing: false` is not a weaker entry. It is the honest one.
+ */
+const STACK = [
+  {
+    name: 'IBM Granite 4 H Small',
+    model_id: 'ibm/granite-4-h-small',
+    role: 'Generates the prose of a cited answer, never the verdict',
+    wired_in: 'app/api/ask/route.ts',
+    marker: 'ibm/granite-4-h-small',
+    load_bearing: true,
+    without_it:
+      'The offline extractive path quotes the corpus verbatim and the answer ships unaudited, labelled as such.',
+  },
+  {
+    name: 'IBM Granite Guardian 3 8B',
+    model_id: 'ibm/granite-guardian-3-8b',
+    role: 'Audits every generated answer for groundedness before it ships',
+    wired_in: 'app/api/ask/route.ts',
+    marker: 'ibm/granite-guardian-3-8b',
+    load_bearing: true,
+    without_it:
+      'The answer is not certified and does not ship. The response degrades to an abstention naming what is missing.',
+  },
+  {
+    name: 'IBM Granite Embedding 278M',
+    model_id: 'ibm/granite-embedding-278m-multilingual',
+    role: 'Named in the model inventory as the intended production embedder',
+    wired_in: 'app/api/status/route.ts',
+    marker: 'granite-embedding-278m-multilingual',
+    load_bearing: false,
+    without_it:
+      'Nothing changes. It does not run. The committed corpus was built with hashing-trick-768 and that is what every deployment retrieves with. runtime.embedding_backend reports the real one on every request.',
+  },
+  {
+    name: 'Docling',
+    role: 'Parsed the PDF half of the regulatory corpus into committed chunks',
+    wired_in: 'pipeline/docling_ingest.py',
+    marker: 'docling',
+    load_bearing: true,
+    without_it:
+      'Nothing at request time. The corpus is a frozen committed artifact, so Docling is a build-time dependency only. Its output is 707 chunks across 5 committed PDF chunk files.',
+  },
+  {
+    name: 'eCFR bulk XML via lxml',
+    role: 'Parsed Title 47 Parts 5, 25, 97 and Title 15 Part 960 into cited chunks',
+    wired_in: 'pipeline/ecfr_parse.py',
+    marker: 'lxml',
+    load_bearing: true,
+    without_it:
+      'No CFR citations exist. This is the source of every section-level citation the product makes, each pinned to its snapshot AMDDATE.',
+  },
+  {
+    name: 'NOAA SWPC 10cm flux',
+    role: 'Live solar flux reading that moves the orbital decay verdict',
+    wired_in: 'app/api/solar/lib.ts',
+    marker: '10cm-flux',
+    load_bearing: true,
+    without_it:
+      'The decay table falls back to its nominal F10.7 row, and the UI labels which of the two states it used.',
+  },
+  {
+    name: 'IBM Bob 2.0.3',
+    role: 'Primary development tool, with write-scoped custom modes per lane',
+    wired_in: '.bob/custom_modes.yaml',
+    marker: 'fileRegex',
+    load_bearing: true,
+    without_it:
+      'A build-time control, not a runtime one. The shipped fileRegex lane table is asserted by tests/test_bob_lane_enforcement.py.',
+  },
+] as const;
+
 const PIPELINE = {
   what_this_is:
     'The stages behind POST /api/ask and the deorbit verdict, and what each ' +
@@ -448,6 +533,7 @@ async function handleStatus(): Promise<NextResponse> {
 
     // The four stages, and what each still does with the model off.
     pipeline: PIPELINE,
+    stack: STACK,
     // Cascade sum across all violated nodes, kept for transparency. One slip
     // propagates to every downstream node, so this is NOT days-of-lateness.
     violated_day_sum_all_nodes: result.totalViolatedDays,
